@@ -2,36 +2,907 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PAL4 — Dashboard | Mariapps Marine Solutions</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Chief Engineer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared/sidebar.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root {
-  --blue:     #1565c0;
-  --blue-lt:  #1e88e5;
-  --blue-bg:  #eff6ff;
-  --red:      #dc2626;
-  --red-bg:   #fef2f2;
-  --amber:    #d97706;
-  --amber-bg: #fffbeb;
-  --green:    #16a34a;
-  --green-bg: #f0fdf4;
-  --purple:   #7c3aed;
-  --purple-bg:#faf5ff;
-  --teal:     #0891b2;
-  --teal-bg:  #f0fdfa;
-  --bg:       #f1f5f9;
-  --card:     #ffffff;
-  --border:   #e2e8f0;
-  --text:     #0f172a;
-  --text2:    #334155;
-  --muted:    #64748b;
-  --sidebar:  256px;
-  --hdr:      56px;
-  --r:        10px;
+/* ─── TOKENS ─── */
+:root{
+  --blue:#1565c0; --blue-lt:#1e88e5; --blue-bg:#eff6ff; --blue-bd:#bfdbfe;
+  --red:#dc2626;  --red-bg:#fef2f2;  --red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --teal:#0891b2; --teal-bg:#ecfeff;
+  --bg:#f7f8fa; --card:#fff; --border:#eaecf0;
+  --text:#111827; --text2:#374151; --muted:#6b7280;
+  --sb:240px; --hdr:64px; --r:14px;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 2px 8px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 6px rgba(0,0,0,.05),0 10px 24px rgba(0,0,0,.08);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:13.5px;}
+body{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;min-height:100vh;
+  font-size:13px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:.01em;
+}
+
+/* ══ TOPBAR ══ */
+#topbar{
+  height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);
+  position:sticky;top:0;
+  /* HIGH z-index so dropdowns always float above map */
+  z-index:9999;
+  display:flex;align-items:center;padding:0 28px;gap:12px;
+}
+
+.tb-gap{flex:1;}
+
+/* Vessel dropdown button — centred, light */
+.vessel-wrap{position:relative;}
+.vessel-sel{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 20px;border-radius:10px;cursor:pointer;transition:all .15s;
+  background:#fff;color:var(--text);
+  border:1.5px solid var(--border);
+  min-width:280px;
+}
+.vessel-sel:hover{background:#f9fafb;border-color:var(--blue-bd);}
+.vs-ico{font-size:16px;}
+.vs-inner{line-height:1.25;}
+.vs-label{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.vs-name{font-size:12.5px;font-weight:600;color:var(--text);}
+.vs-arr{font-size:12px;color:var(--muted);margin-left:2px;}
+.vs-live{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+.vessel-drop{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);width:300px;background:#fff;border:1px solid var(--border);border-radius:13px;box-shadow:var(--shadow-lg);z-index:99999;overflow:hidden;}
+.vessel-drop.open{display:block;}
+.vd-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.vd-hdr-title{font-size:12.5px;font-weight:700;color:var(--text);}
+.vd-hdr-count{font-size:11px;color:var(--muted);}
+.vd-item{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;border-bottom:1px solid #f9fafb;transition:background .12s;}
+.vd-item:last-child{border-bottom:none;}
+.vd-item:hover{background:#f9fafb;}
+.vd-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.vd-name{font-size:13px;font-weight:600;margin-bottom:1px;}
+.vd-sub{font-size:10.5px;color:var(--muted);}
+.vd-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap;}
+
+/* Quick action button */
+.tb-quick{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:10px;
+  background:var(--blue);color:#fff;border:none;
+  font-size:13px;font-weight:700;cursor:pointer;
+  box-shadow:0 2px 8px rgba(21,101,192,.25);transition:all .15s;
+}
+.tb-quick:hover{background:var(--blue-lt);}
+
+/* Notification */
+.notif-wrap{position:relative;}
+.notif-btn{
+  width:40px;height:40px;border-radius:10px;
+  background:#f9fafb;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:17px;transition:all .13s;position:relative;
+}
+.notif-btn:hover{background:var(--blue-bg);border-color:var(--blue-bd);}
+.notif-count{
+  position:absolute;top:-5px;right:-5px;
+  min-width:18px;height:18px;padding:0 4px;
+  background:var(--red);border-radius:10px;border:2px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-weight:800;color:#fff;
+}
+.notif-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;width:360px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);z-index:99999;overflow:hidden;}
+.notif-panel.open{display:block;}
+.np-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.np-title{font-size:13.5px;font-weight:800;}
+.np-mark{font-size:11.5px;color:var(--blue);cursor:pointer;font-weight:600;}
+.np-item{display:flex;gap:11px;padding:11px 16px;border-bottom:1px solid #f9fafb;cursor:pointer;transition:background .12s;}
+.np-item:hover{background:#f9fafb;}
+.np-item.unread{background:#fffbeb;}
+.np-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ni-r{background:var(--red-bg);} .ni-a{background:var(--amber-bg);} .ni-b{background:var(--blue-bg);} .ni-g{background:var(--green-bg);}
+.np-txt{font-size:12.5px;font-weight:600;margin-bottom:3px;line-height:1.35;}
+.np-meta{font-size:11px;color:var(--muted);}
+.np-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:5px;}
+.np-footer{padding:11px;border-top:1px solid var(--border);text-align:center;font-size:12px;font-weight:600;color:var(--blue);cursor:pointer;}
+
+/* User profile */
+.user-wrap{position:relative;}
+.tb-ava-btn{display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 10px;border-radius:10px;transition:background .13s;}
+.tb-ava-btn:hover{background:#f9fafb;}
+.tb-ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;}
+.tb-uname{font-size:12.5px;font-weight:600;color:var(--text);}
+.tb-urole{font-size:10.5px;color:var(--muted);font-weight:400;}
+.tb-arr{font-size:11px;color:var(--muted);}
+
+.user-panel{display:none;position:absolute;top:calc(100% + 8px);right:0;width:300px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);z-index:99999;overflow:hidden;}
+.user-panel.open{display:block;}
+.up-head{background:linear-gradient(135deg,#0d2349,#173878);padding:20px;color:#fff;}
+.up-ava{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--blue-lt),#0891b2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;border:3px solid rgba(255,255,255,.25);}
+.up-name{font-size:14px;font-weight:800;margin-bottom:4px;}
+.up-role{display:inline-flex;padding:3px 9px;background:rgba(255,255,255,.18);border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(255,255,255,.25);}
+.up-vessel-card{margin:12px 14px;padding:11px 12px;background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:10px;}
+.up-vrow{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.up-vname{font-size:13px;font-weight:700;color:var(--blue);}
+.up-live{font-size:9.5px;font-weight:700;background:var(--green-bg);color:var(--green);padding:2px 6px;border-radius:10px;border:1px solid var(--green-bd);margin-left:auto;}
+.up-vmeta{font-size:11px;color:var(--muted);}
+.up-body{padding:10px 14px;}
+.up-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;}
+.up-row:last-child{border-bottom:none;}
+.up-ico{font-size:15px;width:20px;text-align:center;color:var(--muted);}
+.up-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px;}
+.up-val{font-size:12.5px;font-weight:600;color:var(--text2);}
+.up-footer{padding:11px 14px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.up-btn{flex:1;padding:7px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;text-align:center;transition:all .13s;}
+.up-sec{background:#f9fafb;color:var(--text2);border:1px solid var(--border);}
+.up-out{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
+
+/* ══ CONTENT ══ */
+#content{padding:0;flex:1;}
+
+/* Page Header */
+.page-hdr{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:24px 28px 20px;
+  border-bottom:1px solid var(--border);background:#fff;
+}
+.ph-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.4px;margin-bottom:5px;}
+.ph-sub{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.ph-sub-blue{color:var(--blue);font-weight:600;}
+.ph-status{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 14px;border-radius:10px;
+  background:var(--green-bg);border:1px solid var(--green-bd);
+  font-size:12.5px;font-weight:600;color:var(--green);
+}
+.ph-status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* Main content padding */
+.content-body{padding:24px 28px;}
+
+/* ─── KPI CARDS ─── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.kpi{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r);
+  padding:18px 16px 16px;cursor:pointer;
+  transition:box-shadow .15s,transform .15s;
+  box-shadow:var(--shadow);
+}
+.kpi:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+.kpi-icon-wrap{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.kpi-icon-wrap svg{width:20px;height:20px;flex-shrink:0;}
+/* Each card gets its own pastel bg + icon colour */
+.ki-red   {background:#fef2f2;} .ki-red    svg{stroke:#e11d48;}
+.ki-amber {background:#fffbeb;} .ki-amber  svg{stroke:#d97706;}
+.ki-blue  {background:#eff6ff;} .ki-blue   svg{stroke:#2563eb;}
+.ki-green {background:#f0fdf4;} .ki-green  svg{stroke:#16a34a;}
+.ki-purple{background:#faf5ff;} .ki-purple svg{stroke:#7c3aed;}
+/* Number — Zoho style: bold, not too huge */
+.k-num{font-size:28px;font-weight:700;line-height:1;letter-spacing:-.3px;margin-bottom:5px;color:var(--text);}
+/* Label — matches Zoho field-value weight */
+.k-lbl{font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:3px;}
+/* Description — small gray, like Zoho field-label */
+.k-desc{font-size:11px;color:var(--muted);font-weight:400;}
+.k-trend{font-size:10.5px;margin-top:5px;display:flex;align-items:center;gap:3px;font-weight:500;}
+.t-up{color:var(--green);}
+.t-dn{color:var(--red);}
+.t-nt{color:var(--muted);}
+
+/* ─── SECTION LABEL ─── */
+.sec-head{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.sec-sub{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px;}
+.sec-link{font-size:12px;color:var(--blue);cursor:pointer;font-weight:600;}
+.sec-link:hover{text-decoration:underline;}
+
+/* ─── CARDS ─── */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+/* Card title — matches Zoho section headings */
+.ct{font-size:13px;font-weight:700;color:var(--text);}
+.ct-sub{font-size:11px;color:var(--muted);font-weight:400;margin-left:5px;}
+/* Action link */
+.ca{font-size:11.5px;color:var(--blue);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:3px;}
+
+/* ─── LAYOUT ─── */
+.g2 {display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+.g3 {display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px;}
+.g64{display:grid;grid-template-columns:6.5fr 3.5fr;gap:18px;margin-bottom:20px;}
+.g73{display:grid;grid-template-columns:7fr 3fr;gap:18px;margin-bottom:20px;}
+.g55{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+
+/* ─── BADGES ─── */
+.b{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap;}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-x{background:#f3f4f6;color:var(--muted);border:1px solid var(--border);}
+.b-p{background:var(--purple-bg);color:var(--purple);}
+.b-t{background:var(--teal-bg);color:var(--teal);}
+
+
+
+/* ─── DUE JOBS ─── */
+.dj-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f3f4f6;}
+.dj-item:last-child{border-bottom:none;}
+.dj-bar{width:3px;border-radius:2px;align-self:stretch;min-height:34px;flex-shrink:0;}
+/* JO number — Zoho field-value style */
+.dj-num{font-family:'ZohoBuvi',monospace;font-size:11.5px;font-weight:600;color:var(--blue);min-width:50px;}
+.dj-body{flex:1;}
+.dj-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.dj-meta{font-size:11px;color:var(--muted);font-weight:400;}
+.dj-right{text-align:right;flex-shrink:0;}
+
+/* ─── RUNNING HOURS ─── */
+.rh-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f3f4f6;}
+.rh-item:last-child{border-bottom:none;}
+.rh-left{min-width:115px;}
+.rh-name{font-size:12.5px;font-weight:600;color:var(--text);}
+.rh-code{font-size:10.5px;color:var(--muted);margin-top:1px;font-weight:400;}
+.rh-mid{flex:1;}
+.rh-bar{height:6px;border-radius:4px;background:#f3f4f6;overflow:hidden;margin-bottom:4px;}
+.rh-fill{height:100%;border-radius:4px;}
+.rh-nums{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);font-weight:400;}
+.rh-tag{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+
+/* ─── UPCOMING MAINTENANCE ─── */
+.um-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid #f3f4f6;}
+.um-item:last-child{border-bottom:none;}
+.um-date{text-align:center;flex-shrink:0;min-width:38px;}
+/* Date number — prominent but not huge */
+.um-day{font-size:16px;font-weight:700;line-height:1;color:var(--text);}
+.um-mon{font-size:9.5px;font-weight:600;text-transform:uppercase;color:var(--muted);}
+.um-bar{width:3px;border-radius:2px;flex-shrink:0;min-height:32px;}
+.um-body{flex:1;}
+.um-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.um-meta{font-size:11px;color:var(--muted);font-weight:400;}
+.um-right{text-align:right;flex-shrink:0;}
+.um-days{font-size:11.5px;font-weight:600;margin-bottom:3px;}
+
+/* ─── ACTIVITY ─── */
+.act-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f3f4f6;}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.act-txt{font-size:12px;font-weight:500;margin-bottom:2px;line-height:1.4;color:var(--text2);}
+.act-time{font-size:10.5px;color:var(--muted);font-weight:400;}
+
+/* ─── DONUT LEGEND ─── */
+.leg-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #f3f4f6;font-size:12px;}
+.leg-item:last-child{border-bottom:none;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.leg-lbl{flex:1;font-weight:500;color:var(--text2);}
+.leg-val{font-size:13px;font-weight:700;color:var(--text);}
+
+/* ─── MA CHART ─── */
+.chart-sel{font-size:11.5px;padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:#f9fafb;outline:none;color:var(--text2);cursor:pointer;font-weight:500;}
+
+/* ─── JOB ORDER SUMMARY STRIP ─── */
+.jo-summary-strip{
+  display:flex;align-items:center;
+  background:#f9fafb;border:1px solid var(--border);
+  border-radius:10px;padding:12px 0;margin-bottom:4px;
+}
+.jo-sum-item{flex:1;text-align:center;}
+.jo-sum-val{font-size:20px;font-weight:700;line-height:1;margin-bottom:4px;color:var(--text);}
+.jo-sum-lbl{font-size:10.5px;color:var(--muted);font-weight:400;}
+.jo-sum-sep{width:1px;background:var(--border);align-self:stretch;margin:4px 0;}
+
+/* ─── JOB PLANS ─── */
+.jp-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.jp-chip{border-radius:9px;padding:9px 8px;text-align:center;border:1px solid var(--border);}
+.jp-chip-blue  {background:var(--blue-bg);border-color:var(--blue-bd);}
+.jp-chip-teal  {background:var(--teal-bg);border-color:#a5f3fc;}
+.jp-chip-purple{background:var(--purple-bg);border-color:#ddd6fe;}
+.jp-chip-amber {background:var(--amber-bg);border-color:var(--amber-bd);}
+.jp-chip-val{font-size:18px;font-weight:700;line-height:1;margin-bottom:3px;}
+.jp-chip-blue   .jp-chip-val{color:var(--blue);}
+.jp-chip-teal   .jp-chip-val{color:var(--teal);}
+.jp-chip-purple .jp-chip-val{color:var(--purple);}
+.jp-chip-amber  .jp-chip-val{color:var(--amber);}
+.jp-chip-lbl{font-size:10px;color:var(--muted);font-weight:500;}
+
+.jp-dist-bar{height:6px;border-radius:3px;overflow:hidden;display:flex;margin-bottom:6px;}
+.jp-dist-seg{height:100%;}
+
+/* Job plan row */
+.jp-row{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #f3f4f6;align-items:flex-start;}
+.jp-row:last-child{border-bottom:none;}
+.jp-type-badge{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:7px;
+  flex-shrink:0;margin-top:1px;
+}
+.jp-type-cal   {background:var(--teal-bg);}   .jp-type-cal svg   {stroke:var(--teal);}
+.jp-type-cnt   {background:var(--purple-bg);}  .jp-type-cnt svg   {stroke:var(--purple);}
+.jp-type-badge svg{width:14px;height:14px;}
+.jp-body{flex:1;min-width:0;}
+.jp-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.jp-meta{font-size:10.5px;color:var(--muted);}
+.jp-right{text-align:right;flex-shrink:0;}
+.jp-due{font-size:10.5px;font-weight:600;margin-bottom:3px;}
+
+/* ─── JOB PLANS CARD ─── */
+.jp-view-btn{
+  padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;
+  background:var(--blue);color:#fff;border:none;cursor:pointer;
+  transition:background .13s;font-family:inherit;
+}
+.jp-view-btn:hover{background:var(--blue-lt);}
+
+.jp-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.jp-stat{
+  background:#f9fafb;border:1px solid var(--border);border-radius:9px;
+  padding:10px;text-align:center;
+}
+.jp-stat-val{font-size:18px;font-weight:700;color:var(--text);line-height:1;margin-bottom:3px;}
+.jp-stat-lbl{font-size:10px;color:var(--muted);font-weight:400;}
+.jp-s-teal  .jp-stat-val{color:#0891b2;}
+.jp-s-purple.jp-stat-val,.jp-s-purple .jp-stat-val{color:#7c3aed;}
+.jp-s-amber .jp-stat-val{color:var(--amber);}
+
+/* ─── JOB PLANS MODAL ─── */
+#jpModal{display:none;}
+#jpModal.open{display:flex!important;}
+.jp-modal-box{
+  background:#fff;border-radius:16px;
+  width:900px;max-width:96vw;max-height:88vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.jp-modal-hdr{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.jp-modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.jp-modal-sub{font-size:11.5px;color:var(--muted);}
+.jp-modal-tabs{display:flex;gap:4px;}
+.jp-tab{
+  padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;
+  cursor:pointer;background:#f3f4f6;color:var(--muted);border:1px solid transparent;
+  transition:all .13s;font-family:inherit;
+}
+.jp-tab:hover{background:var(--blue-bg);color:var(--blue);}
+.jp-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.jp-modal-close{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+  background:#f9fafb;cursor:pointer;font-size:14px;display:flex;
+  align-items:center;justify-content:center;color:var(--muted);
+  transition:all .13s;font-family:inherit;margin-left:10px;
+}
+.jp-modal-close:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+.jp-modal-body{overflow-y:auto;flex:1;padding:0 24px;}
+.jp-tbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+.jp-tbl th{
+  position:sticky;top:0;background:#fff;
+  text-align:left;padding:12px 10px;
+  font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);
+}
+.jp-tbl td{padding:10px 10px;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+.jp-tbl tr:last-child td{border-bottom:none;}
+.jp-tbl tr:hover td{background:#fafcff;}
+.jp-tbl .jp-r-ovd td{background:#fff5f5!important;border-left:3px solid var(--red);}
+.jp-tbl .jp-r-ns  td{background:#fffdf5!important;border-left:3px solid var(--amber);}
+.jp-modal-footer{
+  padding:14px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+
+/* ─── JO STATUS ROW ─── */
+.jos-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f3f4f6;}
+.jos-row:last-child{border-bottom:none;}
+.jos-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.jos-name{font-size:12px;font-weight:500;color:var(--text2);min-width:150px;}
+.jos-bar-wrap{flex:1;}
+.jos-bar{height:6px;border-radius:3px;background:#f3f4f6;overflow:hidden;}
+.jos-fill{height:100%;border-radius:3px;}
+.jos-count{font-size:12px;font-weight:700;color:var(--text);min-width:24px;text-align:right;}
+.jos-pct{font-size:10.5px;color:var(--muted);min-width:34px;text-align:right;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1300px){.kpi-row{grid-template-columns:repeat(3,1fr);} .g64,.g73{grid-template-columns:1fr;}}
+@media(max-width:960px){.kpi-row{grid-template-columns:repeat(2,1fr);} .g2,.g3,.g55{grid-template-columns:1fr;} #sidebar{display:none;} #main{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚓</div>
+    <div><div class="sb-name">Mariapps</div></div>
+  </div>
+  <div class="sb-nav">
+
+    <!-- Dashboard -->
+    <div class="sb-item active" data-tip="Dashboard">
+      <span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      <span class="sb-lbl">Dashboard</span>
+    </div>
+
+    <!-- Maintenance -->
+    <div class="sb-parent" data-k="maint" data-tip="Maintenance">
+      <span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+      <span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span>
+    </div>
+    <div class="sb-children" id="ch-maint">
+      <a class="sb-child" href="maintenance/equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="maintenance/due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs<span class="sb-bdg" style="margin-left:auto">8</span></a>
+      <a class="sb-child" href="maintenance/job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order<span class="sb-bdg am" style="margin-left:auto">3</span></a>
+      <a class="sb-child" href="maintenance/running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="maintenance/technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="maintenance/reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="maintenance/guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="maintenance/dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="maintenance/pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+
+    <!-- MDM -->
+    <div class="sb-parent open" data-k="mdm" data-tip="MDM">
+      <span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span>
+      <span class="sb-lbl">MDM</span><span class="sb-arr">›</span>
+    </div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+
+    <!-- Administration -->
+    <div class="sb-parent open" data-k="admin" data-tip="Administration">
+      <span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+      <span class="sb-lbl">Administration</span><span class="sb-arr">›</span>
+    </div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="administration/users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="administration/access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <div class="sb-child"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</div>
+      <div class="sb-child"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</div>
+      <div class="sb-child"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</div>
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="sb-ava">RK</div>
+      <div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div>
+      <button class="sb-toggle" onclick="toggleMini()" title="Collapse sidebar">
+        <span class="sb-toggle-ico">‹‹</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <!-- Vessel Selector — CENTER -->
+    <div class="tb-gap"></div>
+    <div class="vessel-wrap">
+      <div class="vessel-sel" id="vesselBtn">
+        <span class="vs-ico">🌐</span>
+        <div class="vs-inner">
+          <div class="vs-label">Vessel</div>
+          <div class="vs-name" id="vsName">MV Saraswati</div>
+        </div>
+        <div class="vs-live" id="vsDot"></div>
+        <span class="vs-arr">▾</span>
+      </div>
+      <div class="vessel-drop" id="vesselDrop">
+        <div class="vd-hdr"><span class="vd-hdr-title">🚢 Select Vessel</span><span class="vd-hdr-count" id="vd-count">5 vessels</span></div>
+        <div id="vesselList"></div>
+      </div>
+    </div>
+    <div class="tb-gap"></div>
+
+    <!-- Notifications -->
+    <div class="notif-wrap">
+      <div class="notif-btn" id="notifBtn">🔔<div class="notif-count">5</div></div>
+      <div class="notif-panel" id="notifPanel">
+        <div class="np-hdr"><div class="np-title">Notifications <span style="font-size:11px;color:var(--muted);font-weight:400">(5 unread)</span></div><div class="np-mark">Mark all read</div></div>
+        <div class="np-item unread"><div class="np-icon ni-r">🚨</div><div style="flex:1"><div class="np-txt">V-2841 Main Engine Piston Overhaul is <strong>4 days OVERDUE</strong></div><div class="np-meta">Due Jobs · 8 min ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-a">⚡</div><div style="flex:1"><div class="np-txt">Generator #2 — <strong>110 hrs</strong> remaining to next service</div><div class="np-meta">Running Hours · 25 min ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-r">🔴</div><div style="flex:1"><div class="np-txt">V-2845 Generator Repair <strong>OVERDUE</strong> — 6 days past due</div><div class="np-meta">Due Jobs · 1 hr ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-a">📋</div><div style="flex:1"><div class="np-txt"><strong>3 job orders</strong> from crew pending your approval</div><div class="np-meta">Job Order · 2 hrs ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-r">🔩</div><div style="flex:1"><div class="np-txt">Nav Antenna ROB (1) below minimum (3)</div><div class="np-meta">Spare Parts · 3 hrs ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item"><div class="np-icon ni-g">✅</div><div style="flex:1"><div class="np-txt">V-2838 Oil Change completed by Motorman Singh</div><div class="np-meta">Due Jobs · 4 hrs ago</div></div></div>
+        <div class="np-footer">View All Notifications →</div>
+      </div>
+    </div>
+
+    <!-- User -->
+    <div class="user-wrap">
+      <div class="tb-ava-btn" id="userBtn">
+        <div class="tb-ava">RK</div>
+        <div><div class="tb-uname">Rajan Kumar</div><div class="tb-urole">Chief Engineer</div></div>
+        <span class="tb-arr">▾</span>
+      </div>
+      <div class="user-panel" id="userPanel">
+        <div class="up-head">
+          <div class="up-ava">RK</div>
+          <div class="up-name">Rajan Kumar</div>
+          <div style="margin-top:5px;"><span class="up-role">🔧 Chief Engineer · Engine Dept.</span></div>
+        </div>
+        <div style="padding:12px 14px 4px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px;">Current Vessel</div>
+          <div class="up-vessel-card">
+            <div class="up-vrow"><span style="font-size:17px;">🚢</span><div class="up-vname" id="up-vname">MV Saraswati</div><div class="up-live">● LIVE</div></div>
+            <div class="up-vmeta" id="up-vimo">IMO 9234567 · Cargo Carrier · 🇮🇳</div>
+            <div class="up-vmeta" id="up-vpos" style="margin-top:3px;">📍 Bay of Bengal · At Sea · 14.2 kn</div>
+          </div>
+        </div>
+        <div class="up-body">
+          <div class="up-row"><div class="up-ico">🏷️</div><div><div class="up-lbl">Active Role</div><div class="up-val">Chief Engineer</div></div></div>
+          <div class="up-row"><div class="up-ico">🏢</div><div><div class="up-lbl">Department</div><div class="up-val">Engine Department · Vessel Head</div></div></div>
+          <div class="up-row"><div class="up-ico">🕐</div><div><div class="up-lbl">Watch</div><div class="up-val">08:00 – 12:00 · Day 4 at Sea</div></div></div>
+        </div>
+        <div class="up-footer">
+          <button class="up-btn up-sec">⚙️ Settings</button>
+          <button class="up-btn up-out">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content-body">
+
+    <!-- KPI CARDS -->
+    <div class="kpi-row">
+      <div class="kpi k-red">
+        <div class="kpi-icon-wrap ki-red"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+        <div class="k-num" id="kpi-overdue">3</div>
+        <div class="k-lbl">Overdue Jobs</div>
+        <div class="k-desc">Require immediate action</div>
+        <div class="k-trend t-dn">▼ 2 Critical · 1 High</div>
+      </div>
+      <div class="kpi k-amber">
+        <div class="kpi-icon-wrap ki-amber"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="k-num" id="kpi-soon">5</div>
+        <div class="k-lbl">Due This Week</div>
+        <div class="k-desc">Scheduled within 7 days</div>
+        <div class="k-trend t-nt">Within next 7 days</div>
+      </div>
+      <div class="kpi k-blue">
+        <div class="kpi-icon-wrap ki-blue"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div>
+        <div class="k-num" id="kpi-total">24</div>
+        <div class="k-lbl">Total Due Jobs</div>
+        <div class="k-desc">Active job queue</div>
+        <div class="k-trend t-nt">8 Critical · 16 Normal</div>
+      </div>
+      <div class="kpi k-green">
+        <div class="kpi-icon-wrap ki-green"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div class="k-num" id="kpi-comp">37</div>
+        <div class="k-lbl">Completed MTD</div>
+        <div class="k-desc">Month-to-date completions</div>
+        <div class="k-trend t-up">▲ 84.1% completion rate</div>
+      </div>
+      <div class="kpi k-purple">
+        <div class="kpi-icon-wrap ki-purple"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div class="k-num" id="kpi-def">6</div>
+        <div class="k-lbl">Open Defects</div>
+        <div class="k-desc">Logged defects pending</div>
+        <div class="k-trend t-dn">2 Urgent · 4 High priority</div>
+      </div>
+    </div>
+
+    <!-- ROW 1: Job Order Details + Maintenance Health Score -->
+    <div class="g64">
+      <div class="card">
+        <div class="ch">
+          <div class="ct">Job Order Details <span class="ct-sub">Status breakdown — current vessel</span></div>
+          <button class="jp-view-btn" onclick="openJOModal()">View Records</button>
+        </div>
+
+        <!-- Summary strip -->
+        <div class="jo-summary-strip">
+          <div class="jo-sum-item"><div class="jo-sum-val" id="jos-total">66</div><div class="jo-sum-lbl">Total</div></div>
+          <div class="jo-sum-sep"></div>
+          <div class="jo-sum-item"><div class="jo-sum-val" style="color:var(--green)" id="jos-comp">37</div><div class="jo-sum-lbl">Completed</div></div>
+          <div class="jo-sum-sep"></div>
+          <div class="jo-sum-item"><div class="jo-sum-val" style="color:var(--blue)" id="jos-wip">5</div><div class="jo-sum-lbl">In Progress</div></div>
+          <div class="jo-sum-sep"></div>
+          <div class="jo-sum-item"><div class="jo-sum-val" style="color:var(--red)" id="jos-ovd">3</div><div class="jo-sum-lbl">Overdue</div></div>
+          <div class="jo-sum-sep"></div>
+          <div class="jo-sum-item"><div class="jo-sum-val" style="color:var(--amber)" id="jos-pend">16</div><div class="jo-sum-lbl">Pending</div></div>
+        </div>
+
+        <!-- Bar chart -->
+        <div style="margin-top:16px;position:relative;height:240px;">
+          <canvas id="joBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Job Plans — Charts + View Records popup -->
+      <div class="card">
+        <div class="ch">
+          <div class="ct">Job Plans</div>
+          <button class="jp-view-btn" onclick="openJobPlansModal()">View Records</button>
+        </div>
+
+        <!-- 4 mini stat tiles -->
+        <div class="jp-stats">
+          <div class="jp-stat"><div class="jp-stat-val">48</div><div class="jp-stat-lbl">Total Plans</div></div>
+          <div class="jp-stat jp-s-teal"><div class="jp-stat-val">29</div><div class="jp-stat-lbl">Calendar Based</div></div>
+          <div class="jp-stat jp-s-purple"><div class="jp-stat-val">14</div><div class="jp-stat-lbl">Counter Based</div></div>
+          <div class="jp-stat jp-s-amber"><div class="jp-stat-val">5</div><div class="jp-stat-lbl">Not Started</div></div>
+        </div>
+
+        <!-- Donut: fixed-size block container -->
+        <div style="margin:14px auto 0;text-align:center;">
+          <canvas id="jpTypeDonut" width="160" height="160" style="display:inline-block;"></canvas>
+        </div>
+
+        <!-- Legend -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:12px;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;"><div style="width:8px;height:8px;border-radius:50%;background:#0891b2;flex-shrink:0;"></div>Calendar (29)</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;"><div style="width:8px;height:8px;border-radius:50%;background:#7c3aed;flex-shrink:0;"></div>Counter (14)</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;"><div style="width:8px;height:8px;border-radius:50%;background:#ea580c;flex-shrink:0;"></div>Condition (3)</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;"><div style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>Event (2)</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ JOB PLANS MODAL ════ -->
+    <div id="jpModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99998;align-items:center;justify-content:center;">
+      <div class="jp-modal-box">
+        <div class="jp-modal-hdr">
+          <div>
+            <div class="jp-modal-title">Job Plans</div>
+            <div class="jp-modal-sub">Upcoming, counter-based &amp; calendar-based · MV Saraswati</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="jp-modal-tabs">
+              <button class="jp-tab active" onclick="filterJP('all',this)">All (48)</button>
+              <button class="jp-tab" onclick="filterJP('calendar',this)">Calendar</button>
+              <button class="jp-tab" onclick="filterJP('counter',this)">Counter</button>
+              <button class="jp-tab" onclick="filterJP('not-started',this)">Not Started</button>
+            </div>
+            <button class="jp-modal-close" onclick="closeJobPlansModal()">✕</button>
+          </div>
+        </div>
+        <div class="jp-modal-body">
+          <table class="jp-tbl">
+            <thead>
+              <tr>
+                <th>Job Plan</th>
+                <th>Equipment</th>
+                <th>Type</th>
+                <th>Frequency</th>
+                <th>Last Done</th>
+                <th>Next Due</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="jp-tbl-body"></tbody>
+          </table>
+        </div>
+        <div class="jp-modal-footer">
+          <span id="jp-showing" style="font-size:11.5px;color:var(--muted);">Showing all 48 plans</span>
+          <button class="jp-view-btn" onclick="closeJobPlansModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ JOB ORDERS MODAL ════ -->
+    <div id="joModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99998;align-items:center;justify-content:center;">
+      <div class="jp-modal-box">
+        <div class="jp-modal-hdr">
+          <div>
+            <div class="jp-modal-title">Job Order Records</div>
+            <div class="jp-modal-sub" id="jo-modal-sub">All job orders — MV Saraswati</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="jp-modal-tabs">
+              <button class="jp-tab active" onclick="filterJO('all',this)">All</button>
+              <button class="jp-tab" onclick="filterJO('completed',this)">Completed</button>
+              <button class="jp-tab" onclick="filterJO('in-progress',this)">In Progress</button>
+              <button class="jp-tab" onclick="filterJO('overdue',this)">Overdue</button>
+              <button class="jp-tab" onclick="filterJO('pending',this)">Pending</button>
+              <button class="jp-tab" onclick="filterJO('postponed',this)">Postponed</button>
+            </div>
+            <button class="jp-modal-close" onclick="closeJOModal()">✕</button>
+          </div>
+        </div>
+        <div class="jp-modal-body">
+          <table class="jp-tbl">
+            <thead>
+              <tr>
+                <th>JO No.</th>
+                <th>Equipment</th>
+                <th>Job Title</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Frequency</th>
+                <th>Last Done</th>
+                <th>Next Due</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="jo-tbl-body"></tbody>
+          </table>
+        </div>
+        <div class="jp-modal-footer">
+          <span id="jo-showing" style="font-size:11.5px;color:var(--muted);">Showing all records</span>
+          <button class="jp-view-btn" onclick="closeJOModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Due Jobs + Upcoming Maintenance -->
+    <div class="g55">
+      <div class="card">
+        <div class="ch">
+          <div class="ct">Due Jobs
+            <span style="margin-left:8px;"><span class="b b-r" id="kpi-overdue-badge">Overdue: 3</span></span>
+            <span style="margin-left:4px;"><span class="b b-a" id="kpi-soon-badge">Due Soon: 5</span></span>
+          </div>
+          <span class="ca">View All ›</span>
+        </div>
+        <div id="dj-list"></div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center;">
+          <span id="dj-count" style="font-size:11.5px;color:var(--muted);">Showing 6 of 24 jobs</span>
+          <span class="ca">View All Due Jobs ›</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><div class="ct">Upcoming Maintenance</div><span class="ca">View Schedule ›</span></div>
+        <div class="um-item">
+          <div class="um-date"><div class="um-day" style="color:var(--amber)">14</div><div class="um-mon">Jun</div></div>
+          <div class="um-bar" style="background:var(--amber)"></div>
+          <div class="um-body"><div class="um-title">FO Purifier — Disk Stack Cleaning</div><div class="um-meta">V-2850 · FOP-001 · 500 Hrs · High</div></div>
+          <div class="um-right"><div class="um-days" style="color:var(--amber)">3 days</div><span class="b b-a">Due Soon</span></div>
+        </div>
+        <div class="um-item">
+          <div class="um-date"><div class="um-day" style="color:var(--amber)">16</div><div class="um-mon">Jun</div></div>
+          <div class="um-bar" style="background:var(--red)"></div>
+          <div class="um-body"><div class="um-title">Fire Detection System — Annual Test</div><div class="um-meta">O-1930 · FD-MAIN · 12 Month · Critical</div></div>
+          <div class="um-right"><div class="um-days" style="color:var(--amber)">5 days</div><span class="b b-r">Critical</span></div>
+        </div>
+        <div class="um-item">
+          <div class="um-date"><div class="um-day">22</div><div class="um-mon">Jun</div></div>
+          <div class="um-bar" style="background:var(--blue)"></div>
+          <div class="um-body"><div class="um-title">Steering Gear — Hydraulic Oil Test</div><div class="um-meta">V-2852 · STG-001 · 3 Month</div></div>
+          <div class="um-right"><div class="um-days" style="color:var(--muted)">11 days</div><span class="b b-b">Scheduled</span></div>
+        </div>
+        <div class="um-item">
+          <div class="um-date"><div class="um-day">28</div><div class="um-mon">Jun</div></div>
+          <div class="um-bar" style="background:var(--blue)"></div>
+          <div class="um-body"><div class="um-title">Aux Engine #1 — Cylinder Head Overhaul</div><div class="um-meta">V-2855 · AE-001 · 2000 Hrs</div></div>
+          <div class="um-right"><div class="um-days" style="color:var(--muted)">17 days</div><span class="b b-b">Scheduled</span></div>
+        </div>
+        <div class="um-item">
+          <div class="um-date"><div class="um-day">05</div><div class="um-mon">Jul</div></div>
+          <div class="um-bar" style="background:var(--muted)"></div>
+          <div class="um-body"><div class="um-title">Engine Room — Round Job Inspection</div><div class="um-meta">RJ-012 · Monthly cycle · All Dept.</div></div>
+          <div class="um-right"><div class="um-days" style="color:var(--muted)">24 days</div><span class="b b-x">Round Job</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Maintenance Analysis + Equipment Status -->
+    <div class="g73">
+      <div class="card">
+        <div class="ch">
+          <div class="ct">Maintenance Analysis</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <select class="chart-sel" id="monthSel" onchange="updateChart()">
+              <option value="3">Last 3 Months</option>
+              <option value="6">Last 6 Months</option>
+              <option value="12">Last 12 Months</option>
+            </select>
+            <span class="ca">Full Report ›</span>
+          </div>
+        </div>
+        <canvas id="maChart" height="140"></canvas>
+        <div style="display:flex;gap:20px;margin-top:12px;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:11px;height:11px;border-radius:3px;background:rgba(239,68,68,.2);border:1.5px solid #ef4444;"></div>Jobs Due</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:11px;height:11px;border-radius:3px;background:rgba(22,163,74,.75);"></div>Completed</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:11px;height:11px;border-radius:3px;background:#dc2626;"></div>Overdue (line)</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Equipment Status</div></div>
+        <canvas id="eqDonut" width="220" height="175"></canvas>
+        <div style="margin-top:14px;">
+          <div class="leg-item"><div class="leg-dot" style="background:#16a34a"></div><div class="leg-lbl">Operational</div><div class="leg-val" id="eq-op">14</div></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#d97706"></div><div class="leg-lbl">Due Soon</div><div class="leg-val" id="eq-ds">3</div></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#dc2626"></div><div class="leg-lbl">Defect / Overdue</div><div class="leg-val" id="eq-ov">3</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4: Running Hours + Recent Activity -->
+    <div class="g55">
+      <div class="card">
+        <div class="ch"><div class="ct">Running Hours — Key Equipment</div><span class="ca">Log Hours ›</span></div>
+        <div class="rh-item">
+          <div class="rh-left"><div class="rh-name">Main Engine</div><div class="rh-code">ME-001</div></div>
+          <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:99%;background:var(--red)"></div></div><div class="rh-nums"><span>18,420 hrs</span><span>/ 18,500 next due</span></div></div>
+          <div class="rh-tag" style="background:var(--red-bg);color:var(--red)">⚠ 80 hrs</div>
+        </div>
+        <div class="rh-item">
+          <div class="rh-left"><div class="rh-name">Generator #2</div><div class="rh-code">GEN-002</div></div>
+          <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:89%;background:var(--amber)"></div></div><div class="rh-nums"><span>4,890 hrs</span><span>/ 5,000 next due</span></div></div>
+          <div class="rh-tag" style="background:var(--amber-bg);color:var(--amber)">⚡ 110 hrs</div>
+        </div>
+        <div class="rh-item">
+          <div class="rh-left"><div class="rh-name">Aux Engine #1</div><div class="rh-code">AE-001</div></div>
+          <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:72%;background:var(--blue)"></div></div><div class="rh-nums"><span>6,210 hrs</span><span>/ 6,500 next due</span></div></div>
+          <div class="rh-tag" style="background:var(--green-bg);color:var(--green)">✓ 290 hrs</div>
+        </div>
+        <div class="rh-item">
+          <div class="rh-left"><div class="rh-name">FO Purifier</div><div class="rh-code">FOP-001</div></div>
+          <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:55%;background:var(--blue)"></div></div><div class="rh-nums"><span>2,340 hrs</span><span>/ 2,500 next due</span></div></div>
+          <div class="rh-tag" style="background:var(--blue-bg);color:var(--blue)">✓ 160 hrs</div>
+        </div>
+        <div class="rh-item">
+          <div class="rh-left"><div class="rh-name">Cargo Pump</div><div class="rh-code">CP-001</div></div>
+          <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:25%;background:var(--green)"></div></div><div class="rh-nums"><span>1,120 hrs</span><span>/ 1,500 next due</span></div></div>
+          <div class="rh-tag" style="background:var(--green-bg);color:var(--green)">✓ 380 hrs</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><div class="ct">Recent Activity</div><span class="ca">All Logs ›</span></div>
+        <div id="act-feed"></div>
+      </div>
+    </div>
+
+  </div><!-- /content-body -->
+</div><!-- /main -->
+
+<!-- ═══ DATA LAYER ═══════════════════════════════════════════════
+     Sample data is loaded from data/sample-data.js
+     To connect a real REST API, open that file and replace the
+     body of PAL4.loadVessel() with your fetch() call.
+═════════════════════════════════════════════════════════════════ -->
+<script src="data/sample-data.js"></script>
+
+<script>
+/*
+ * ══════════════════════════════════════════════════════════════
+ *  DATA LOADING
+ *  All data comes from PAL4.getVessel(id) — defined in
+ *  data/sample-data.js. To connect a real REST API, replace:
+ *
+ *    PAL4.getVessel(id)   →  await PAL4.loadVessel(id)
+ *    PAL4.getVesselList() →  await PAL4.loadVesselList()
+ * ══════════════════════════════════════════════════════════════
+ */
+
+let currentVessel = 'saraswati';
+let eqDonutChart, maChartObj;
+const SC = { operational:'#16a34a', maintenance:'#d97706', offline:'#dc2626' };
+const SB = { operational:{bg:'#f0fdf4',c:'#16a34a'}, maintenance:{bg:'#fffbeb',c:'#d97706'}, offline:{bg:'#fef2f2',c:'#dc2626'} };
+
+/* ── SIDEBAR MINI TOGGLE ── */
+function toggleMini() {
+  document.body.classList.toggle('sb-mini');
+  localStorage.setItem('sb-mini', document.body.classList.contains('sb-mini'));
+}
+// Restore preference on load
+if (localStorage.getItem('sb-mini') === 'true') document.body.classList.add('sb-mini');
 
 /* ── TWO-PANEL SIDEBAR JS ── */
 document.querySelectorAll(".sb-parent").forEach(p=>{
@@ -62,1062 +933,387 @@ document.addEventListener("click",e=>{
   }
 });
 
-/* Top-level items */
-.sb-item,.sb-parent{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 18px;cursor:pointer;color:var(--text2);
-  font-size:13.5px;font-weight:600;border-left:3px solid transparent;
-  transition:all .13s;user-select:none;
+/* ── DROPDOWN HELPER ── */
+function makeToggle(btnId, panelId) {
+  const btn = document.getElementById(btnId), panel = document.getElementById(panelId);
+  btn.addEventListener('click', e => { e.stopPropagation(); panel.classList.toggle('open'); closeOthers(panelId); });
+  document.addEventListener('click', () => panel.classList.remove('open'));
+  panel.addEventListener('click', e => e.stopPropagation());
 }
-.sb-item:hover,.sb-parent:hover{background:#f8fafc;color:var(--text);}
-.sb-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
-.sb-parent.open{background:#f8fafc;color:var(--text);}
-.sb-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
-.sb-label{flex:1;}
-.sb-chevron{
-  font-size:16px;color:var(--muted);
-  transition:transform .22s;display:inline-block;
-  font-style:normal;
+function closeOthers(except) { ['notifPanel','userPanel'].forEach(id => { if(id!==except) document.getElementById(id).classList.remove('open'); }); }
+makeToggle('notifBtn','notifPanel');
+makeToggle('userBtn','userPanel');
+
+/* ── VESSEL DROPDOWN ── */
+const vsBtn  = document.getElementById('vesselBtn');
+const vsDrop = document.getElementById('vesselDrop');
+vsBtn.addEventListener('click', e => { e.stopPropagation(); vsDrop.classList.toggle('open'); closeOthers('vessel'); });
+document.addEventListener('click', () => vsDrop.classList.remove('open'));
+vsDrop.addEventListener('click', e => e.stopPropagation());
+
+/* ── VESSEL DROPDOWN — built from PAL4.getVesselList() ── */
+const vList = document.getElementById('vesselList');
+PAL4.getVesselList().forEach(v => {
+  const el = document.createElement('div');
+  el.className = 'vd-item';
+  el.innerHTML = `<div class="vd-dot" style="background:${SC[v.status]}"></div>
+    <div><div class="vd-name">${v.name}</div><div class="vd-sub">${v.imo} · ${v.type}</div></div>
+    <span class="vd-status" style="background:${SB[v.status].bg};color:${SB[v.status].c}">${v.status}</span>`;
+  el.addEventListener('click', () => { selectVessel(v.id); vsDrop.classList.remove('open'); });
+  vList.appendChild(el);
+});
+
+/* ── SELECT VESSEL — reads from PAL4.getVessel(id) ── */
+/*
+ * TO SWITCH TO REST API:
+ *   1. Make this function async
+ *   2. Replace PAL4.getVessel(key) with: const d = await PAL4.loadVessel(key);
+ */
+function selectVessel(key) {
+  currentVessel = key;
+  const d = PAL4.getVessel(key);   // ← swap to: await PAL4.loadVessel(key)
+  const k = d.kpi;
+  const jobs = d.jobs;
+
+  // Topbar vessel name + dot
+  document.getElementById('vsName').textContent          = d.info.name;
+  document.getElementById('vsDot').style.background      = SC[d.info.status];
+  // User panel
+  document.getElementById('up-vname').textContent        = d.info.name;
+  document.getElementById('up-vimo').textContent         = d.info.imo + ' · ' + d.info.type + ' · ' + d.info.flag;
+  document.getElementById('up-vpos').textContent         = '📍 ' + d.info.location + ' · ' + d.info.position + ' · ' + d.info.speed;
+  // KPI cards
+  document.getElementById('kpi-overdue').textContent     = k.overdue;
+  document.getElementById('kpi-soon').textContent        = k.dueSoon;
+  document.getElementById('kpi-total').textContent       = k.totalJobs;
+  document.getElementById('kpi-comp').textContent        = k.completed;
+  document.getElementById('kpi-def').textContent         = k.defects;
+  document.getElementById('kpi-overdue-badge').textContent = 'Overdue: ' + k.overdue;
+  document.getElementById('kpi-soon-badge').textContent    = 'Due Soon: ' + k.dueSoon;
+  document.getElementById('dj-count').textContent = 'Showing ' + jobs.length + ' of ' + k.totalJobs + ' jobs';
+  // Due jobs list
+  renderJobs(jobs);
+  // Chart
+  updateChart();
+  // Equipment status donut
+  const eq = d.eqStatus;
+  eqDonutChart.data.datasets[0].data = [eq.operational, eq.dueSoon, eq.defect];
+  eqDonutChart.update();
+  document.getElementById('eq-op').textContent = eq.operational;
+  document.getElementById('eq-ds').textContent = eq.dueSoon;
+  document.getElementById('eq-ov').textContent = eq.defect;
+  // Health score
+  document.getElementById('health-val').textContent = d.health;
+  updateHealthGauge(d.health);
+  // Activity feed — from PAL4 data
+  renderActivity(d.activity);
+  // Job Order donut + list — from PAL4 data
+  renderJobOrders(d.jobOrders);
+  // Job Plans stats — from PAL4 data
+  renderJobPlansStats(d.jobPlans);
 }
-.sb-parent.open .sb-chevron{transform:rotate(90deg);}
 
-/* Children */
-.sb-children{
-  display:none;
-  background:#fafcff;
-  border-left:3px solid var(--blue-bg);
-  margin-left:0;
+/* ── RENDER DUE JOBS from PAL4 data shape ── */
+function renderJobs(jobs) {
+  const statusBar = { overdue:'var(--red)', 'due-soon':'var(--amber)', scheduled:'#e8edf2', default:'#e8edf2' };
+  const statusBdg = { overdue:'b-r', 'due-soon':'b-a', scheduled:'b-b', default:'b-x' };
+  document.getElementById('dj-list').innerHTML = jobs.map(j => {
+    const barC  = statusBar[j.status]  || statusBar.default;
+    const bdgC  = statusBdg[j.status] || statusBdg.default;
+    const meta  = `${j.eqCode} · ${j.frequency} · Last: ${j.lastDone}`;
+    return `<div class="dj-item">
+      <div class="dj-bar" style="background:${barC}"></div>
+      <div class="dj-num">${j.joNo}</div>
+      <div class="dj-body"><div class="dj-title">${j.equipment} — ${j.title}</div><div class="dj-meta">${meta}</div></div>
+      <div class="dj-right"><span class="b ${bdgC}">${j.nextDue}</span><div style="font-size:10.5px;color:var(--muted);margin-top:3px;">${j.priority}</div></div>
+    </div>`;
+  }).join('');
 }
-.sb-children.open{display:block;}
-.sb-child{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 18px 8px 44px;
-  cursor:pointer;color:var(--muted);
-  font-size:13px;font-weight:500;
-  transition:all .13s;user-select:none;
-  border-left:3px solid transparent;
+
+/* ── RENDER ACTIVITY from PAL4 data ── */
+function renderActivity(activity) {
+  document.getElementById('act-feed').innerHTML = activity.map(a =>
+    `<div class="act-item"><div class="act-dot" style="background:${a.color}"></div><div><div class="act-txt">${a.text}</div><div class="act-time">${a.time}</div></div></div>`
+  ).join('');
 }
-.sb-child:hover{background:#eff6ff;color:var(--blue);}
-.sb-child.active{color:var(--blue);font-weight:600;background:var(--blue-bg);border-left-color:var(--blue);}
-.sb-cico{font-size:14px;width:16px;text-align:center;flex-shrink:0;}
 
-.sb-badge{
-  background:var(--red);color:#fff;
-  font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;
-  margin-left:auto;
+/* ── RENDER JOB ORDERS — horizontal bar chart ── */
+function renderJobOrders(jo) {
+  // Summary strip
+  document.getElementById('jos-total').textContent = jo.total;
+  document.getElementById('jos-comp').textContent  = jo.summary.completed;
+  document.getElementById('jos-wip').textContent   = jo.summary.inProgress;
+  document.getElementById('jos-ovd').textContent   = jo.summary.overdue;
+  document.getElementById('jos-pend').textContent  = jo.summary.pending;
+  // Store records for modal
+  window._joRecords = jo.records || [];
+  // Update bar chart on vessel switch
+  if (window._joBarChart) {
+    window._joBarChart.data.labels                       = jo.statuses.map(s => s.label);
+    window._joBarChart.data.datasets[0].data             = jo.statuses.map(s => s.count);
+    window._joBarChart.data.datasets[0].backgroundColor  = jo.statuses.map(s => s.color + 'cc');
+    window._joBarChart.data.datasets[0].borderColor      = jo.statuses.map(s => s.color);
+    window._joBarChart.update();
+  }
 }
-.sb-badge.amber{background:var(--amber);}
-.sb-badge.blue{background:var(--blue);}
-/* push badge right when inside child */
-.sb-child .sb-badge{margin-left:auto;}
 
-.sb-bottom{
-  margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);background:#fff;
+/* ── RENDER JOB PLANS stats from PAL4 data ── */
+function renderJobPlansStats(jp) {
+  // Update the 4 stat tiles
+  const tiles = document.querySelectorAll('.jp-stat .jp-stat-val');
+  if (tiles[0]) tiles[0].textContent = jp.total;
+  if (tiles[1]) tiles[1].textContent = jp.calendarBased;
+  if (tiles[2]) tiles[2].textContent = jp.counterBased;
+  if (tiles[3]) tiles[3].textContent = jp.notStarted;
+  // Update type donut if exists
+  if (window._jpTypeChart) {
+    window._jpTypeChart.data.datasets[0].data = jp.typeDistribution;
+    window._jpTypeChart.update();
+  }
+  // Store records for the modal
+  window._jpRecords = jp.records;
 }
-.sb-user{
-  display:flex;align-items:center;gap:10px;padding:8px 10px;
-  border-radius:8px;background:#f8fafc;cursor:pointer;
-}
-.sb-avatar{
-  width:30px;height:30px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,var(--blue),#26c6da);
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:12px;font-weight:700;
-}
-.sb-user-name{font-size:12px;font-weight:700;}
-.sb-user-role{font-size:10.5px;color:var(--muted);}
 
-/* ── MAIN ── */
-#main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+/* ── stale jp-list block removed — Job Plans now uses PAL4 data via renderJobPlansStats() ── */
 
-/* ── TOPBAR ── */
-#topbar{
-  height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 24px;gap:12px;
-  position:sticky;top:0;z-index:50;
-}
-.tb-title{font-size:16px;font-weight:800;flex:1;}
-.tb-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
-.tb-date{font-size:12px;color:var(--muted);padding:5px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:7px;}
-.tb-notif{
-  position:relative;width:34px;height:34px;background:#f8fafc;
-  border:1px solid var(--border);border-radius:8px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;
-}
-.tb-notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff;}
-.tb-avatar{
-  width:32px;height:32px;border-radius:50%;cursor:pointer;
-  background:linear-gradient(135deg,var(--blue),#26c6da);
-  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;
-}
-.tb-btn{
-  display:flex;align-items:center;gap:5px;padding:6px 14px;
-  border-radius:7px;font-size:12.5px;font-weight:600;
-  cursor:pointer;border:1px solid var(--border);
-  background:#fff;color:var(--text2);transition:all .13s;
-}
-.tb-btn:hover{background:#f8fafc;}
-.tb-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
-.tb-btn.primary:hover{background:var(--blue-lt);}
+/* ─── JOB ORDER + JOB PLANS CHARTS — initialised from PAL4 data ─── */
+/* All data sourced from data/sample-data.js via PAL4.getVessel() */
 
-/* ── CONTENT ── */
-#content{padding:22px 24px;flex:1;}
+const _initData = PAL4.getVessel('saraswati');   // initial load
 
-/* ── ALERT BANNER ── */
-.alert{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:12.5px;
-}
-.alert-red{background:var(--red-bg);border:1px solid #fecaca;color:#991b1b;}
-.alert-amber{background:var(--amber-bg);border:1px solid #fde68a;color:#92400e;}
-
-/* ── KPI GRID ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:18px;}
-.kpi{
-  background:#fff;border:1px solid var(--border);
-  border-radius:var(--r);padding:16px;position:relative;overflow:hidden;cursor:pointer;
-  transition:box-shadow .15s;
-}
-.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.kpi.kred::before  {background:var(--red);}
-.kpi.kamber::before{background:var(--amber);}
-.kpi.kgreen::before{background:var(--green);}
-.kpi.kblue::before {background:var(--blue);}
-.kpi.kpurp::before {background:var(--purple);}
-.kpi.kteal::before {background:var(--teal);}
-.kpi-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;}
-.kpi-val{font-size:30px;font-weight:800;line-height:1;margin-bottom:5px;}
-.kpi-sub{font-size:11px;display:flex;align-items:center;gap:4px;}
-.kpi-ico{position:absolute;right:12px;top:12px;font-size:26px;opacity:.1;}
-.kred   .kpi-val{color:var(--red);}
-.kamber .kpi-val{color:var(--amber);}
-.kgreen .kpi-val{color:var(--green);}
-.kblue  .kpi-val{color:var(--blue);}
-.kpurp  .kpi-val{color:var(--purple);}
-.kteal  .kpi-val{color:var(--teal);}
-.up{color:var(--green);}
-.down{color:var(--red);}
-
-/* ── GRID ── */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
-.g7-5{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:16px;}
-.g5-7{display:grid;grid-template-columns:5fr 7fr;gap:16px;margin-bottom:16px;}
-.g4-8{display:grid;grid-template-columns:4fr 8fr;gap:16px;margin-bottom:16px;}
-
-/* ── CARD ── */
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px;}
-.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-.card-title{font-size:13.5px;font-weight:700;}
-.card-action{font-size:12px;color:var(--blue);cursor:pointer;font-weight:500;}
-.card-action:hover{text-decoration:underline;}
-
-/* ── TABLE ── */
-.tbl-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:12.5px;}
-th{
-  text-align:left;padding:8px 12px;
-  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--muted);background:#f8fafc;border-bottom:1px solid var(--border);white-space:nowrap;
-}
-td{padding:9px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:#fafcff;}
-.row-overdue td{background:#fff5f5!important;border-left:3px solid var(--red);}
-.row-amber   td{background:#fffdf5!important;border-left:3px solid var(--amber);}
-
-/* ── BADGE ── */
-.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;}
-.bd-red   {background:var(--red-bg);color:var(--red);}
-.bd-amber {background:var(--amber-bg);color:var(--amber);}
-.bd-green {background:var(--green-bg);color:var(--green);}
-.bd-blue  {background:var(--blue-bg);color:var(--blue);}
-.bd-gray  {background:#f8fafc;color:var(--muted);border:1px solid var(--border);}
-.bd-purple{background:var(--purple-bg);color:var(--purple);}
-.bd-teal  {background:var(--teal-bg);color:var(--teal);}
-
-/* ── PROGRESS ── */
-.pbar{height:5px;border-radius:3px;background:#e2e8f0;overflow:hidden;}
-.pfill{height:100%;border-radius:3px;transition:width .6s;}
-.pf-blue {background:var(--blue);}
-.pf-green{background:var(--green);}
-.pf-amber{background:var(--amber);}
-.pf-red  {background:var(--red);}
-
-/* ── VESSEL CARD ── */
-.vessel-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;}
-.vessel-item:last-child{border-bottom:none;}
-.vessel-flag{font-size:18px;flex-shrink:0;}
-.vessel-name{font-size:13px;font-weight:600;}
-.vessel-type{font-size:11px;color:var(--muted);}
-.vessel-right{margin-left:auto;text-align:right;}
-.vessel-loc{font-size:11px;color:var(--muted);margin-top:2px;}
-
-/* ── ACTIVITY ── */
-.act-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;}
-.act-item:last-child{border-bottom:none;}
-.act-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
-.act-text{font-weight:500;margin-bottom:2px;line-height:1.35;}
-.act-time{font-size:11px;color:var(--muted);}
-
-/* ── APPROVAL ── */
-.appr-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;
-}
-.appr-item:last-child{border-bottom:none;}
-.appr-num{font-family:monospace;font-size:12px;font-weight:700;color:var(--blue);}
-.appr-vessel{font-size:11px;color:var(--muted);}
-.appr-actions{margin-left:auto;display:flex;gap:6px;}
-.btn-sm{
-  padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:600;
-  cursor:pointer;border:none;transition:all .13s;
-}
-.btn-approve{background:var(--green-bg);color:var(--green);}
-.btn-approve:hover{background:#dcfce7;}
-.btn-reject{background:var(--red-bg);color:var(--red);}
-.btn-reject:hover{background:#fee2e2;}
-
-/* ── MA MATRIX ── */
-.ma-table{font-size:11.5px;width:100%;border-collapse:collapse;}
-.ma-table th{background:#f8fafc;padding:7px 10px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);font-weight:700;}
-.ma-table td{padding:7px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
-.ma-table tr:hover td{background:#fafcff;}
-.ma-cell{text-align:center;font-weight:700;}
-.ma-cell.red{color:var(--red);}
-.ma-cell.amber{color:var(--amber);}
-.ma-cell.green{color:var(--green);}
-.ma-hl td{background:#fff5f5!important;}
-
-/* ── DONUT LEGEND ── */
-.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;padding:5px 0;}
-.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.legend-val{margin-left:auto;font-weight:700;}
-
-/* ── MINI STAT ── */
-.mini-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;}
-.mini-stat:last-child{border-bottom:none;}
-.mini-stat-val{font-weight:700;}
-
-/* ── SECTION HEADER ── */
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.sec-hdr h2{font-size:14px;font-weight:800;color:var(--text);}
-.sec-hdr-right{display:flex;gap:8px;}
-
-/* ── TOOLTIP ── */
-[title]{cursor:help;}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1300px){
-  .kpi-grid{grid-template-columns:repeat(3,1fr);}
-  .g7-5,.g5-7{grid-template-columns:1fr;}
-}
-@media(max-width:900px){
-  .kpi-grid{grid-template-columns:repeat(2,1fr);}
-  .g2,.g3{grid-template-columns:1fr;}
-  #sidebar{display:none;}
-  #main{margin-left:0;}
-}
-</style>
-</head>
-<body>
-
-<!-- ══════════════ SIDEBAR ══════════════ -->
-<nav id="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-icon">⚓</div>
-    <div>
-      <div class="sb-logo-title">Mariapps PAL4</div>
-      <div class="sb-logo-ver">v4.0 · Marine Solutions</div>
-    </div>
-  </div>
-
-  <div class="sb-vessel">
-    <div class="sb-vessel-flag">🚢</div>
-    <div>
-      <div class="sb-vessel-name">MV Saraswati</div>
-      <div class="sb-vessel-imo">IMO 9234567 · Cargo Carrier</div>
-    </div>
-    <div class="sb-vessel-status"><span class="bdg bd-green">● Live</span></div>
-  </div>
-
-  <div class="sb-nav">
-    <!-- Dashboard -->
-    <div class="sb-item active" data-key="dashboard">
-      <span class="sb-ico">🏠</span>
-      <span class="sb-label">Dashboard</span>
-    </div>
-
-    <!-- Maintenance -->
-    <div class="sb-parent" data-key="maintenance">
-      <span class="sb-ico">🔧</span>
-      <span class="sb-label">Maintenance</span>
-      <span class="sb-badge">11</span>
-      <span class="sb-chevron">›</span>
-    </div>
-    <div class="sb-children" id="ch-maintenance">
-      <div class="sb-child" data-key="due-jobs"><span class="sb-cico">📋</span>Due Jobs<span class="sb-badge">8</span></div>
-      <div class="sb-child" data-key="equipments"><span class="sb-cico">🔩</span>Equipments</div>
-      <div class="sb-child" data-key="job-order"><span class="sb-cico">🗒️</span>Job Order<span class="sb-badge amber">3</span></div>
-      <div class="sb-child" data-key="running-hours"><span class="sb-cico">⏱️</span>Running Hours</div>
-      <div class="sb-child" data-key="technical-forms"><span class="sb-cico">📝</span>Technical Forms</div>
-      <div class="sb-child" data-key="reports"><span class="sb-cico">📊</span>Reports</div>
-      <div class="sb-child" data-key="guarantee-claims"><span class="sb-cico">🛡️</span>Guarantee Claims</div>
-      <div class="sb-child" data-key="dynamic-forms"><span class="sb-cico">📐</span>Dynamic Forms</div>
-      <div class="sb-child" data-key="pms-admin"><span class="sb-cico">⚙️</span>PMS Administration</div>
-    </div>
-
-    <!-- MDM -->
-    <div class="sb-parent" data-key="mdm">
-      <span class="sb-ico">🗄️</span>
-      <span class="sb-label">MDM</span>
-      <span class="sb-chevron">›</span>
-    </div>
-    <div class="sb-children" id="ch-mdm">
-      <div class="sb-child" data-key="vessel-register"><span class="sb-cico">🚢</span>Vessel Register</div>
-      <div class="sb-child" data-key="common"><span class="sb-cico">🏢</span>Common</div>
-      <div class="sb-child" data-key="pms-ref"><span class="sb-cico">📑</span>PMS Reference Data</div>
-    </div>
-
-    <!-- Administration -->
-    <div class="sb-parent" data-key="administration">
-      <span class="sb-ico">⚙️</span>
-      <span class="sb-label">Administration</span>
-      <span class="sb-chevron">›</span>
-    </div>
-    <div class="sb-children" id="ch-administration">
-      <div class="sb-child" data-key="users-roles"><span class="sb-cico">👥</span>Users &amp; Roles</div>
-      <div class="sb-child" data-key="access-rights"><span class="sb-cico">🔑</span>Access Rights</div>
-      <div class="sb-child" data-key="system-config"><span class="sb-cico">🖥️</span>System Config</div>
-      <div class="sb-child" data-key="livefleet"><span class="sb-cico">🛰️</span>LiveFleet</div>
-      <div class="sb-child" data-key="monitoring"><span class="sb-cico">📡</span>Monitoring &amp; Audit</div>
-    </div>
-  </div>
-
-  <div class="sb-bottom">
-    <div class="sb-user">
-      <div class="sb-avatar">T</div>
-      <div>
-        <div class="sb-user-name">Thamizh Selvan</div>
-        <div class="sb-user-role">Technical Superintendent</div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- ══════════════ MAIN ══════════════ -->
-<div id="main">
-
-  <!-- TOPBAR -->
-  <header id="topbar">
-    <div>
-      <div class="tb-title">Dashboard</div>
-    </div>
-    <div class="tb-date">📅 11 June 2026</div>
-    <div class="tb-btn">🚢 MV Saraswati ▾</div>
-    <div class="tb-btn primary">+ New Job Order</div>
-    <div class="tb-notif">🔔<div class="tb-notif-dot"></div></div>
-    <div class="tb-avatar">T</div>
-  </header>
-
-  <!-- CONTENT -->
-  <div id="content">
-
-    <!-- ALERT BANNERS -->
-    <div class="alert alert-red">
-      ⚠️ <strong>3 overdue jobs</strong> require immediate attention — V-2841 Engine Overhaul (4 days overdue), V-2845 Generator Repair (6 days overdue), O-1923 Hull Survey (2 days overdue)
-      <span style="margin-left:auto;cursor:pointer;font-weight:600;">View Due Jobs →</span>
-    </div>
-    <div class="alert alert-amber">
-      🕐 <strong>5 jobs due within 7 days</strong> — postponement approval pending for 2 jobs (VSL→TSI routing)
-      <span style="margin-left:auto;cursor:pointer;font-weight:600;">View Pending →</span>
-    </div>
-
-    <!-- KPI CARDS -->
-    <div class="kpi-grid">
-      <div class="kpi kred">
-        <div class="kpi-ico">🔴</div>
-        <div class="kpi-lbl">Overdue Jobs</div>
-        <div class="kpi-val">3</div>
-        <div class="kpi-sub down">▲ 1 since yesterday</div>
-      </div>
-      <div class="kpi kamber">
-        <div class="kpi-ico">🟡</div>
-        <div class="kpi-lbl">Due Shortly (7d)</div>
-        <div class="kpi-val">5</div>
-        <div class="kpi-sub" style="color:var(--muted)">Within next 7 days</div>
-      </div>
-      <div class="kpi kblue">
-        <div class="kpi-ico">📋</div>
-        <div class="kpi-lbl">Total Due Jobs</div>
-        <div class="kpi-val">24</div>
-        <div class="kpi-sub" style="color:var(--muted)">8 Critical · 16 Normal</div>
-      </div>
-      <div class="kpi kgreen">
-        <div class="kpi-ico">✅</div>
-        <div class="kpi-lbl">Completed (MTD)</div>
-        <div class="kpi-val">37</div>
-        <div class="kpi-sub up">▲ 84.1% completion rate</div>
-      </div>
-      <div class="kpi kpurp">
-        <div class="kpi-ico">🗒️</div>
-        <div class="kpi-lbl">Open Defects</div>
-        <div class="kpi-val">6</div>
-        <div class="kpi-sub down">2 Urgent · 4 High</div>
-      </div>
-      <div class="kpi kteal">
-        <div class="kpi-ico">⏳</div>
-        <div class="kpi-lbl">Pending Approvals</div>
-        <div class="kpi-val">4</div>
-        <div class="kpi-sub" style="color:var(--muted)">VSL→TSI queue</div>
-      </div>
-    </div>
-
-    <!-- ROW 1: MA Summary + Fleet Status -->
-    <div class="g7-5">
-
-      <!-- MA Summary Table -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">📊 MA Summary — Fleet KPI</div>
-          <span class="card-action">Fleetwide Report →</span>
-        </div>
-        <div class="tbl-wrap">
-          <table class="ma-table">
-            <thead>
-              <tr>
-                <th>Vessel</th>
-                <th>Total Jobs</th>
-                <th>Completed</th>
-                <th>% Done</th>
-                <th>Overdue</th>
-                <th style="color:#dc2626">Critical OD</th>
-                <th>Defects</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>MV Saraswati</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9234567</span></td>
-                <td class="ma-cell">44</td>
-                <td class="ma-cell green">37</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <div class="pbar" style="flex:1"><div class="pfill pf-green" style="width:84%"></div></div>
-                    <span style="font-size:11px;font-weight:700;color:var(--green)">84%</span>
-                  </div>
-                </td>
-                <td class="ma-cell red">3</td>
-                <td class="ma-cell red">1</td>
-                <td class="ma-cell amber">6</td>
-                <td><span class="bdg bd-amber">Attention</span></td>
-              </tr>
-              <tr>
-                <td><strong>MV Neptune Star</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9387421</span></td>
-                <td class="ma-cell">38</td>
-                <td class="ma-cell green">36</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <div class="pbar" style="flex:1"><div class="pfill pf-green" style="width:95%"></div></div>
-                    <span style="font-size:11px;font-weight:700;color:var(--green)">95%</span>
-                  </div>
-                </td>
-                <td class="ma-cell green">0</td>
-                <td class="ma-cell green">0</td>
-                <td class="ma-cell green">2</td>
-                <td><span class="bdg bd-green">On Track</span></td>
-              </tr>
-              <tr class="ma-hl">
-                <td><strong>TS Bay Explorer</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9112345</span></td>
-                <td class="ma-cell">52</td>
-                <td class="ma-cell amber">23</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <div class="pbar" style="flex:1"><div class="pfill pf-red" style="width:44%"></div></div>
-                    <span style="font-size:11px;font-weight:700;color:var(--red)">44%</span>
-                  </div>
-                </td>
-                <td class="ma-cell red">7</td>
-                <td class="ma-cell red">3</td>
-                <td class="ma-cell red">11</td>
-                <td><span class="bdg bd-red">Critical</span></td>
-              </tr>
-              <tr>
-                <td><strong>MV Trident</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9445632</span></td>
-                <td class="ma-cell">41</td>
-                <td class="ma-cell green">39</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <div class="pbar" style="flex:1"><div class="pfill pf-green" style="width:95%"></div></div>
-                    <span style="font-size:11px;font-weight:700;color:var(--green)">95%</span>
-                  </div>
-                </td>
-                <td class="ma-cell green">0</td>
-                <td class="ma-cell green">0</td>
-                <td class="ma-cell green">1</td>
-                <td><span class="bdg bd-green">On Track</span></td>
-              </tr>
-              <tr>
-                <td><strong>TS Deep Scan</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9501234</span></td>
-                <td class="ma-cell">29</td>
-                <td class="ma-cell green">24</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <div class="pbar" style="flex:1"><div class="pfill pf-blue" style="width:83%"></div></div>
-                    <span style="font-size:11px;font-weight:700;color:var(--blue)">83%</span>
-                  </div>
-                </td>
-                <td class="ma-cell amber">2</td>
-                <td class="ma-cell green">0</td>
-                <td class="ma-cell amber">3</td>
-                <td><span class="bdg bd-amber">Attention</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;">
-          ⚠️ Rows highlighted red = vessel with ≥50% jobs pending (per MA Report threshold)
-        </div>
-      </div>
-
-      <!-- Fleet Status Donut -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">🚢 Fleet Status</div>
-          <span class="bdg bd-green">● 5 Vessels</span>
-        </div>
-        <canvas id="donutChart" height="180"></canvas>
-        <div style="margin-top:14px;">
-          <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Operational<div class="legend-val">3</div></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div>Under Maintenance<div class="legend-val">1</div></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>Offline / Dry Dock<div class="legend-val">1</div></div>
-        </div>
-        <div style="height:1px;background:var(--border);margin:12px 0;"></div>
-        <div class="card-title" style="margin-bottom:10px;">🛰️ Vessel Connectivity</div>
-        <div class="mini-stat"><span>MV Saraswati</span><span class="bdg bd-green">● Synced</span></div>
-        <div class="mini-stat"><span>MV Neptune Star</span><span class="bdg bd-green">● Synced</span></div>
-        <div class="mini-stat"><span>TS Bay Explorer</span><span class="bdg bd-amber">⚡ Intermittent</span></div>
-        <div class="mini-stat"><span>MV Trident</span><span class="bdg bd-green">● Synced</span></div>
-        <div class="mini-stat"><span>TS Deep Scan</span><span class="bdg bd-gray">○ Offline</span></div>
-      </div>
-    </div>
-
-    <!-- ROW 2: Maintenance Analysis 12M Chart + Pending Approvals -->
-    <div class="g5-7">
-
-      <!-- Pending Approvals -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">✅ Pending Job Approvals <span class="bdg bd-amber" style="margin-left:6px">4</span></div>
-          <span class="card-action">All Approvals →</span>
-        </div>
-        <div>
-          <div class="appr-item">
-            <div>
-              <div class="appr-num">V-2841</div>
-              <div style="font-size:13px;font-weight:600;margin:2px 0;">Main Engine — Piston Overhaul</div>
-              <div class="appr-vessel">MV Saraswati · Postponement Request · <span class="bdg bd-red">Critical</span></div>
-            </div>
-            <div class="appr-actions">
-              <button class="btn-sm btn-approve">✓ Approve</button>
-              <button class="btn-sm btn-reject">✗ Reject</button>
-            </div>
-          </div>
-          <div class="appr-item">
-            <div>
-              <div class="appr-num">O-1923</div>
-              <div style="font-size:13px;font-weight:600;margin:2px 0;">Hull Inspection — Annual Survey</div>
-              <div class="appr-vessel">TS Bay Explorer · Office-Generated · <span class="bdg bd-amber">High</span></div>
-            </div>
-            <div class="appr-actions">
-              <button class="btn-sm btn-approve">✓ Approve</button>
-              <button class="btn-sm btn-reject">✗ Reject</button>
-            </div>
-          </div>
-          <div class="appr-item">
-            <div>
-              <div class="appr-num">V-2903</div>
-              <div style="font-size:13px;font-weight:600;margin:2px 0;">Fuel Oil Purifier — Overhaul</div>
-              <div class="appr-vessel">MV Trident · Vessel-Generated · <span class="bdg bd-blue">Normal</span></div>
-            </div>
-            <div class="appr-actions">
-              <button class="btn-sm btn-approve">✓ Approve</button>
-              <button class="btn-sm btn-reject">✗ Reject</button>
-            </div>
-          </div>
-          <div class="appr-item">
-            <div>
-              <div class="appr-num">V-2911</div>
-              <div style="font-size:13px;font-weight:600;margin:2px 0;">Fire Detection System — Test</div>
-              <div class="appr-vessel">TS Deep Scan · Vessel-Generated · <span class="bdg bd-red">Critical</span></div>
-            </div>
-            <div class="appr-actions">
-              <button class="btn-sm btn-approve">✓ Approve</button>
-              <button class="btn-sm btn-reject">✗ Reject</button>
-            </div>
-          </div>
-        </div>
-        <div style="height:1px;background:var(--border);margin:14px 0 10px;"></div>
-        <div class="card-title" style="margin-bottom:10px;">🛡️ Guarantee Claims</div>
-        <div class="mini-stat"><span>GC-0042 — Main Engine Turbocharger</span><span class="bdg bd-amber">Open</span></div>
-        <div class="mini-stat"><span>GC-0039 — Navigation Radar Unit</span><span class="bdg bd-blue">Under Review</span></div>
-        <div class="mini-stat"><span>GC-0035 — Fuel Injection Pump</span><span class="bdg bd-green">Closed</span></div>
-      </div>
-
-      <!-- 12-Month Maintenance Analysis Chart -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">📈 Maintenance Analysis — 12 Month Rolling (MV Saraswati)</div>
-          <span class="card-action">Full Report →</span>
-        </div>
-        <canvas id="maChart" height="240"></canvas>
-        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:#1565c0;"></div>Jobs Due</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:#16a34a;"></div>Completed</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:#dc2626;"></div>Overdue</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ROW 3: Due Jobs Preview + Activity + Defects -->
-    <div class="g3">
-
-      <!-- Due Jobs Preview -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">📋 Due Jobs — Live Queue</div>
-          <span class="card-action">View All (24) →</span>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:12px;">
-          <span class="bdg bd-red">🔴 Overdue: 3</span>
-          <span class="bdg bd-amber">🟡 Due Soon: 5</span>
-          <span class="bdg bd-blue">Total: 24</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>JO No.</th>
-              <th>Equipment</th>
-              <th>Job Title</th>
-              <th>Next Due</th>
-              <th>Priority</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row-overdue">
-              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2841</span></td>
-              <td>Main Engine<br><span style="font-size:10.5px;color:var(--muted)">ME-001</span></td>
-              <td>Piston Overhaul</td>
-              <td><span class="bdg bd-red">4d Overdue</span></td>
-              <td><span class="bdg bd-red">Critical</span></td>
-            </tr>
-            <tr class="row-overdue">
-              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2845</span></td>
-              <td>Generator #2<br><span style="font-size:10.5px;color:var(--muted)">GEN-002</span></td>
-              <td>Generator Repair</td>
-              <td><span class="bdg bd-red">6d Overdue</span></td>
-              <td><span class="bdg bd-red">Critical</span></td>
-            </tr>
-            <tr class="row-amber">
-              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2850</span></td>
-              <td>Fuel Oil Purifier<br><span style="font-size:10.5px;color:var(--muted)">FOP-001</span></td>
-              <td>Disk Stack Clean</td>
-              <td><span class="bdg bd-amber">Due 14 Jun</span></td>
-              <td><span class="bdg bd-amber">High</span></td>
-            </tr>
-            <tr class="row-amber">
-              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">O-1930</span></td>
-              <td>Fire Detection<br><span style="font-size:10.5px;color:var(--muted)">FD-MAIN</span></td>
-              <td>Annual Inspection</td>
-              <td><span class="bdg bd-amber">Due 16 Jun</span></td>
-              <td><span class="bdg bd-red">Critical</span></td>
-            </tr>
-            <tr>
-              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2852</span></td>
-              <td>Steering Gear<br><span style="font-size:10.5px;color:var(--muted)">STG-001</span></td>
-              <td>Hydraulic Oil Test</td>
-              <td><span class="bdg bd-blue">Due 22 Jun</span></td>
-              <td><span class="bdg bd-blue">Normal</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Defect List Preview -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">🔍 Open Defects</div>
-          <span class="card-action">Defect Register →</span>
-        </div>
-        <table>
-          <thead>
-            <tr><th>Defect</th><th>Equipment</th><th>Priority</th><th>Issued</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Turbocharger Oil Leak<br><span style="font-size:10.5px;color:var(--muted)">DEF-0112</span></td>
-              <td>ME Turbocharger</td>
-              <td><span class="bdg bd-red">Urgent</span></td>
-              <td style="font-size:11.5px;color:var(--muted)">08 Jun</td>
-              <td><span class="bdg bd-amber">WIP</span></td>
-            </tr>
-            <tr>
-              <td>Hydraulic Pump Noise<br><span style="font-size:10.5px;color:var(--muted)">DEF-0111</span></td>
-              <td>Steering Gear</td>
-              <td><span class="bdg bd-red">Urgent</span></td>
-              <td style="font-size:11.5px;color:var(--muted)">06 Jun</td>
-              <td><span class="bdg bd-blue">Pending</span></td>
-            </tr>
-            <tr>
-              <td>Navigation Light Fault<br><span style="font-size:10.5px;color:var(--muted)">DEF-0109</span></td>
-              <td>Bridge — Nav</td>
-              <td><span class="bdg bd-amber">High</span></td>
-              <td style="font-size:11.5px;color:var(--muted)">05 Jun</td>
-              <td><span class="bdg bd-blue">Pending</span></td>
-            </tr>
-            <tr>
-              <td>Bilge Pump Inefficiency<br><span style="font-size:10.5px;color:var(--muted)">DEF-0108</span></td>
-              <td>Engine Room</td>
-              <td><span class="bdg bd-amber">High</span></td>
-              <td style="font-size:11.5px;color:var(--muted)">03 Jun</td>
-              <td><span class="bdg bd-purple">Waiting Spares</span></td>
-            </tr>
-            <tr>
-              <td>Exhaust Valve Wear<br><span style="font-size:10.5px;color:var(--muted)">DEF-0107</span></td>
-              <td>Main Engine</td>
-              <td><span class="bdg bd-amber">High</span></td>
-              <td style="font-size:11.5px;color:var(--muted)">01 Jun</td>
-              <td><span class="bdg bd-amber">Shore Asst.</span></td>
-            </tr>
-            <tr>
-              <td>Cargo Hold Hatch Seal<br><span style="font-size:10.5px;color:var(--muted)">DEF-0106</span></td>
-              <td>Cargo Hold #3</td>
-              <td><span class="bdg bd-gray">Medium</span></td>
-              <td style="font-size:11.5px;color:var(--muted)">30 May</td>
-              <td><span class="bdg bd-blue">Pending</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">⚡ System Activity</div>
-          <span class="card-action">Audit Log →</span>
-        </div>
-        <div id="activity-feed"></div>
-        <div style="height:1px;background:var(--border);margin:14px 0 10px;"></div>
-        <div class="card-title" style="margin-bottom:10px;">🔩 Spare Parts — Low Stock</div>
-        <div class="mini-stat">
-          <span>Nav Antenna Unit</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;color:var(--muted)">ROB: 1 / Min: 3</span>
-            <span class="bdg bd-red">Critical</span>
-          </div>
-        </div>
-        <div class="mini-stat">
-          <span>Hydraulic Pump Seal Kit</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;color:var(--muted)">ROB: 2 / Min: 5</span>
-            <span class="bdg bd-amber">Low</span>
-          </div>
-        </div>
-        <div class="mini-stat">
-          <span>Fuel Injector (ME)</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;color:var(--muted)">ROB: 3 / Min: 4</span>
-            <span class="bdg bd-amber">Low</span>
-          </div>
-        </div>
-        <div class="mini-stat">
-          <span>Main Engine Gasket Set</span>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;color:var(--muted)">ROB: 8 / Min: 5</span>
-            <span class="bdg bd-green">OK</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ROW 4: Running Hours + Job Status Pie + TOM Forms -->
-    <div class="g3">
-
-      <!-- Running Hours -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">⏱️ Running Hours — Key Equipment</div>
-          <span class="card-action">Update Hours →</span>
-        </div>
-        <table>
-          <thead><tr><th>Equipment</th><th>Current (hrs)</th><th>Next Due (hrs)</th><th>Remaining</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Main Engine<br><span style="font-size:10.5px;color:var(--muted)">ME-001</span></td>
-              <td style="font-weight:700">18,420</td>
-              <td>18,500</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="pbar" style="width:60px"><div class="pfill pf-amber" style="width:20%"></div></div>
-                  <span style="font-size:11px;color:var(--amber);font-weight:700">80 hrs</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Aux Engine #1<br><span style="font-size:10.5px;color:var(--muted)">AE-001</span></td>
-              <td style="font-weight:700">6,210</td>
-              <td>6,500</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="pbar" style="width:60px"><div class="pfill pf-green" style="width:71%"></div></div>
-                  <span style="font-size:11px;color:var(--green);font-weight:700">290 hrs</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Generator #2<br><span style="font-size:10.5px;color:var(--muted)">GEN-002</span></td>
-              <td style="font-weight:700">4,890</td>
-              <td>5,000</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="pbar" style="width:60px"><div class="pfill pf-red" style="width:89%"></div></div>
-                  <span style="font-size:11px;color:var(--red);font-weight:700">110 hrs</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>FO Purifier<br><span style="font-size:10.5px;color:var(--muted)">FOP-001</span></td>
-              <td style="font-weight:700">2,340</td>
-              <td>2,500</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="pbar" style="width:60px"><div class="pfill pf-blue" style="width:50%"></div></div>
-                  <span style="font-size:11px;color:var(--blue);font-weight:700">160 hrs</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Cargo Pump<br><span style="font-size:10.5px;color:var(--muted)">CP-001</span></td>
-              <td style="font-weight:700">1,120</td>
-              <td>1,500</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:6px;">
-                  <div class="pbar" style="width:60px"><div class="pfill pf-green" style="width:25%"></div></div>
-                  <span style="font-size:11px;color:var(--green);font-weight:700">380 hrs</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Job Status Breakdown -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">📊 Job Status Breakdown</div>
-          <span class="card-action">Job Overview →</span>
-        </div>
-        <canvas id="jobStatusChart" height="190"></canvas>
-        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></div>Completed: 37</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#1565c0;flex-shrink:0;"></div>Scheduled: 16</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0;"></div>WIP: 5</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0;"></div>Overdue: 3</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#7c3aed;flex-shrink:0;"></div>Postponed: 2</div>
-          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#64748b;flex-shrink:0;"></div>Wait Spares: 3</div>
-        </div>
-      </div>
-
-      <!-- TOM Forms + MDM Quick Stats -->
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title">📝 TOM Forms — June 2026</div>
-          <span class="card-action">TOM Overview →</span>
-        </div>
-        <div id="tom-matrix"></div>
-
-        <div style="height:1px;background:var(--border);margin:14px 0 10px;"></div>
-        <div class="card-title" style="margin-bottom:10px;">🗄️ MDM Quick Stats</div>
-        <div class="mini-stat">
-          <span>Vessel Register</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <span style="font-size:11px;color:var(--muted)">5 Active</span>
-            <span class="bdg bd-green">Current</span>
-          </div>
-        </div>
-        <div class="mini-stat">
-          <span>Equipment Records</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <span style="font-size:11px;color:var(--muted)">1,284 Total</span>
-            <span class="bdg bd-blue">Healthy</span>
-          </div>
-        </div>
-        <div class="mini-stat">
-          <span>Makers in Registry</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <span style="font-size:11px;color:var(--muted)">142 Records</span>
-            <span class="bdg bd-green">OK</span>
-          </div>
-        </div>
-        <div class="mini-stat">
-          <span>Class References</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <span style="font-size:11px;color:var(--muted)">DNV · LR · BV</span>
-            <span class="bdg bd-teal">Linked</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /content -->
-</div><!-- /main -->
-
-<script>
-/* ── SIDEBAR TOGGLE ── */
-document.querySelectorAll('.sb-parent').forEach(parent => {
-  parent.addEventListener('click', () => {
-    const key   = parent.dataset.key;
-    const child = document.getElementById('ch-' + key);
-    const isOpen = parent.classList.contains('open');
-
-    // Close all others
-    document.querySelectorAll('.sb-parent').forEach(p => p.classList.remove('open'));
-    document.querySelectorAll('.sb-children').forEach(c => c.classList.remove('open'));
-
-    if (!isOpen) {
-      parent.classList.add('open');
-      child.classList.add('open');
+/* JO Status — vertical bar chart */
+window._joBarChart = new Chart(document.getElementById('joBarChart'), {
+  type: 'bar',
+  data: {
+    labels: _initData.jobOrders.statuses.map(s => s.label),
+    datasets: [{
+      label: 'Job Orders',
+      data:  _initData.jobOrders.statuses.map(s => s.count),
+      backgroundColor: _initData.jobOrders.statuses.map(s => s.color + 'cc'),
+      borderColor:     _initData.jobOrders.statuses.map(s => s.color),
+      borderWidth: 1.5,
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.parsed.y} orders (${Math.round(ctx.parsed.y / _initData.jobOrders.total * 100)}%)`
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 10 }, maxRotation: 35, minRotation: 35 }
+      },
+      y: {
+        grid: { color: 'rgba(0,0,0,0.04)' },
+        ticks: { font: { size: 11 }, stepSize: 5 },
+        beginAtZero: true
+      }
     }
+  }
+});
+/* Store records */
+window._joRecords = _initData.jobOrders.records || [];
+
+/* JP type donut */
+window._jpTypeChart = new Chart(document.getElementById('jpTypeDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Calendar-based','Counter-based','Condition-based','Event-based'],
+    datasets: [{ data: _initData.jobPlans.typeDistribution, backgroundColor: ['#0891b2','#7c3aed','#ea580c','#6b7280'], borderWidth: 2.5, borderColor: '#fff', hoverOffset: 4 }]
+  },
+  options: { responsive: false, cutout: '72%', plugins: { legend: { display: false } } }
+});
+
+
+/* Job Plans modal — uses window._jpRecords (set by renderJobPlansStats on vessel select) */
+window._jpRecords = _initData.jobPlans.records;
+
+const _jpStatusBadge = {
+  'overdue':     '<span class="b b-r">Overdue</span>',
+  'due-soon':    '<span class="b b-a">Due Soon</span>',
+  'upcoming':    '<span class="b b-b">Upcoming</span>',
+  'not-started': '<span class="b b-x">Not Started</span>',
+};
+const _jpTypeBadge = {
+  'calendar': '<span class="b b-t">📅 Calendar</span>',
+  'counter':  '<span class="b b-p">⏱ Counter</span>',
+};
+const _jpRowCls = { overdue:'jp-r-ovd', 'due-soon':'jp-r-ns', 'not-started':'jp-r-ns', upcoming:'', default:'' };
+
+function renderJPTable(filter) {
+  const recs = window._jpRecords || [];
+  const rows = recs.filter(r => {
+    if (filter === 'all') return true;
+    if (filter === 'not-started') return r.status === 'not-started';
+    return r.type === filter;
   });
+  document.getElementById('jp-showing').textContent = `Showing ${rows.length} of ${recs.length} plans`;
+  document.getElementById('jp-tbl-body').innerHTML = rows.map(r => `
+    <tr class="${_jpRowCls[r.status] || ''}">
+      <td><b style="font-size:12.5px;">${r.title}</b></td>
+      <td style="font-size:12px;color:var(--muted);">${r.equipment}</td>
+      <td>${_jpTypeBadge[r.type] || r.type}</td>
+      <td style="font-size:12px;">${r.frequency}</td>
+      <td style="font-size:12px;color:var(--muted);">${r.lastDone}</td>
+      <td style="font-size:12px;font-weight:600;">${r.nextDue}</td>
+      <td>${_jpStatusBadge[r.status] || r.status}</td>
+    </tr>`).join('');
+}
+
+function openJobPlansModal() {
+  document.getElementById('jpModal').classList.add('open');
+  renderJPTable('all');
+}
+function closeJobPlansModal() {
+  document.getElementById('jpModal').classList.remove('open');
+}
+function filterJP(f, el) {
+  currentJPFilter = f;
+  document.querySelectorAll('.jp-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderJPTable(f);
+}
+/* close on backdrop click */
+document.getElementById('jpModal').addEventListener('click', function(e) {
+  if (e.target === this) closeJobPlansModal();
+});
+document.getElementById('joModal').addEventListener('click', function(e) {
+  if (e.target === this) closeJOModal();
 });
 
-// Child active state
-document.querySelectorAll('.sb-child').forEach(child => {
-  child.addEventListener('click', () => {
-    document.querySelectorAll('.sb-child').forEach(c => c.classList.remove('active'));
-    child.classList.add('active');
+/* ── JOB ORDERS MODAL ── */
+const _joStatusBadge = {
+  'completed':        '<span class="b b-g">Completed</span>',
+  'in-progress':      '<span class="b b-t">In Progress</span>',
+  'overdue':          '<span class="b b-r">Overdue</span>',
+  'pending':          '<span class="b b-b">Pending</span>',
+  'postponed':        '<span class="b b-p">Postponed</span>',
+  'waiting-spares':   '<span class="b b-a">Wait Spares</span>',
+  'waiting-shore':    '<span class="b" style="background:#fff7ed;color:#c2410c">Wait Shore</span>',
+  'pending-approval': '<span class="b b-x">Pend. Approval</span>',
+};
+const _joTypeBadge = {
+  'Planned':   '<span class="b b-b">Planned</span>',
+  'Unplanned': '<span class="b b-a">Unplanned</span>',
+  'Defect':    '<span class="b b-r">Defect</span>',
+};
+const _joPriBadge = {
+  'Critical': '<span class="b b-r">Critical</span>',
+  'Urgent':   '<span class="b b-r">Urgent</span>',
+  'High':     '<span class="b b-a">High</span>',
+  'Normal':   '<span class="b b-b">Normal</span>',
+  'Medium':   '<span class="b b-x">Medium</span>',
+};
+const _joRowCls = {
+  'overdue':'jp-r-ovd', 'waiting-spares':'jp-r-ns', 'waiting-shore':'jp-r-ns', default:''
+};
+
+function renderJOTable(filter) {
+  const recs = window._joRecords || [];
+  const rows = recs.filter(r => {
+    if (filter === 'all') return true;
+    if (filter === 'pending') return r.status === 'pending' || r.status === 'pending-approval';
+    if (filter === 'postponed') return r.status === 'postponed';
+    return r.status === filter || r.status.startsWith(filter);
   });
-});
+  const d = PAL4.getVessel(currentVessel);
+  document.getElementById('jo-modal-sub').textContent = `All job orders — ${d.info.name}`;
+  document.getElementById('jo-showing').textContent   = `Showing ${rows.length} of ${recs.length} records`;
+  document.getElementById('jo-tbl-body').innerHTML = rows.map(r => `
+    <tr class="${_joRowCls[r.status] || ''}">
+      <td><b style="font-family:monospace;font-size:12px;color:var(--blue)">${r.joNo}</b></td>
+      <td style="font-size:12.5px;font-weight:600">${r.equipment}<br><span style="font-size:10.5px;color:var(--muted);font-weight:400">${r.eqCode}</span></td>
+      <td style="font-size:12.5px">${r.title}</td>
+      <td>${_joTypeBadge[r.type] || r.type}</td>
+      <td>${_joPriBadge[r.priority] || r.priority}</td>
+      <td style="font-size:12px;color:var(--muted)">${r.frequency}</td>
+      <td style="font-size:12px;color:var(--muted)">${r.lastDone}</td>
+      <td style="font-size:12px;font-weight:600">${r.nextDue}</td>
+      <td>${_joStatusBadge[r.status] || `<span class="b b-x">${r.status}</span>`}</td>
+    </tr>`).join('');
+}
 
-// Dashboard item
-document.querySelector('.sb-item[data-key="dashboard"]').addEventListener('click', () => {
-  document.querySelectorAll('.sb-parent').forEach(p => p.classList.remove('open'));
-  document.querySelectorAll('.sb-children').forEach(c => c.classList.remove('open'));
-  document.querySelectorAll('.sb-child').forEach(c => c.classList.remove('active'));
-  document.querySelector('.sb-item[data-key="dashboard"]').classList.add('active');
-});
-
-/* ── ACTIVITY FEED ── */
-const acts = [
-  { c:'#dc2626', t:'V-2845 Generator Repair flagged OVERDUE (6 days)', time:'8 min ago' },
-  { c:'#16a34a', t:'V-2838 Aux Engine Oil Change — Completed by Eng. Kumar', time:'32 min ago' },
-  { c:'#d97706', t:'Postponement request V-2841 submitted — pending TSI approval', time:'1 hr ago' },
-  { c:'#1565c0', t:'Running hours updated — Main Engine: 18,420 hrs', time:'2 hrs ago' },
-  { c:'#7c3aed', t:'GC-0042 Guarantee Claim opened — Turbocharger failure', time:'3 hrs ago' },
-  { c:'#0891b2', t:'MDM: Vessel record MV Saraswati updated by Sys Admin', time:'4 hrs ago' },
-  { c:'#16a34a', t:'O-1918 Hull Inspection — Approved by TSI', time:'5 hrs ago' },
-];
-document.getElementById('activity-feed').innerHTML = acts.map(a=>`
-  <div class="act-item">
-    <div class="act-dot" style="background:${a.c}"></div>
-    <div>
-      <div class="act-text">${a.t}</div>
-      <div class="act-time">${a.time}</div>
-    </div>
-  </div>`).join('');
-
-/* ── TOM FORMS MATRIX ── */
-const toms = [
-  { form:'ME Performance', w1:'✅', w2:'✅', w3:'✅', w4:'⬜' },
-  { form:'FW Analysis',    w1:'✅', w2:'✅', w3:'⬜', w4:'⬜' },
-  { form:'Sounding Report',w1:'✅', w2:'✅', w3:'✅', w4:'✅' },
-  { form:'Bilge Log',      w1:'✅', w2:'⬜', w3:'✅', w4:'⬜' },
-];
-document.getElementById('tom-matrix').innerHTML = `
-<table style="width:100%;border-collapse:collapse;font-size:11.5px;">
-  <thead><tr>
-    <th style="padding:5px 8px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Form</th>
-    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk1</th>
-    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk2</th>
-    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk3</th>
-    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk4</th>
-  </tr></thead>
-  <tbody>
-  ${toms.map(r=>`<tr>
-    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;font-weight:500;">${r.form}</td>
-    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w1}</td>
-    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w2}</td>
-    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w3}</td>
-    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w4}</td>
-  </tr>`).join('')}
-  </tbody>
-</table>`;
+function openJOModal() {
+  document.getElementById('joModal').style.display = 'flex';
+  renderJOTable('all');
+  document.querySelectorAll('#joModal .jp-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('#joModal .jp-tab').classList.add('active');
+}
+function closeJOModal() {
+  document.getElementById('joModal').style.display = 'none';
+}
+function filterJO(f, el) {
+  document.querySelectorAll('#joModal .jp-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderJOTable(f);
+}
 
 /* ── CHARTS ── */
-Chart.defaults.color = '#64748b';
-Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
-const gc = 'rgba(0,0,0,0.06)';
+Chart.defaults.color = '#6b7280';
+Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+const gc = 'rgba(0,0,0,0.05)';
+const allLabels = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
 
-/* Donut */
-new Chart(document.getElementById('donutChart'), {
-  type:'doughnut',
-  data:{
-    labels:['Operational','Under Maintenance','Offline / Dry Dock'],
-    datasets:[{
-      data:[3,1,1],
-      backgroundColor:['#16a34a','#d97706','#dc2626'],
-      borderWidth:3, borderColor:'#fff'
-    }]
-  },
-  options:{
-    cutout:'70%',
-    plugins:{legend:{display:false}},
-    maintainAspectRatio:true
-  }
-});
 
-/* MA 12-Month Chart */
-const months=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
-new Chart(document.getElementById('maChart'), {
-  type:'bar',
-  data:{
-    labels:months,
-    datasets:[
-      { label:'Due',       data:[42,38,45,40,43,39,41,44,38,46,43,44], backgroundColor:'rgba(21,101,192,.15)', borderColor:'#1565c0', borderWidth:1.5, borderRadius:3 },
-      { label:'Completed', data:[40,36,44,39,42,37,40,43,36,45,41,37], backgroundColor:'rgba(22,163,74,.7)',   borderRadius:3 },
-      { label:'Overdue',   data:[2,2,1,1,1,2,1,1,2,1,2,3],            backgroundColor:'rgba(220,38,38,.75)',  borderRadius:3, type:'line', tension:.4, fill:false, yAxisID:'y1' },
-    ]
-  },
+/* MA chart */
+const skyBg = {
+  id:'skyBg',
+  beforeDraw(c){ const {ctx,chartArea}=c; if(!chartArea)return; ctx.save(); ctx.fillStyle='#f0f9ff'; ctx.fillRect(chartArea.left,chartArea.top,chartArea.right-chartArea.left,chartArea.bottom-chartArea.top); ctx.restore(); }
+};
+const maCtx = document.getElementById('maChart').getContext('2d');
+maChartObj = new Chart(maCtx,{
+  type:'bar', plugins:[skyBg],
+  data:{ labels:[], datasets:[
+    {label:'Jobs Due',  data:[], backgroundColor:'rgba(239,68,68,0.15)', borderColor:'#ef4444', borderWidth:1.5, borderRadius:5},
+    {label:'Completed', data:[], backgroundColor:'rgba(22,163,74,0.75)', borderRadius:5},
+    {label:'Overdue',   data:[], type:'line', tension:.4, fill:false, borderColor:'#dc2626', pointBackgroundColor:'#dc2626', pointRadius:4, yAxisID:'y1'}
+  ]},
   options:{
-    responsive:true,
-    plugins:{legend:{display:false}},
+    responsive:true, plugins:{legend:{display:false}},
     scales:{
-      x:{grid:{color:gc}, ticks:{font:{size:10}}},
-      y:{grid:{color:gc}, ticks:{font:{size:10}}},
-      y1:{position:'right', grid:{display:false}, ticks:{font:{size:10}, color:'#dc2626'}, max:10}
+      x: {grid:{color:gc},ticks:{font:{size:11}}},
+      y: {grid:{color:gc},ticks:{font:{size:11}},beginAtZero:true},
+      y1:{position:'right',grid:{display:false},max:10,ticks:{font:{size:11},color:'#dc2626'}}
     }
   }
 });
+function updateChart() {
+  const d = PAL4.getVessel(currentVessel);   // ← swap to: await PAL4.loadVessel(...)
+  const m = parseInt(document.getElementById('monthSel').value);
+  maChartObj.data.labels           = allLabels.slice(-m);
+  maChartObj.data.datasets[0].data = d.maData.jobsDue.slice(-m);
+  maChartObj.data.datasets[1].data = d.maData.completed.slice(-m);
+  maChartObj.data.datasets[2].data = d.maData.overdue.slice(-m);
+  maChartObj.update();
+}
 
-/* Job Status Doughnut */
-new Chart(document.getElementById('jobStatusChart'), {
+/* Equipment donut */
+eqDonutChart = new Chart(document.getElementById('eqDonut'),{
   type:'doughnut',
-  data:{
-    labels:['Completed','Scheduled','WIP','Overdue','Postponed','Wait Spares'],
-    datasets:[{
-      data:[37,16,5,3,2,3],
-      backgroundColor:['#16a34a','#1565c0','#d97706','#dc2626','#7c3aed','#64748b'],
-      borderWidth:3, borderColor:'#fff'
-    }]
-  },
-  options:{
-    cutout:'65%',
-    plugins:{legend:{display:false}},
-    maintainAspectRatio:true
-  }
+  data:{labels:['Operational','Due Soon','Defect / Overdue'],datasets:[{data:[14,3,3],backgroundColor:['#16a34a','#d97706','#dc2626'],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},
+  options:{ responsive:false, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false}} }
 });
+
+/* ── FLEET HEALTH LIST — from PAL4.getFleetHealth() ── */
+document.getElementById('vessel-health-list').innerHTML =
+  PAL4.getFleetHealth().map(v => `
+    <div class="hv-row">
+      <div class="hv-name">${v.name}</div>
+      <div class="hv-bar-wrap"><div class="hv-bar"><div class="hv-fill" style="width:${v.score}%;background:${v.color}"></div></div></div>
+      <div class="hv-score" style="color:${v.color}">${v.score}</div>
+    </div>`).join('');
+
+/* ── INIT ── */
+selectVessel('saraswati');
 </script>
 </body>
 </html>
