@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Due Jobs | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;--red-lt:#fff5f5;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;--amber-lt:#fffdf0;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --gray:#6b7280;--gray-bg:#f9fafb;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* SIDEBAR */
+
+/* MAIN */
+
+/* TOPBAR */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-bc{font-size:13px;color:var(--muted);flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;white-space:nowrap;}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.excel{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0;}
+.tbtn.pdf{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+
+/* PAGE HEADER */
+.page-hdr{background:#fff;border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.ph-left h1{font-size:16px;font-weight:800;margin-bottom:4px;}
+.ph-left p{font-size:12.5px;color:var(--muted);}
+
+/* Summary chips */
+.summary-chips{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.chip{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-size:13px;font-weight:700;border:1.5px solid;cursor:pointer;transition:opacity .13s;}
+.chip:hover{opacity:.85;}
+.chip-red   {background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+.chip-amber {background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd);}
+.chip-teal  {background:var(--teal-bg);color:var(--teal);border-color:#a5f3fc;}
+.chip-blue  {background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd);}
+.chip-red-dash{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);border-style:dashed;}
+.chip-gray  {background:var(--gray-bg);color:var(--gray);border-color:var(--border);}
+.chip-val{font-size:20px;font-weight:800;line-height:1;}
+.chip-lbl{font-size:11.5px;font-weight:600;}
+
+/* FILTER BAR */
+.filter-bar{background:#fff;border-bottom:1px solid var(--border);padding:11px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fb-input{display:flex;align-items:center;gap:6px;background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:6px 11px;min-width:220px;transition:border .13s;}
+.fb-input:focus-within{border-color:var(--blue-bd);background:#fff;}
+.fb-input input{background:none;border:none;outline:none;font-size:13px;font-weight:600;color:var(--text);flex:1;font-family:inherit;}
+.fb-input input::placeholder{color:var(--muted-lt);font-weight:500;}
+.fb-select{background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:7px 11px;font-size:13px;font-weight:600;color:var(--text2);outline:none;font-family:inherit;cursor:pointer;transition:border .13s;}
+.fb-select:focus{border-color:var(--blue-bd);}
+.fb-divider{width:1px;height:24px;background:var(--border);margin:0 2px;}
+.fb-right{margin-left:auto;display:flex;gap:8px;}
+
+/* TABLE */
+#content{flex:1;padding:16px 20px;}
+.tbl-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.tbl-info-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);}
+.tbl-info-left{font-size:13px;font-weight:600;color:var(--muted);}
+.tbl-info-left span{color:var(--text);font-weight:800;}
+.tbl-info-right{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.tbl-scroll{overflow-x:auto;}
+.tbl-scroll::-webkit-scrollbar{height:5px;}
+.tbl-scroll::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:10px 13px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--blue);}
+th.sorted{color:var(--blue);}
+th .si{font-size:10px;margin-left:3px;opacity:.35;}
+th.sorted .si{opacity:1;}
+td{padding:10px 13px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f6f8fa;cursor:pointer;}
+tr.row-overdue  td{background:var(--red-lt)!important;border-left:3.5px solid var(--red);}
+tr.row-due-soon td{background:var(--amber-lt)!important;border-left:3.5px solid var(--amber);}
+tr.row-postponed td{background:#faf5ff!important;border-left:3.5px solid var(--purple);}
+tr.row-waiting  td{background:#fffbf0!important;border-left:3.5px solid var(--amber);}
+.cb-col{width:36px;padding:10px 8px 10px 14px!important;}
+.cb{width:15px;height:15px;cursor:pointer;accent-color:var(--blue);}
+
+/* Cell styles */
+.jo-num{font-family:monospace;font-size:13px;font-weight:800;color:var(--blue);}
+.jo-type{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;font-size:10px;font-weight:800;margin-left:4px;}
+.jt-v{background:var(--blue-bg);color:var(--blue);}
+.jt-o{background:var(--teal-bg);color:var(--teal);}
+.eq-name{font-size:13px;font-weight:700;color:var(--text);}
+.eq-code{font-size:11.5px;color:var(--muted);font-weight:500;}
+.flags{display:flex;gap:4px;flex-wrap:wrap;}
+.flag{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap;}
+.flag-critical{background:var(--red-bg);color:var(--red);}
+.flag-class   {background:var(--teal-bg);color:var(--teal);}
+.flag-round   {background:#f3f4f6;color:var(--muted);}
+.flag-postponed{background:var(--purple-bg);color:var(--purple);}
+.flag-spares  {background:var(--amber-bg);color:var(--amber);}
+.flag-wp      {background:#fef3c7;color:#92400e;}
+.flag-ra      {background:#fce7f3;color:#be185d;}
+
+/* Badges */
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-p{background:var(--purple-bg);color:var(--purple);}
+.b-t{background:var(--teal-bg);color:var(--teal);}
+.b-x{background:#f1f5f9;color:var(--muted);border:1px solid #e2e8f0;}
+
+/* Empty */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px;gap:12px;color:var(--muted);}
+.es-icon{font-size:44px;opacity:.15;}
+.es-text{font-size:14px;font-weight:700;}
+.es-sub{font-size:13px;color:var(--muted-lt);}
+
+/* SIDE PANEL */
+#sidePanel{position:fixed;top:0;right:0;bottom:0;width:480px;background:#fff;border-left:1px solid var(--border);z-index:400;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.08);transform:translateX(100%);transition:transform .25s;}
+#sidePanel.open{transform:translateX(0);}
+.sp-hdr{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sp-title{font-size:15px;font-weight:800;margin-bottom:4px;}
+.sp-close{width:30px;height:30px;border-radius:7px;background:#f6f8fa;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--muted);flex-shrink:0;transition:all .12s;}
+.sp-close:hover{background:var(--red-bg);color:var(--red);}
+.sp-body{flex:1;overflow-y:auto;padding:16px 18px;}
+.sp-body::-webkit-scrollbar{width:4px;}
+.sp-body::-webkit-scrollbar-thumb{background:var(--border);}
+.sp-sec{margin-bottom:18px;}
+.sp-sec-title{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-lt);}
+.sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sp-field{padding:9px 12px;background:#f9fafb;border:1px solid var(--border-lt);border-radius:7px;}
+.sp-field.span2{grid-column:span 2;}
+.sp-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px;}
+.sp-val{font-size:13.5px;font-weight:700;color:var(--text);}
+.sp-footer{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:399;}
+#overlay.open{display:block;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚓</div>
+    <div><div class="sb-name">Mariapps</div></div>
+  </div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-maint">
+      <a class="sb-child" href="equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child active" href="due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child" href="job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child" href="technical-forms.html"><span class="sb-cico">📝</span>Technical Forms</a>
+      <a class="sb-child" href="reports.html"><span class="sb-cico">📊</span>Reports</a>
+      <a class="sb-child" href="guarantee-claims.html"><span class="sb-cico">🛡️</span>Guarantee Claims</a>
+      <a class="sb-child" href="dynamic-forms.html"><span class="sb-cico">📐</span>Dynamic Forms</a>
+      <a class="sb-child" href="pms-administration.html"><span class="sb-cico">⚙️</span>PMS Administration</a>
+    </div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm">
+      <a class="sb-child" href="#"><span class="sb-cico">🚢</span>Vessel Register</a>
+    </div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin">
+      <a class="sb-child" href="#"><span class="sb-cico">👥</span>Users &amp; Roles</a>
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-ava">RK</div>
+      <div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <header id="topbar">
+    <button class="tbtn" onclick="toggleSidebar()" style="padding:7px 10px;font-size:16px;">☰</button>
+    <div class="tb-sep"></div>
+    <a class="tb-back" href="../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-bc">Maintenance &nbsp;›&nbsp; <span>Due Jobs</span></div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div><span id="vessel-name">MV Saraswati</span></div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <div class="page-hdr">
+    <div class="ph-left">
+      <h1>Due Jobs</h1>
+      <p id="page-sub">Live view of scheduled, due and overdue maintenance jobs</p>
+    </div>
+    <div class="summary-chips" id="summaryChips"></div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="fb-input">
+      <span style="color:var(--muted-lt);font-size:14px">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search job, equipment, JO number…" oninput="applyFilters()"/>
+    </div>
+    <select class="fb-select" id="fCategory" onchange="applyFilters()">
+      <option value="">All Categories</option>
+      <option>Planned</option><option>Defect</option><option>Unplanned</option>
+      <option>Round Job</option><option>Class Survey</option>
+    </select>
+    <select class="fb-select" id="fPriority" onchange="applyFilters()">
+      <option value="">All Priorities</option>
+      <option>Critical</option><option>High</option><option>Normal</option>
+    </select>
+    <select class="fb-select" id="fDiscipline" onchange="applyFilters()">
+      <option value="">All Disciplines</option>
+      <option>Engine</option><option>Deck</option><option>Bridge</option><option>Electrical</option>
+    </select>
+    <select class="fb-select" id="fStatus" onchange="applyFilters()">
+      <option value="">All Status</option>
+      <option value="overdue">Overdue</option>
+      <option value="due-soon">Due Soon</option>
+      <option value="scheduled">Scheduled</option>
+      <option value="in-progress">In Progress</option>
+      <option value="postponed">Postponed</option>
+      <option value="waiting-spares">Waiting Spares</option>
+    </select>
+    <div class="fb-divider"></div>
+    <div class="fb-right">
+      <button class="tbtn" onclick="clearFilters()">✕ Clear</button>
+      <button class="tbtn excel">↓ Excel</button>
+      <button class="tbtn pdf">↓ PDF</button>
+      <button class="tbtn primary">+ New Job Order</button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div id="content">
+    <div class="tbl-card">
+      <div class="tbl-info-bar">
+        <div class="tbl-info-left">Showing <span id="rowCount">0</span> of <span id="totalCount">0</span> job orders</div>
+        <div class="tbl-info-right">
+          <span id="selCount" style="display:none;font-weight:700;color:var(--blue)"></span>
+          <span style="font-size:11.5px;color:var(--muted-lt)">Click any row to view details</span>
+        </div>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th class="cb-col"><input type="checkbox" class="cb" id="selectAll" onchange="toggleAll(this)"/></th>
+              <th onclick="doSort('joNo')">JO No.<span class="si">⇅</span></th>
+              <th onclick="doSort('equipment')">Equipment<span class="si">⇅</span></th>
+              <th onclick="doSort('title')">Job Title<span class="si">⇅</span></th>
+              <th onclick="doSort('jobType')">Category<span class="si">⇅</span></th>
+              <th onclick="doSort('maintType')">Maint. Type<span class="si">⇅</span></th>
+              <th onclick="doSort('freqPrimary')">Frequency<span class="si">⇅</span></th>
+              <th onclick="doSort('lastDoneDate')">Last Done<span class="si">⇅</span></th>
+              <th onclick="doSort('nextDueDate')">Next Due<span class="si">⇅</span></th>
+              <th onclick="doSort('priority')">Priority<span class="si">⇅</span></th>
+              <th onclick="doSort('status')">Status<span class="si">⇅</span></th>
+              <th>Flags</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="es-icon">📋</div>
+        <div class="es-text">No jobs match the current filters</div>
+        <div class="es-sub">Try changing or clearing the filters above</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDE PANEL -->
+<div id="overlay" onclick="closePanel()"></div>
+<div id="sidePanel">
+  <div class="sp-hdr">
+    <div style="flex:1;min-width:0">
+      <div class="sp-title" id="sp-title">—</div>
+      <div style="font-size:12px;color:var(--muted)" id="sp-sub">—</div>
+    </div>
+    <div class="sp-close" onclick="closePanel()">✕</div>
+  </div>
+  <div class="sp-body" id="sp-body"></div>
+  <div class="sp-footer">
+    <button class="tbtn primary" style="flex:1">✓ Mark Complete</button>
+    <button class="tbtn" style="flex:1">⏸ Postpone</button>
+    <button class="tbtn" style="flex:1">📋 Log Work</button>
+  </div>
+</div>
+
+<script src="../data/sample-data.js"></script>
+<script>
+/* ── TWO-PANEL SIDEBAR JS ── */
+document.querySelectorAll(".sb-parent").forEach(p=>{
+  p.addEventListener("click",e=>{
+    e.stopPropagation();
+    const k=p.dataset.k;
+    const ch=document.getElementById("ch-"+k);
+    if(!ch)return;
+    const isOpen=ch.classList.contains("open");
+    // Close all panels
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+    // Open this one if it was closed
+    if(!isOpen){
+      ch.classList.add("open");
+      p.classList.add("p2-open");
+      document.body.classList.add("p2-open");
+    }
+  });
+});
+// Close panel 2 when clicking outside sidebar
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#sidebar")){
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+  }
+});
+
+/* ── DATA ── */
+const vid    = new URLSearchParams(window.location.search).get('vessel')||'saraswati';
+const vessel = PAL4.getVessel(vid);
+const ALL    = PAL4.getDueJobs(vid);
+
+document.getElementById('vessel-name').textContent = vessel.info.name;
+document.getElementById('page-sub').textContent =
+  `Live view of scheduled, due and overdue maintenance jobs · ${vessel.info.name}`;
+document.getElementById('totalCount').textContent = ALL.length;
+
+/* ── STATUS / PRIORITY CONFIGS ── */
+const SC = {
+  overdue:        {label:'Overdue',      badge:'b-r', row:'row-overdue'  },
+  'due-soon':     {label:'Due Soon',     badge:'b-a', row:'row-due-soon' },
+  scheduled:      {label:'Scheduled',    badge:'b-b', row:''             },
+  'in-progress':  {label:'In Progress',  badge:'b-t', row:''             },
+  postponed:      {label:'Postponed',    badge:'b-p', row:'row-postponed'},
+  'waiting-spares':{label:'Wait Spares', badge:'b-a', row:'row-waiting'  },
+};
+const PC = {Critical:'b-r', High:'b-a', Normal:'b-b'};
+const SO = {overdue:0,'due-soon':1,'in-progress':2,'waiting-spares':3,postponed:4,scheduled:5};
+
+/* ── SUMMARY CHIPS ── */
+function buildChips(jobs){
+  const c={overdue:0,'due-soon':0,'in-progress':0,total:jobs.length,critical:0,normal:0};
+  jobs.forEach(j=>{
+    if(c[j.status]!==undefined) c[j.status]++;
+    if(j.priority==='Critical') c.critical++; else c.normal++;
+  });
+  document.getElementById('summaryChips').innerHTML=`
+    <div class="chip chip-red"      onclick="fByStatus('overdue')"  ><div class="chip-val">${c.overdue}</div><div class="chip-lbl">Overdue</div></div>
+    <div class="chip chip-amber"    onclick="fByStatus('due-soon')" ><div class="chip-val">${c['due-soon']}</div><div class="chip-lbl">Due Soon</div></div>
+    <div class="chip chip-teal"     onclick="fByStatus('in-progress')"><div class="chip-val">${c['in-progress']}</div><div class="chip-lbl">In Progress</div></div>
+    <div class="chip chip-blue"     onclick="fByStatus('')">         <div class="chip-val">${c.total}</div><div class="chip-lbl">Total</div></div>
+    <div class="chip chip-red-dash" style="border-style:dashed">     <div class="chip-val">${c.critical}</div><div class="chip-lbl">Critical</div></div>
+    <div class="chip chip-gray">                                      <div class="chip-val">${c.normal}</div><div class="chip-lbl">Normal</div></div>`;
+}
+buildChips(ALL);
+
+/* ── SORT ── */
+let sortCol='status', sortDir=1;
+function doSort(col){
+  if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1;}
+  document.querySelectorAll('th').forEach(t=>t.classList.remove('sorted'));
+  applyFilters();
+}
+function sorted(jobs){
+  return [...jobs].sort((a,b)=>{
+    if(sortCol==='status') return ((SO[a.status]??9)-(SO[b.status]??9))*sortDir;
+    if(sortCol==='priority'){const po={Critical:0,High:1,Normal:2}; return((po[a.priority]??9)-(po[b.priority]??9))*sortDir;}
+    return String(a[sortCol]||'').localeCompare(String(b[sortCol]||''))*sortDir;
+  });
+}
+
+/* ── RENDER ── */
+function render(jobs){
+  const tbody=document.getElementById('tbody');
+  const empty=document.getElementById('emptyState');
+  document.getElementById('rowCount').textContent=jobs.length;
+  if(!jobs.length){tbody.innerHTML='';empty.style.display='flex';return;}
+  empty.style.display='none';
+  tbody.innerHTML=jobs.map(j=>{
+    const sc=SC[j.status]||{label:j.status,badge:'b-x',row:''};
+    const pb=PC[j.priority]||'b-x';
+    const jt=j.joType==='V'
+      ?`<span class="jo-type jt-v" title="Vessel generated">V</span>`
+      :`<span class="jo-type jt-o" title="Office generated">O</span>`;
+    const flags=[];
+    if(j.flags.includes('critical'))      flags.push(`<span class="flag flag-critical">CRITICAL</span>`);
+    if(j.flags.includes('class'))         flags.push(`<span class="flag flag-class">CLASS</span>`);
+    if(j.flags.includes('round-job'))     flags.push(`<span class="flag flag-round">ROUND</span>`);
+    if(j.flags.includes('postponed'))     flags.push(`<span class="flag flag-postponed">POSTPONED</span>`);
+    if(j.flags.includes('waiting-spares'))flags.push(`<span class="flag flag-spares">WAIT SPARES</span>`);
+    if(j.workPermit)                      flags.push(`<span class="flag flag-wp">WP</span>`);
+    if(j.riskAssmt)                       flags.push(`<span class="flag flag-ra">RA</span>`);
+    const dueLbl=j.status==='overdue'
+      ?`<span class="b b-r">${j.daysOverdue}d Overdue</span>`
+      :`<span style="font-size:13px;font-weight:700">${j.nextDueDate}</span>`;
+    return`<tr class="${sc.row}" onclick="openPanel('${j.joNo}')">
+      <td class="cb-col" onclick="event.stopPropagation()"><input type="checkbox" class="cb row-cb" data-id="${j.joNo}" onchange="updateSel()"/></td>
+      <td><div class="jo-num">${j.joNo}${jt}</div></td>
+      <td><div class="eq-name">${j.equipment}</div><div class="eq-code">${j.eqCode}</div></td>
+      <td style="max-width:190px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.title}</td>
+      <td><span class="b b-x" style="font-size:11px">${j.jobType}</span></td>
+      <td style="color:var(--muted);font-size:12.5px">${j.maintType}</td>
+      <td style="color:var(--text2)">${j.freqPrimary}</td>
+      <td style="color:var(--muted);font-size:12.5px">${j.lastDoneDate}${j.lastDoneHrs&&j.lastDoneHrs!=='—'?`<div style="font-size:11px">${j.lastDoneHrs}</div>`:''}</td>
+      <td>${dueLbl}${j.nextDueHrs&&j.nextDueHrs!=='—'?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${j.nextDueHrs}</div>`:''}</td>
+      <td><span class="b ${pb}">${j.priority}</span></td>
+      <td><span class="b ${sc.badge}">${sc.label}</span></td>
+      <td><div class="flags">${flags.join('')||'<span style="color:var(--muted-lt);font-size:12px">—</span>'}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── FILTER ── */
+function applyFilters(){
+  const q  =document.getElementById('searchInput').value.toLowerCase().trim();
+  const cat=document.getElementById('fCategory').value;
+  const pri=document.getElementById('fPriority').value;
+  const dis=document.getElementById('fDiscipline').value;
+  const sts=document.getElementById('fStatus').value;
+  let jobs=ALL.filter(j=>{
+    if(q&&!j.joNo.toLowerCase().includes(q)&&!j.equipment.toLowerCase().includes(q)&&!j.title.toLowerCase().includes(q))return false;
+    if(cat&&j.jobType!==cat)   return false;
+    if(pri&&j.priority!==pri)  return false;
+    if(dis&&j.discipline!==dis)return false;
+    if(sts&&j.status!==sts)    return false;
+    return true;
+  });
+  render(sorted(jobs));
+}
+function fByStatus(s){document.getElementById('fStatus').value=s;applyFilters();}
+function clearFilters(){
+  document.getElementById('searchInput').value='';
+  ['fCategory','fPriority','fDiscipline','fStatus'].forEach(id=>document.getElementById(id).value='');
+  applyFilters();
+}
+
+/* ── SELECT ── */
+function toggleAll(cb){document.querySelectorAll('.row-cb').forEach(r=>r.checked=cb.checked);updateSel();}
+function updateSel(){
+  const n=document.querySelectorAll('.row-cb:checked').length;
+  const el=document.getElementById('selCount');
+  if(n>0){el.textContent=`${n} selected`;el.style.display='inline';}
+  else el.style.display='none';
+}
+
+/* ── SIDE PANEL ── */
+function openPanel(joNo){
+  const j=ALL.find(x=>x.joNo===joNo); if(!j)return;
+  const sc=SC[j.status]||{label:j.status,badge:'b-x'};
+  const pb=PC[j.priority]||'b-x';
+  document.getElementById('sp-title').textContent=j.title;
+  document.getElementById('sp-sub').innerHTML=`
+    <span style="font-family:monospace;font-weight:800;color:var(--blue)">${j.joNo}</span>
+    &nbsp;·&nbsp; ${j.equipment}
+    &nbsp;·&nbsp; <span class="b ${sc.badge}" style="font-size:11px">${sc.label}</span>`;
+  document.getElementById('sp-body').innerHTML=`
+    <div class="sp-sec">
+      <div class="sp-sec-title">Job Information</div>
+      <div class="sp-grid">
+        <div class="sp-field span2"><div class="sp-lbl">Job Title</div><div class="sp-val">${j.title}</div></div>
+        <div class="sp-field"><div class="sp-lbl">JO Number</div><div class="sp-val" style="font-family:monospace;color:var(--blue)">${j.joNo}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Generated By</div><div class="sp-val">${j.joType==='V'?'Vessel (V-)':'Office (O-)'}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Job Category</div><div class="sp-val">${j.jobType}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Maintenance Type</div><div class="sp-val">${j.maintType}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Priority</div><div class="sp-val"><span class="b ${pb}">${j.priority}</span></div></div>
+        <div class="sp-field"><div class="sp-lbl">Safety Level</div><div class="sp-val">${j.safetyLevel}</div></div>
+      </div>
+    </div>
+    <div class="sp-sec">
+      <div class="sp-sec-title">Equipment</div>
+      <div class="sp-grid">
+        <div class="sp-field"><div class="sp-lbl">Equipment Name</div><div class="sp-val">${j.equipment}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Equipment Code</div><div class="sp-val" style="font-family:monospace">${j.eqCode}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Discipline</div><div class="sp-val">${j.discipline}</div></div>
+      </div>
+    </div>
+    <div class="sp-sec">
+      <div class="sp-sec-title">Schedule</div>
+      <div class="sp-grid">
+        <div class="sp-field"><div class="sp-lbl">Primary Frequency</div><div class="sp-val">${j.freqPrimary}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Secondary Frequency</div><div class="sp-val">${j.freqSecondary||'—'}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Last Done Date</div><div class="sp-val">${j.lastDoneDate}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Last Done Hours</div><div class="sp-val">${j.lastDoneHrs||'—'}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Next Due Date</div><div class="sp-val">${j.nextDueDate}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Next Due Hours</div><div class="sp-val">${j.nextDueHrs||'—'}</div></div>
+        ${j.status==='overdue'?`<div class="sp-field span2" style="background:var(--red-bg);border-color:var(--red-bd)"><div class="sp-lbl" style="color:var(--red)">Overdue By</div><div class="sp-val" style="color:var(--red);font-size:17px">${j.daysOverdue} days</div></div>`:''}
+      </div>
+    </div>
+    <div class="sp-sec">
+      <div class="sp-sec-title">Requirements</div>
+      <div class="sp-grid">
+        <div class="sp-field"><div class="sp-lbl">Work Permit</div><div class="sp-val">${j.workPermit?'✅ Required':'Not Required'}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Risk Assessment</div><div class="sp-val">${j.riskAssmt?'✅ Required':'Not Required'}</div></div>
+        <div class="sp-field"><div class="sp-lbl">Current Status</div><div class="sp-val"><span class="b ${sc.badge}">${sc.label}</span></div></div>
+      </div>
+    </div>`;
+  document.getElementById('sidePanel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closePanel(){
+  document.getElementById('sidePanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+/* ── INIT ── */
+applyFilters();
+</script>
+</body>
+</html>

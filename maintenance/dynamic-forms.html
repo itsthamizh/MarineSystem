@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Dynamic Forms | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-menu{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;font-size:18px;color:var(--muted);}
+.tb-menu:hover{background:#f6f8fa;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+#content{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.tab-bar{background:#fff;border:1px solid var(--border);border-radius:var(--r);display:flex;overflow:hidden;}
+.tab{flex:1;padding:12px 10px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;text-align:center;transition:all .12s;border-right:1px solid var(--border);}
+.tab:last-child{border-right:none;}
+.tab:hover{background:#f6f8fa;color:var(--text);}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--blue-bg);font-weight:700;}
+.tab-panel{display:none;}
+.tab-panel.active{display:flex;flex-direction:column;gap:14px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-hdr h2{font-size:14px;font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:#f6f8fa;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{background:var(--blue-lt);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f6f8fa;cursor:pointer;}
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-active{background:var(--green-bg);color:var(--green);}
+.b-inactive{background:#f3f4f6;color:#6b7280;}
+.b-numeric{background:var(--blue-bg);color:var(--blue);}
+.b-text{background:var(--purple-bg);color:var(--purple);}
+.b-bool{background:var(--amber-bg);color:var(--amber);}
+/* VESSEL MAPPING LAYOUT */
+.mapping-layout{display:grid;grid-template-columns:220px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.vessel-list-panel{border-right:1px solid var(--border);background:#f9fafb;}
+.vessel-list-panel h3{padding:10px 14px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);}
+.vessel-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border-lt);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;transition:all .11s;border-left:3px solid transparent;}
+.vessel-item:hover{background:#eff6ff;color:var(--blue);}
+.vessel-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:700;}
+.vessel-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.mapping-right{padding:16px;}
+.mapping-right h3{font-size:13px;font-weight:700;margin-bottom:14px;}
+.checkbox-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid var(--border-lt);border-radius:7px;margin-bottom:6px;background:#f9fafb;}
+.checkbox-row:hover{background:var(--blue-bg);}
+.checkbox-row label{font-size:13px;font-weight:600;cursor:pointer;flex:1;}
+.checkbox-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;}
+/* SLIDE PANEL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;display:none;}
+.overlay.open{display:block;}
+.slide-panel{position:fixed;top:0;right:0;width:480px;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:401;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;}
+.slide-panel.open{transform:translateX(0);}
+.sp-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;flex-shrink:0;}
+.sp-hdr h3{font-size:15px;font-weight:700;}
+.sp-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.sp-body{padding:20px;flex:1;}
+.var-item{padding:8px 12px;border:1px solid var(--border-lt);border-radius:7px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
+.var-name{font-size:13px;font-weight:700;}
+.var-meta{font-size:11.5px;color:var(--muted);}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toggle{position:relative;width:36px;height:20px;cursor:pointer;display:inline-block;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:#d1d5db;border-radius:10px;transition:.2s;}
+.toggle input:checked ~ .toggle-track{background:var(--blue);}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked ~ .toggle-thumb{left:18px;}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-maint">
+      <a class="sb-child" href="equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child" href="due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child" href="job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child" href="technical-forms.html"><span class="sb-cico">📝</span>Technical Forms</a>
+      <a class="sb-child" href="reports.html"><span class="sb-cico">📊</span>Reports</a>
+      <a class="sb-child" href="guarantee-claims.html"><span class="sb-cico">🛡️</span>Guarantee Claims</a>
+      <a class="sb-child active" href="dynamic-forms.html"><span class="sb-cico">📐</span>Dynamic Forms</a>
+      <a class="sb-child" href="pms-administration.html"><span class="sb-cico">⚙️</span>PMS Administration</a>
+    </div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm"><a class="sb-child" href="#"><span class="sb-cico">🚢</span>Vessel Register</a></div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin"><a class="sb-child" href="#"><span class="sb-cico">👥</span>Users &amp; Roles</a></div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tb-menu" onclick="toggleSidebar()">☰</button>
+    <a class="tb-back" href="../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Dynamic Forms</div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div>MV Pacific Star</div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </div>
+  <div id="content">
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('templates')">📋 Form Templates</div>
+      <div class="tab" onclick="switchTab('variables')">📐 Service Variables</div>
+      <div class="tab" onclick="switchTab('mapping')">🚢 Vessel Forms Mapping</div>
+    </div>
+
+    <!-- TEMPLATES -->
+    <div class="tab-panel active" id="tab-templates">
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Form Templates</h2>
+          <button class="btn primary" onclick="showToast('New template form opened')">+ New Template</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Form Name</th><th>Service Category</th><th>Variables Count</th><th>Status</th><th>Last Modified</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr onclick="openVarPanel('ME Performance Check')">
+              <td style="font-weight:700">ME Performance Check</td>
+              <td>Engine Performance</td>
+              <td style="text-align:center">12</td>
+              <td><span class="b b-active">Active</span></td>
+              <td>10 Jun 2026</td>
+              <td><button class="btn sm" onclick="event.stopPropagation();openVarPanel('ME Performance Check')">View Variables</button></td>
+            </tr>
+            <tr onclick="openVarPanel('Fuel Consumption Log')">
+              <td style="font-weight:700">Fuel Consumption Log</td>
+              <td>Fuel Consumption</td>
+              <td style="text-align:center">8</td>
+              <td><span class="b b-active">Active</span></td>
+              <td>08 Jun 2026</td>
+              <td><button class="btn sm" onclick="event.stopPropagation();openVarPanel('Fuel Consumption Log')">View Variables</button></td>
+            </tr>
+            <tr onclick="openVarPanel('Weather Observation')">
+              <td style="font-weight:700">Weather Observation</td>
+              <td>Weather</td>
+              <td style="text-align:center">7</td>
+              <td><span class="b b-active">Active</span></td>
+              <td>05 Jun 2026</td>
+              <td><button class="btn sm" onclick="event.stopPropagation();openVarPanel('Weather Observation')">View Variables</button></td>
+            </tr>
+            <tr onclick="openVarPanel('Cargo Operations Log')">
+              <td style="font-weight:700">Cargo Operations Log</td>
+              <td>Cargo Operations</td>
+              <td style="text-align:center">10</td>
+              <td><span class="b b-active">Active</span></td>
+              <td>01 Jun 2026</td>
+              <td><button class="btn sm" onclick="event.stopPropagation();openVarPanel('Cargo Operations Log')">View Variables</button></td>
+            </tr>
+            <tr onclick="openVarPanel('Lube Oil Analysis')">
+              <td style="font-weight:700">Lube Oil Analysis</td>
+              <td>Engine Performance</td>
+              <td style="text-align:center">9</td>
+              <td><span class="b b-inactive">Inactive</span></td>
+              <td>15 May 2026</td>
+              <td><button class="btn sm" onclick="event.stopPropagation();openVarPanel('Lube Oil Analysis')">View Variables</button></td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- VARIABLES -->
+    <div class="tab-panel" id="tab-variables">
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Service Variables</h2>
+          <button class="btn primary" onclick="showToast('Add variable form opened')">+ Add Variable</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Variable Name</th><th>Symbol</th><th>Description</th><th>Unit</th><th>Type</th><th>Validation (Min–Max)</th><th>Used in Perf. Calc</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">Engine RPM</td><td style="font-family:monospace">RPM</td><td>Main engine revolutions per minute</td><td>rpm</td><td><span class="b b-numeric">Numeric</span></td><td>60 – 120</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Power Output</td><td style="font-family:monospace">kW</td><td>Brake horse power output</td><td>kW</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 15000</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Exhaust Temp</td><td style="font-family:monospace">T_exh</td><td>Exhaust gas temperature per cylinder</td><td>°C</td><td><span class="b b-numeric">Numeric</span></td><td>300 – 500</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Scav. Air Pressure</td><td style="font-family:monospace">P_scav</td><td>Scavenging air pressure</td><td>bar</td><td><span class="b b-numeric">Numeric</span></td><td>1.5 – 3.5</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Fuel Index</td><td style="font-family:monospace">FI</td><td>Fuel injection pump index</td><td>mm</td><td><span class="b b-numeric">Numeric</span></td><td>20 – 70</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Wind Speed</td><td style="font-family:monospace">V_wind</td><td>Apparent wind speed</td><td>knots</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 120</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Wind Direction</td><td style="font-family:monospace">D_wind</td><td>True wind direction</td><td>degrees</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 360</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Sea State</td><td style="font-family:monospace">SS</td><td>Beaufort sea state</td><td>BF</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 12</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">FO Consumption</td><td style="font-family:monospace">FO_cons</td><td>Fuel oil consumption rate</td><td>MT/day</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 80</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">LO Consumption</td><td style="font-family:monospace">LO_cons</td><td>Lube oil daily consumption</td><td>L/day</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 200</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Cargo Quantity</td><td style="font-family:monospace">CGO</td><td>Cargo onboard in metric tons</td><td>MT</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 50000</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Engine Running</td><td style="font-family:monospace">ENG_RUN</td><td>Engine running status</td><td>—</td><td><span class="b b-bool">Boolean</span></td><td>Yes / No</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Remarks</td><td style="font-family:monospace">RMK</td><td>Free-text remarks field</td><td>—</td><td><span class="b b-text">Text</span></td><td>—</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">TC Speed</td><td style="font-family:monospace">TC_RPM</td><td>Turbocharger speed</td><td>rpm</td><td><span class="b b-numeric">Numeric</span></td><td>5000 – 25000</td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            <tr><td style="font-weight:700">Draft Fwd</td><td style="font-family:monospace">DRF_FWD</td><td>Forward draft reading</td><td>m</td><td><span class="b b-numeric">Numeric</span></td><td>0 – 15</td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MAPPING -->
+    <div class="tab-panel" id="tab-mapping">
+      <div class="card" style="overflow:hidden;">
+        <div class="card-hdr"><h2>Vessel Forms Mapping</h2><button class="btn primary" onclick="showToast('Mapping saved successfully')">💾 Save Mapping</button></div>
+        <div class="mapping-layout">
+          <div class="vessel-list-panel">
+            <h3>Vessels</h3>
+            <div class="vessel-item active" onclick="selectVessel(this,'MV Pacific Star')"><div class="vessel-dot"></div>MV Pacific Star</div>
+            <div class="vessel-item" onclick="selectVessel(this,'MV Atlantic Arrow')"><div class="vessel-dot"></div>MV Atlantic Arrow</div>
+            <div class="vessel-item" onclick="selectVessel(this,'MV Indian Breeze')"><div class="vessel-dot"></div>MV Indian Breeze</div>
+            <div class="vessel-item" onclick="selectVessel(this,'MV Northern Light')"><div class="vessel-dot"></div>MV Northern Light</div>
+            <div class="vessel-item" onclick="selectVessel(this,'MV Southern Cross')"><div class="vessel-dot"></div>MV Southern Cross</div>
+          </div>
+          <div class="mapping-right">
+            <h3 id="mapping-vessel-title">Enabled Form Templates for: MV Pacific Star</h3>
+            <div id="mapping-checks">
+              <div class="checkbox-row"><input type="checkbox" id="c1" checked/><label for="c1" style="padding-left:8px">ME Performance Check</label><span class="b b-active" style="font-size:11px">Active</span></div>
+              <div class="checkbox-row"><input type="checkbox" id="c2" checked/><label for="c2" style="padding-left:8px">Fuel Consumption Log</label><span class="b b-active" style="font-size:11px">Active</span></div>
+              <div class="checkbox-row"><input type="checkbox" id="c3" checked/><label for="c3" style="padding-left:8px">Weather Observation</label><span class="b b-active" style="font-size:11px">Active</span></div>
+              <div class="checkbox-row"><input type="checkbox" id="c4" checked/><label for="c4" style="padding-left:8px">Cargo Operations Log</label><span class="b b-active" style="font-size:11px">Active</span></div>
+              <div class="checkbox-row"><input type="checkbox" id="c5"/><label for="c5" style="padding-left:8px">Lube Oil Analysis</label><span class="b b-inactive" style="font-size:11px">Inactive</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIABLES SLIDE PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="slide-panel" id="var-panel">
+  <div class="sp-hdr"><h3 id="var-panel-title">Variables</h3><button class="sp-close" onclick="closePanel()">✕</button></div>
+  <div class="sp-body" id="var-panel-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../data/sample-data.js"></script>
+<script>
+function toggleSidebar(){const sb=document.getElementById('sidebar');const m=document.getElementById('main');sb.classList.toggle('visible');m.classList.toggle('with-sidebar');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k;const ch=document.getElementById('ch-'+k);p.classList.toggle('open');ch.classList.toggle('open');});});
+function switchTab(name){
+  const names=['templates','variables','mapping'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+const templateVars={
+  'ME Performance Check':['Engine RPM','Power Output','Exhaust Temp (Cyl 1-6)','Scav. Air Pressure','Fuel Index','TC Speed','FO Inlet Temp','LO Pressure','CW Temp In','CW Temp Out','Fuel Oil Temp','Remarks'],
+  'Fuel Consumption Log':['FO Consumption','LO Consumption','FW Consumption','DO Consumption','HFO ROB','MDO ROB','FW ROB','Remarks'],
+  'Weather Observation':['Wind Speed','Wind Direction','Sea State','Swell Height','Air Temp','Sea Water Temp','Remarks'],
+  'Cargo Operations Log':['Cargo Quantity','Cargo Type','Loading Rate','Discharging Rate','Draft Fwd','Draft Aft','Trim','GM','Remarks','Safety Checks'],
+  'Lube Oil Analysis':['Viscosity','TBN','Fe Content','Cu Content','Cr Content','Soot %','Water %','Remarks','Sample Date'],
+};
+function openVarPanel(name){
+  document.getElementById('var-panel-title').textContent='Variables: '+name;
+  const vars=templateVars[name]||[];
+  document.getElementById('var-panel-body').innerHTML=`<div style="margin-bottom:10px;font-size:12.5px;color:var(--muted);font-weight:600">${vars.length} variables configured</div>`+vars.map((v,i)=>`<div class="var-item"><div><div class="var-name">${v}</div><div class="var-meta">Variable ${i+1} of ${vars.length}</div></div><span class="b b-active" style="font-size:11px">Active</span></div>`).join('');
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('var-panel').classList.add('open');
+}
+function closePanel(){document.getElementById('overlay').classList.remove('open');document.getElementById('var-panel').classList.remove('open');}
+function selectVessel(el,name){
+  document.querySelectorAll('.vessel-item').forEach(v=>v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('mapping-vessel-title').textContent='Enabled Form Templates for: '+name;
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+</script>
+</body>
+</html>

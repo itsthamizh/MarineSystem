@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Add New Equipment | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --green:#16a34a;--green-bg:#f0fdf4;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* ── SIDEBAR (hidden by default on this page) ── */
+
+/* ── MAIN ── */
+
+/* ── TOPBAR ── */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-bc{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;white-space:nowrap;}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+.tbtn.danger:hover{background:#fee2e2;}
+
+/* ── FORM LAYOUT ── */
+#content{padding:22px 28px;flex:1;max-width:1200px;width:100%;}
+
+/* Progress steps */
+.form-steps{display:flex;align-items:center;gap:0;margin-bottom:24px;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;overflow-x:auto;}
+.step{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.step-num{width:26px;height:26px;border-radius:50%;background:#f1f5f9;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--muted);flex-shrink:0;transition:all .2s;}
+.step-lbl{font-size:12.5px;font-weight:700;color:var(--muted);transition:color .2s;}
+.step.active .step-num{background:var(--blue);border-color:var(--blue);color:#fff;}
+.step.active .step-lbl{color:var(--blue);}
+.step.done .step-num{background:var(--green);border-color:var(--green);color:#fff;}
+.step.done .step-lbl{color:var(--green);}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 10px;min-width:24px;}
+.step.done + .step-line{background:var(--green);}
+
+/* Section card */
+.form-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden;}
+.form-card-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;background:#f9fafb;border-bottom:1px solid var(--border);
+}
+.form-card-title{font-size:13.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;}
+.form-card-req{font-size:11.5px;color:var(--muted);font-weight:500;}
+
+/* 4-column grid */
+.fg{display:grid;grid-template-columns:repeat(4,1fr);}
+.fg-2{display:grid;grid-template-columns:repeat(2,1fr);}
+.fg-3{display:grid;grid-template-columns:repeat(3,1fr);}
+
+/* Each field cell */
+.ff{padding:12px 16px;border-right:1px solid var(--border-lt);border-bottom:1px solid var(--border-lt);min-height:72px;}
+.ff:last-child,.ff.no-rb{border-right:none;}
+.ff.span2{grid-column:span 2;}
+.ff.span3{grid-column:span 3;}
+.ff.span4{grid-column:span 4;border-right:none;}
+/* remove bottom border on last row */
+.ff.last-row{border-bottom:none;}
+
+/* Label */
+.ff-lbl{
+  font-size:12.5px;font-weight:700;color:var(--text2);
+  margin-bottom:6px;display:flex;align-items:center;gap:5px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.req-star{color:var(--red);font-size:13px;margin-left:1px;}
+.info-ico{color:var(--muted-lt);font-size:12px;cursor:help;}
+
+/* Inputs */
+.ff-input,
+.ff-select,
+.ff-textarea{
+  width:100%;
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;
+  color:var(--text);
+  background:#f9fafb;
+  border:1.5px solid var(--border);
+  border-radius:6px;
+  padding:8px 11px;
+  outline:none;
+  transition:border .14s,background .14s;
+}
+.ff-input:focus,
+.ff-select:focus,
+.ff-textarea:focus{
+  border-color:var(--blue-bd);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(21,101,192,.07);
+}
+.ff-input::placeholder{color:var(--muted-lt);font-weight:500;}
+.ff-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+.ff-textarea{resize:vertical;min-height:80px;line-height:1.5;}
+
+/* Toggle (Yes/No) */
+.ff-toggle-wrap{display:flex;align-items:center;gap:10px;margin-top:2px;}
+.ff-tgl{position:relative;width:40px;height:22px;flex-shrink:0;}
+.ff-tgl input{opacity:0;width:0;height:0;position:absolute;}
+.tgl-track{position:absolute;inset:0;border-radius:11px;background:#e2e8f0;transition:background .2s;cursor:pointer;border:1.5px solid var(--border);}
+.tgl-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+.ff-tgl input:checked + .tgl-track{background:var(--blue);border-color:var(--blue);}
+.ff-tgl input:checked ~ .tgl-thumb{transform:translateX(18px);}
+.ff-tgl-lbl{font-size:14px;font-weight:700;color:var(--text);}
+
+/* Error state */
+.ff-input.error,.ff-select.error{border-color:var(--red);background:#fff;}
+.ff-err{font-size:11.5px;color:var(--red);font-weight:600;margin-top:4px;display:none;}
+.ff-err.visible{display:block;}
+
+/* Hint text */
+.ff-hint{font-size:11.5px;color:var(--muted-lt);margin-top:4px;font-weight:500;}
+
+/* Spec table */
+.spec-table{width:100%;border-collapse:collapse;}
+.spec-table th{text-align:left;padding:8px 12px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.spec-table td{padding:8px 12px;border-bottom:1px solid var(--border-lt);vertical-align:middle;}
+.spec-table tr:last-child td{border-bottom:none;}
+.spec-table input{width:100%;font-family:inherit;font-size:13.5px;font-weight:600;border:1.5px solid var(--border);border-radius:6px;padding:5px 9px;outline:none;background:#f9fafb;}
+.spec-table input:focus{border-color:var(--blue-bd);background:#fff;}
+.add-spec-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;border:1.5px dashed var(--border);background:#f9fafb;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;transition:all .13s;margin:10px 16px;font-family:inherit;}
+.add-spec-btn:hover{border-color:var(--blue-bd);background:var(--blue-bg);color:var(--blue);}
+
+/* Action bar (sticky bottom) */
+.action-bar{
+  position:sticky;bottom:0;z-index:100;
+  background:#fff;border-top:1px solid var(--border);
+  padding:14px 28px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 -2px 12px rgba(0,0,0,.06);
+}
+.action-bar-left{flex:1;display:flex;align-items:center;gap:8px;}
+.action-bar-right{display:flex;gap:10px;}
+
+/* Required note */
+.req-note{font-size:12px;color:var(--muted);font-weight:500;}
+.req-note span{color:var(--red);font-weight:700;}
+</style>
+</head>
+<body class="sidebar-hidden">
+
+<!-- ══ SIDEBAR ══ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚓</div>
+    <div><div class="sb-name">Mariapps</div></div>
+  </div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-maint">
+      <a class="sb-child active" href="equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child" href="due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child" href="job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child" href="technical-forms.html"><span class="sb-cico">📝</span>Technical Forms</a>
+      <a class="sb-child" href="reports.html"><span class="sb-cico">📊</span>Reports</a>
+      <a class="sb-child" href="guarantee-claims.html"><span class="sb-cico">🛡️</span>Guarantee Claims</a>
+      <a class="sb-child" href="dynamic-forms.html"><span class="sb-cico">📐</span>Dynamic Forms</a>
+      <a class="sb-child" href="pms-administration.html"><span class="sb-cico">⚙️</span>PMS Administration</a>
+    </div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm">
+      <a class="sb-child" href="#"><span class="sb-cico">🚢</span>Vessel Register</a>
+    </div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin">
+      <a class="sb-child" href="#"><span class="sb-cico">👥</span>Users &amp; Roles</a>
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-ava">RK</div>
+      <div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <button class="tbtn" onclick="toggleSidebar()" title="Toggle Menu" style="padding:7px 10px;font-size:16px;">☰</button>
+    <div class="tb-sep"></div>
+    <a class="tb-back" href="equipments.html">← Equipment List</a>
+    <div class="tb-sep"></div>
+    <div class="tb-bc">
+      Maintenance &nbsp;›&nbsp; <a href="equipments.html" style="color:var(--muted);text-decoration:none;">Equipments</a> &nbsp;›&nbsp; <span>Add New Equipment</span>
+    </div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div><span>MV Saraswati</span></div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </header>
+
+  <!-- FORM CONTENT -->
+  <div id="content">
+
+    <!-- STEPS -->
+    <div class="form-steps">
+      <div class="step active" id="step1">
+        <div class="step-num">1</div>
+        <div class="step-lbl">Identification</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step2">
+        <div class="step-num">2</div>
+        <div class="step-lbl">Classification</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step3">
+        <div class="step-num">3</div>
+        <div class="step-lbl">Technical Flags</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step4">
+        <div class="step-num">4</div>
+        <div class="step-lbl">Specification</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step5">
+        <div class="step-num">5</div>
+        <div class="step-lbl">Review &amp; Save</div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 1 — IDENTIFICATION ══ -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">🔖 Identification</div>
+        <span class="form-card-req"><span style="color:var(--red)">*</span> Required fields</span>
+      </div>
+      <div class="fg">
+        <div class="ff">
+          <div class="ff-lbl">Equipment Code <span class="req-star">*</span> <span class="info-ico" title="Unique code for this equipment">ⓘ</span></div>
+          <input class="ff-input" id="eq-code" type="text" placeholder="e.g. ME-002" oninput="validateCode(this)"/>
+          <div class="ff-err" id="err-code">Equipment code is required</div>
+          <div class="ff-hint">Must be unique across the vessel</div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Equipment Name <span class="req-star">*</span></div>
+          <input class="ff-input" id="eq-name" type="text" placeholder="e.g. Main Engine #2"/>
+          <div class="ff-err" id="err-name">Equipment name is required</div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Class Reference</div>
+          <input class="ff-input" type="text" placeholder="e.g. CL-ME-001"/>
+          <div class="ff-hint">Classification society reference code</div>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Parent Equipment</div>
+          <select class="ff-select">
+            <option value="">— None (Top Level) —</option>
+            <option>ME-001 - Main Engine</option>
+            <option>AE-001 - Aux Engine #1</option>
+            <option>GEN-001 - Generator #1</option>
+            <option>GEN-002 - Generator #2</option>
+            <option>FOP-001 - FO Purifier</option>
+          </select>
+          <div class="ff-hint">Select if this is a sub-component</div>
+        </div>
+
+        <div class="ff last-row">
+          <div class="ff-lbl">Maker <span class="req-star">*</span></div>
+          <input class="ff-input" type="text" placeholder="e.g. MAN B&amp;W"/>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Model</div>
+          <input class="ff-input" type="text" placeholder="e.g. 6S60ME-C"/>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Serial Number</div>
+          <input class="ff-input" type="text" placeholder="e.g. SN20240001"/>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Drawing Number</div>
+          <input class="ff-input" type="text" placeholder="e.g. DWG-ME-2024"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 2 — CLASSIFICATION ══ -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">🏷️ Classification</div>
+      </div>
+      <div class="fg">
+        <div class="ff">
+          <div class="ff-lbl">Equipment Type</div>
+          <select class="ff-select">
+            <option value="">— Select Type —</option>
+            <option>Propulsion</option>
+            <option>Power Generation</option>
+            <option>Fuel System</option>
+            <option>Lube Oil System</option>
+            <option>Cooling System</option>
+            <option>Compressed Air</option>
+            <option>Deck Machinery</option>
+            <option>Navigation</option>
+            <option>Safety Equipment</option>
+            <option>HVAC</option>
+            <option>Cargo Handling</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Safety Level <span class="req-star">*</span></div>
+          <select class="ff-select" id="eq-safety">
+            <option value="">— Select —</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Normal">Normal</option>
+          </select>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Department <span class="req-star">*</span></div>
+          <select class="ff-select">
+            <option value="">— Select —</option>
+            <option>Engine</option>
+            <option>Deck</option>
+            <option>Bridge</option>
+            <option>Electrical</option>
+            <option>Cargo</option>
+          </select>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Physical Location <span class="req-star">*</span></div>
+          <select class="ff-select">
+            <option value="">— Select —</option>
+            <option>Engine Room</option>
+            <option>Bridge</option>
+            <option>Deck</option>
+            <option>Pump Room</option>
+            <option>Cargo Hold</option>
+            <option>Steering Room</option>
+            <option>Muster Station</option>
+            <option>Store Room</option>
+          </select>
+        </div>
+
+        <div class="ff last-row">
+          <div class="ff-lbl">Classification Society</div>
+          <select class="ff-select">
+            <option value="">— Select —</option>
+            <option>DNV GL</option>
+            <option>Lloyd's Register</option>
+            <option>Bureau Veritas</option>
+            <option>ABS</option>
+            <option>ClassNK</option>
+            <option>RINA</option>
+            <option>KRS</option>
+          </select>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Equipment Status</div>
+          <select class="ff-select">
+            <option value="In Use" selected>In Use</option>
+            <option>Available</option>
+            <option>Stand By</option>
+            <option>Not Operational</option>
+            <option>Awaiting Parts</option>
+            <option>Damaged</option>
+            <option>Obsolete</option>
+            <option>Decommissioned</option>
+            <option>Scrapped</option>
+          </select>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Installation Date</div>
+          <input class="ff-input" type="date"/>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Builder / License No.</div>
+          <input class="ff-input" type="text" placeholder="e.g. LIC-2024-001"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 3 — TECHNICAL FLAGS ══ -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">⚙️ Technical Flags</div>
+      </div>
+      <div class="fg">
+        <div class="ff">
+          <div class="ff-lbl">Main Engine</div>
+          <div class="ff-toggle-wrap">
+            <label class="ff-tgl">
+              <input type="checkbox" id="flag-main-engine" onchange="updateToggleLabel(this,'lbl-main-engine')"/>
+              <div class="tgl-track"></div><div class="tgl-thumb"></div>
+            </label>
+            <span class="ff-tgl-lbl" id="lbl-main-engine">No</span>
+          </div>
+          <div class="ff-hint">Marks as the vessel's main propulsion engine</div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Circulating Equipment</div>
+          <div class="ff-toggle-wrap">
+            <label class="ff-tgl">
+              <input type="checkbox" id="flag-circ" onchange="updateToggleLabel(this,'lbl-circ')"/>
+              <div class="tgl-track"></div><div class="tgl-thumb"></div>
+            </label>
+            <span class="ff-tgl-lbl" id="lbl-circ">No</span>
+          </div>
+          <div class="ff-hint">Component tracked individually via mount/dismount</div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Mount Allowed</div>
+          <div class="ff-toggle-wrap">
+            <label class="ff-tgl">
+              <input type="checkbox" id="flag-mount" onchange="updateToggleLabel(this,'lbl-mount')"/>
+              <div class="tgl-track"></div><div class="tgl-thumb"></div>
+            </label>
+            <span class="ff-tgl-lbl" id="lbl-mount">No</span>
+          </div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">RHrs. Separately</div>
+          <div class="ff-toggle-wrap">
+            <label class="ff-tgl">
+              <input type="checkbox" id="flag-rhrs" onchange="toggleRhrsFields(this)"/>
+              <div class="tgl-track"></div><div class="tgl-thumb"></div>
+            </label>
+            <span class="ff-tgl-lbl" id="lbl-rhrs">No</span>
+          </div>
+          <div class="ff-hint">Track running hours independently</div>
+        </div>
+
+        <div class="ff" id="rhrs-section" style="display:none">
+          <div class="ff-lbl">Inherit RHrs. from</div>
+          <select class="ff-select">
+            <option value="">— None —</option>
+            <option>ME-001 - Main Engine</option>
+            <option>AE-001 - Aux Engine #1</option>
+          </select>
+          <div class="ff-hint">Inherit running hours from parent equipment</div>
+        </div>
+        <div class="ff" id="rhrs-init-section" style="display:none">
+          <div class="ff-lbl">Initial Running Hours</div>
+          <input class="ff-input" type="number" placeholder="0" min="0" id="rhrs-initial"/>
+          <div class="ff-hint">Current counter reading at onboarding</div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">MD Required</div>
+          <div class="ff-toggle-wrap">
+            <label class="ff-tgl">
+              <input type="checkbox" id="flag-md" onchange="updateToggleLabel(this,'lbl-md')"/>
+              <div class="tgl-track"></div><div class="tgl-thumb"></div>
+            </label>
+            <span class="ff-tgl-lbl" id="lbl-md">No</span>
+          </div>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">SDoc Required</div>
+          <div class="ff-toggle-wrap">
+            <label class="ff-tgl">
+              <input type="checkbox" id="flag-sdoc" onchange="updateToggleLabel(this,'lbl-sdoc')"/>
+              <div class="tgl-track"></div><div class="tgl-thumb"></div>
+            </label>
+            <span class="ff-tgl-lbl" id="lbl-sdoc">No</span>
+          </div>
+        </div>
+
+        <div class="ff last-row">
+          <div class="ff-lbl">Preferred Vendor</div>
+          <input class="ff-input" type="text" placeholder="Vendor name"/>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Circulating Eq. Group</div>
+          <select class="ff-select">
+            <option value="">— None —</option>
+            <option>Pistons</option>
+            <option>Fuel Injectors</option>
+            <option>Exhaust Valves</option>
+            <option>Cylinder Heads</option>
+          </select>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">ID Number</div>
+          <input class="ff-input" type="text" placeholder="e.g. ID-2024-001"/>
+        </div>
+        <div class="ff last-row">
+          <div class="ff-lbl">Part Number</div>
+          <input class="ff-input" type="text" placeholder="e.g. PN-ME-2024"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 4 — SPECIFICATION ══ -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">📐 Technical Specification</div>
+        <span class="form-card-req">Add technical parameters (voltage, RPM, pressure, etc.)</span>
+      </div>
+      <table class="spec-table" id="specTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Parameter Name</th>
+            <th style="width:35%">Value</th>
+            <th style="width:20%">Unit</th>
+            <th style="width:10%"></th>
+          </tr>
+        </thead>
+        <tbody id="specBody">
+          <tr>
+            <td><input type="text" placeholder="e.g. Power Output" value="Power Output"/></td>
+            <td><input type="text" placeholder="Value" value=""/></td>
+            <td><input type="text" placeholder="kW" value="kW"/></td>
+            <td><button onclick="removeSpecRow(this)" style="background:var(--red-bg);color:var(--red);border:none;border-radius:5px;padding:4px 9px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;">✕</button></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="e.g. RPM" value="RPM"/></td>
+            <td><input type="text" placeholder="Value" value=""/></td>
+            <td><input type="text" placeholder="rpm" value="rpm"/></td>
+            <td><button onclick="removeSpecRow(this)" style="background:var(--red-bg);color:var(--red);border:none;border-radius:5px;padding:4px 9px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;">✕</button></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="e.g. Operating Pressure" value="Operating Pressure"/></td>
+            <td><input type="text" placeholder="Value" value=""/></td>
+            <td><input type="text" placeholder="bar" value="bar"/></td>
+            <td><button onclick="removeSpecRow(this)" style="background:var(--red-bg);color:var(--red);border:none;border-radius:5px;padding:4px 9px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="add-spec-btn" onclick="addSpecRow()">+ Add Parameter</button>
+    </div>
+
+    <!-- ══ SECTION 5 — ADDITIONAL ══ -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">📋 Additional Information</div>
+      </div>
+      <div class="fg">
+        <div class="ff">
+          <div class="ff-lbl">Equipment Dimension</div>
+          <input class="ff-input" type="text" placeholder="e.g. 2400 x 1800 x 1200 mm"/>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Equipment Material</div>
+          <input class="ff-input" type="text" placeholder="e.g. Cast Iron, Stainless Steel"/>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">Reference Field 1</div>
+          <input class="ff-input" type="text" placeholder="Custom reference"/>
+        </div>
+        <div class="ff">
+          <div class="ff-lbl">IMO Tier</div>
+          <select class="ff-select">
+            <option value="">— Select —</option>
+            <option>Tier I</option>
+            <option>Tier II</option>
+            <option>Tier III</option>
+            <option>N/A</option>
+          </select>
+        </div>
+
+        <div class="ff span4">
+          <div class="ff-lbl">Remarks</div>
+          <textarea class="ff-textarea" placeholder="Enter any additional notes, remarks or special instructions for this equipment…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom padding for action bar -->
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- ══ STICKY ACTION BAR ══ -->
+  <div class="action-bar">
+    <div class="action-bar-left">
+      <span class="req-note"><span>*</span> Required fields must be completed before saving</span>
+    </div>
+    <div class="action-bar-right">
+      <button class="tbtn danger" onclick="confirmCancel()">✕ Cancel</button>
+      <button class="tbtn" onclick="saveDraft()">💾 Save Draft</button>
+      <button class="tbtn primary" onclick="saveEquipment()">✓ Save Equipment</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══ SAVE SUCCESS TOAST ══ -->
+<div id="toast" style="
+  display:none;position:fixed;bottom:28px;right:28px;
+  background:#0f172a;color:#fff;padding:13px 20px;
+  border-radius:10px;font-size:13.5px;font-weight:600;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;
+  display:none;align-items:center;gap:10px;
+"></div>
+
+<script>
+/* ── TWO-PANEL SIDEBAR JS ── */
+document.querySelectorAll(".sb-parent").forEach(p=>{
+  p.addEventListener("click",e=>{
+    e.stopPropagation();
+    const k=p.dataset.k;
+    const ch=document.getElementById("ch-"+k);
+    if(!ch)return;
+    const isOpen=ch.classList.contains("open");
+    // Close all panels
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+    // Open this one if it was closed
+    if(!isOpen){
+      ch.classList.add("open");
+      p.classList.add("p2-open");
+      document.body.classList.add("p2-open");
+    }
+  });
+});
+// Close panel 2 when clicking outside sidebar
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#sidebar")){
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+  }
+});
+
+/* ── TOGGLE HELPERS ── */
+function updateToggleLabel(checkbox, labelId) {
+  document.getElementById(labelId).textContent = checkbox.checked ? 'Yes' : 'No';
+}
+
+function toggleRhrsFields(checkbox) {
+  updateToggleLabel(checkbox, 'lbl-rhrs');
+  const show = checkbox.checked;
+  document.getElementById('rhrs-section').style.display       = show ? '' : 'none';
+  document.getElementById('rhrs-init-section').style.display  = show ? '' : 'none';
+}
+
+/* ── SPEC TABLE ── */
+function addSpecRow() {
+  const tbody = document.getElementById('specBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Parameter name"/></td>
+    <td><input type="text" placeholder="Value"/></td>
+    <td><input type="text" placeholder="Unit"/></td>
+    <td><button onclick="removeSpecRow(this)" style="background:var(--red-bg);color:var(--red);border:none;border-radius:5px;padding:4px 9px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;">✕</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('input').focus();
+}
+function removeSpecRow(btn) {
+  btn.closest('tr').remove();
+}
+
+/* ── VALIDATION ── */
+function validateCode(input) {
+  const err = document.getElementById('err-code');
+  if (!input.value.trim()) {
+    input.classList.add('error');
+    err.classList.add('visible');
+  } else {
+    input.classList.remove('error');
+    err.classList.remove('visible');
+  }
+}
+
+function validateForm() {
+  let valid = true;
+  const code = document.getElementById('eq-code');
+  const name = document.getElementById('eq-name');
+  const safety = document.getElementById('eq-safety');
+
+  if (!code.value.trim()) {
+    code.classList.add('error');
+    document.getElementById('err-code').classList.add('visible');
+    valid = false;
+  }
+  if (!name.value.trim()) {
+    name.classList.add('error');
+    document.getElementById('err-name').classList.add('visible');
+    valid = false;
+  }
+  if (!safety.value) {
+    safety.classList.add('error');
+    valid = false;
+  }
+  return valid;
+}
+
+/* ── SAVE ── */
+function saveEquipment() {
+  if (!validateForm()) {
+    showToast('❌ Please fill in all required fields', '#dc2626');
+    /* Scroll to first error */
+    document.querySelector('.ff-input.error, .ff-select.error')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  showToast('✅ Equipment saved successfully!', '#16a34a');
+  setTimeout(() => { window.location.href = 'equipments.html'; }, 1800);
+}
+
+function saveDraft() {
+  showToast('💾 Draft saved — you can continue later', '#1565c0');
+}
+
+function confirmCancel() {
+  if (confirm('Discard changes and go back to Equipment List?')) {
+    window.location.href = 'equipments.html';
+  }
+}
+
+/* ── TOAST ── */
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color;
+  t.style.display = 'flex';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+/* ── STEP HIGHLIGHT on scroll ── */
+const sections = ['eq-code','eq-safety','flag-main-engine','specTable'];
+// Simple step activation on field focus
+document.querySelectorAll('.ff-input,.ff-select,.ff-textarea').forEach((el, i) => {
+  el.addEventListener('focus', () => {
+    const card = el.closest('.form-card');
+    if (!card) return;
+    const cards = Array.from(document.querySelectorAll('.form-card'));
+    const idx   = cards.indexOf(card);
+    document.querySelectorAll('.step').forEach((s, si) => {
+      s.classList.remove('active');
+      if (si < idx) s.classList.add('done');
+      else if (si === idx) s.classList.add('active');
+    });
+  });
+});
+</script>
+</body>
+</html>

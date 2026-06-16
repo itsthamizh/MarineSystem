@@ -1,0 +1,283 @@
+/* ================================================================
+   PAL4 · Mariapps Marine Solutions
+   shared/sidebar.css  —  TWO-PANEL dark sidebar
+   Panel 1 (72px): icon strip, always visible
+   Panel 2 (200px): sub-items, slides in when module clicked
+================================================================ */
+
+/* ── CSS TOKENS ── */
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --gray:#6b7280;--gray-bg:#f9fafb;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  /* Sidebar dimensions */
+  --sb-p1: 72px;    /* Panel 1 always visible */
+  --sb-p2: 200px;   /* Panel 2 slides in */
+  --sb: calc(var(--sb-p1) + var(--sb-p2));  /* combined when open */
+  --hdr:54px;--r:8px;
+}
+
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter','Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;min-height:100vh;
+  font-size:14px;font-weight:500;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL 1 — icon strip (always visible 72px)
+═══════════════════════════════════════════ */
+#sidebar{
+  width:var(--sb-p1);min-height:100vh;
+  background:#152F40;
+  border-right:1px solid rgba(255,255,255,.08);
+  position:fixed;top:0;left:0;bottom:0;z-index:300;
+  display:flex;flex-direction:column;
+  overflow:visible;  /* allow Panel 2 to overflow */
+}
+.sidebar-hidden #sidebar{display:none;}
+.sidebar-hidden #main{margin-left:0!important;}
+
+/* Logo */
+.sb-logo{
+  display:flex;align-items:center;justify-content:center;
+  padding:14px 0;background:#0f2235;
+  border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;
+}
+.sb-mark{
+  width:32px;height:32px;background:rgba(255,255,255,.15);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;
+}
+/* Hide name in panel 1 (icon-only) */
+.sb-name{display:none;}
+
+/* Panel 1 nav */
+.sb-nav{padding:6px 0;flex:1;overflow:visible;}
+
+/* TOP-LEVEL items (Panel 1 icons) */
+.sb-item,.sb-parent{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:12px 4px;
+  cursor:pointer;color:rgba(255,255,255,.55);
+  font-size:10.5px;font-weight:600;
+  border-left:3px solid transparent;
+  transition:all .13s;user-select:none;
+  text-decoration:none!important;
+  position:relative;width:100%;
+}
+.sb-item:hover,.sb-parent:hover{
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.9);
+}
+.sb-item.active,.sb-parent.p2-open{
+  background:rgba(255,255,255,.12);color:#fff;
+  border-left-color:#60a5fa;
+}
+/* Icon wrapper */
+.sb-ico{
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.sb-ico svg{width:18px;height:18px;display:block;}
+/* Short label under icon */
+.sb-lbl{
+  font-size:10px;font-weight:600;
+  color:inherit;text-align:center;
+  line-height:1.2;
+  max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* Hide arrow in panel 1 */
+.sb-arr{display:none;}
+/* Hide badges in panel 1 (shown in Panel 2) */
+.sb-bdg{display:none;}
+
+/* Foot */
+.sb-foot{
+  padding:12px 0;border-top:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;
+}
+.sb-user{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.sb-ava{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),#0891b2);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700;
+}
+.sb-uname,.sb-urole{display:none;}
+
+/* Mini sidebar toggle button */
+.sb-toggle{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:6px;
+  background:rgba(255,255,255,.08);border:none;
+  cursor:pointer;color:rgba(255,255,255,.5);font-size:12px;
+  transition:all .13s;margin-top:4px;
+}
+.sb-toggle:hover{background:rgba(255,255,255,.16);color:#fff;}
+.sb-toggle-ico{display:inline-block;}
+
+/* ═══════════════════════════════════════════
+   PANEL 2 — sub-items (slides in from Panel 1)
+═══════════════════════════════════════════ */
+.sb-children{
+  /* Position Panel 2 to the RIGHT of Panel 1 */
+  position:fixed;
+  top:0;
+  left:var(--sb-p1);
+  bottom:0;
+  width:0;
+  overflow:hidden;
+  background:#1a3a52;
+  border-right:1px solid rgba(255,255,255,.08);
+  z-index:299;
+  display:flex;flex-direction:column;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
+}
+.sb-children.open{
+  width:var(--sb-p2);
+}
+/* Panel 2 header (module name) */
+.sb-children::before{
+  content:attr(data-title);
+  display:block;
+  padding:15px 16px 10px;
+  font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:rgba(255,255,255,.4);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  flex-shrink:0;white-space:nowrap;
+}
+
+/* Sub-items */
+.sb-child{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 16px;
+  cursor:pointer;
+  color:rgba(255,255,255,.65);
+  font-size:13.5px;font-weight:500;
+  transition:all .12s;
+  border-left:3px solid transparent;
+  text-decoration:none!important;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.sb-child:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.95);}
+.sb-child.active{
+  color:#fff;font-weight:700;
+  background:rgba(255,255,255,.1);border-left-color:#60a5fa;
+}
+.sb-cico{
+  width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sb-cico svg{width:14px;height:14px;display:block;}
+
+/* Badge in Panel 2 */
+.sb-child .sb-bdg{
+  display:inline-flex;margin-left:auto;
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;
+}
+.sb-child .sb-bdg.am{background:var(--amber);}
+
+/* ── MAIN content area ── */
+#main{
+  margin-left:var(--sb-p1);
+  flex:1;display:flex;flex-direction:column;min-height:100vh;
+  transition:margin-left .22s cubic-bezier(.4,0,.2,1);
+}
+/* Push main right when Panel 2 is open */
+body.p2-open #main{
+  margin-left:calc(var(--sb-p1) + var(--sb-p2));
+}
+/* Sidebar hidden (equipment pages) */
+.sidebar-hidden #main{margin-left:0!important;}
+
+/* ── TOPBAR ── */
+#topbar{
+  height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:10px;
+  position:sticky;top:0;z-index:200;
+}
+.tb-back{
+  display:flex;align-items:center;gap:5px;
+  font-size:13.5px;font-weight:600;color:var(--muted);
+  padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;
+}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-bc{font-size:13.5px;color:var(--muted);flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border-radius:8px;border:1px solid var(--border);background:#f6f8fa;
+  font-size:13px;font-weight:700;color:var(--text2);
+}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),#0891b2);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700;
+}
+
+/* ── COMMON BUTTONS ── */
+.tbtn{
+  display:flex;align-items:center;gap:5px;padding:7px 13px;
+  border-radius:7px;border:1px solid var(--border);
+  background:#fff;color:var(--text2);font-size:13.5px;font-weight:700;
+  cursor:pointer;transition:all .12s;font-family:inherit;white-space:nowrap;
+}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.success{background:var(--green-bg);color:var(--green);border-color:var(--green-bd);}
+.tbtn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+.tbtn.excel{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0;}
+.tbtn.pdf{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+
+/* ── COMMON BADGES ── */
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-x{background:#f1f5f9;color:var(--muted);border:1px solid #e2e8f0;}
+.b-p{background:var(--purple-bg);color:var(--purple);}
+.b-t{background:var(--teal-bg);color:var(--teal);}
+
+/* ── SIDEBAR JS (embed in every page) ─────────────
+   function sbInit(){
+     document.querySelectorAll('.sb-parent').forEach(p=>{
+       p.addEventListener('click',()=>{
+         const k=p.dataset.k;
+         const ch=document.getElementById('ch-'+k);
+         const isOpen=ch&&ch.classList.contains('open');
+         // Close all
+         document.querySelectorAll('.sb-children').forEach(c=>c.classList.remove('open'));
+         document.querySelectorAll('.sb-parent').forEach(x=>x.classList.remove('p2-open'));
+         document.body.classList.remove('p2-open');
+         // Toggle this one
+         if(!isOpen&&ch){ch.classList.add('open');p.classList.add('p2-open');document.body.classList.add('p2-open');}
+       });
+     });
+     // Close panel 2 on outside click
+     document.addEventListener('click',e=>{
+       if(!e.target.closest('#sidebar')){
+         document.querySelectorAll('.sb-children').forEach(c=>c.classList.remove('open'));
+         document.querySelectorAll('.sb-parent').forEach(x=>x.classList.remove('p2-open'));
+         document.body.classList.remove('p2-open');
+       }
+     });
+   }
+   sbInit();
+─────────────────────────────────────────────── */

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Running Hours | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="running-hours.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-menu{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;font-size:18px;color:var(--muted);}
+.tb-menu:hover{background:#f6f8fa;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+#content{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:#f6f8fa;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{background:var(--blue-lt);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-hdr h2{font-size:14px;font-weight:700;}
+.note-bar{background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:8px;}
+.filter-bar{padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fb-select{background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-weight:600;color:var(--text2);outline:none;font-family:inherit;cursor:pointer;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr.row-warn td{background:#fffbeb;}
+tr.row-danger td{background:#fef2f2;}
+.reading-input{width:110px;padding:6px 10px;border:1.5px solid var(--blue-bd);border-radius:7px;font-size:13px;font-weight:700;color:var(--blue);background:var(--blue-bg);outline:none;font-family:inherit;text-align:right;}
+.reading-input:focus{border-color:var(--blue);background:#fff;}
+.add-hrs{font-weight:800;font-size:13px;}
+.add-hrs.pos{color:var(--green);}
+.add-hrs.warn{color:var(--amber);}
+.add-hrs.danger{color:var(--red);}
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-ok{background:var(--green-bg);color:var(--green);}
+.b-warn{background:var(--amber-bg);color:var(--amber);}
+.b-danger{background:var(--red-bg);color:var(--red);}
+.b-na{background:#f3f4f6;color:#6b7280;}
+.tbl-footer{padding:10px 14px;background:#f9fafb;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:var(--muted);}
+.tbl-footer span{color:var(--text);font-weight:800;}
+/* SLIDE PANEL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;display:none;}
+.overlay.open{display:block;}
+.slide-panel{position:fixed;top:0;right:0;width:520px;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:401;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;}
+.slide-panel.open{transform:translateX(0);}
+.sp-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;flex-shrink:0;}
+.sp-hdr h3{font-size:15px;font-weight:700;}
+.sp-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.sp-body{padding:20px;flex:1;}
+.sp-equip{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../MarineDashb.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint" data-title="Maintenance">
+      <a class="sb-child" href="../equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="../due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs</a>
+      <a class="sb-child" href="../job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order</a>
+      <a class="sb-child" href="../running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="../technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="../reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="../guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="../dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="../pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="../../mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="../../mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="../../mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="../../administration/users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="../../administration/access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <a class="sb-child" href="../../administration/system-config/system-config.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</a>
+      <a class="sb-child" href="../../administration/livefleet/livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</a>
+      <a class="sb-child" href="../../administration/monitoring-audit/monitoring-audit.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tb-menu" onclick="toggleSidebar()">☰</button>
+    <a class="tb-back" href="../../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Running Hours</div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div>MV Pacific Star</div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </div>
+  <div id="content">
+    <div class="note-bar">ℹ️ New entries auto-recalculate next due hours for all linked job plans.</div>
+    <div class="card">
+      <div class="card-hdr">
+        <h2>Equipment Running Hours</h2>
+        <div style="display:flex;gap:8px;">
+          <select class="fb-select" style="border-color:var(--border)"><option>All Equipment</option><option>Main Engine</option><option>Generators</option><option>Purifiers</option></select>
+          <button class="btn primary" onclick="saveAllReadings()">💾 Save All Readings</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Equipment Name</th>
+              <th>Code</th>
+              <th>Current Counter (hrs)</th>
+              <th style="background:var(--blue-bg);color:var(--blue)">Present Reading ✎</th>
+              <th>Previous Reading</th>
+              <th>Additional Hours</th>
+              <th>Reading Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rh-tbody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="tbl-footer">
+        <div>Total Running Hours (Main Engine): <span id="me-total">—</span> hrs</div>
+        <div style="display:flex;gap:16px;font-size:12px;">
+          <span style="color:var(--red)">■ Approaching threshold</span>
+          <span style="color:var(--amber)">■ Within 20% of threshold</span>
+          <span style="color:var(--green)">■ Normal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY PANEL -->
+<div class="overlay" id="overlay" onclick="closeHistory()"></div>
+<div class="slide-panel" id="hist-panel">
+  <div class="sp-hdr"><h3>Reading History</h3><button class="sp-close" onclick="closeHistory()">✕</button></div>
+  <div class="sp-body">
+    <div class="sp-equip" id="hist-equip">—</div>
+    <table>
+      <thead><tr><th>Date</th><th>Previous (hrs)</th><th>New Reading (hrs)</th><th>Additional (hrs)</th><th>Logged By</th></tr></thead>
+      <tbody id="hist-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../../data/sample-data.js"></script>
+<script>
+const equipment=[
+  {name:'Main Engine',code:'ME-001',current:14820,prev:14750,date:'2026-06-05',threshold:250,nextDue:15000,status:'warn'},
+  {name:'Generator #1',code:'GEN-001',current:8340,prev:8290,date:'2026-06-08',threshold:500,nextDue:8500,status:'warn'},
+  {name:'Generator #2',code:'GEN-002',current:6120,prev:6080,date:'2026-06-10',threshold:500,nextDue:6500,status:'ok'},
+  {name:'Aux Engine #1',code:'AE-001',current:5460,prev:5410,date:'2026-06-09',threshold:500,nextDue:5500,status:'danger'},
+  {name:'FO Purifier',code:'FOP-001',current:3200,prev:3170,date:'2026-06-11',threshold:250,nextDue:3250,status:'warn'},
+  {name:'LO Purifier',code:'LOP-001',current:2980,prev:2950,date:'2026-06-11',threshold:250,nextDue:3250,status:'ok'},
+  {name:'Cargo Pump',code:'CP-001',current:1850,prev:1820,date:'2026-06-07',threshold:500,nextDue:2000,status:'ok'},
+  {name:'Air Compressor',code:'AC-001',current:4430,prev:4400,date:'2026-06-06',threshold:250,nextDue:4500,status:'danger'},
+];
+const history={
+  'ME-001':[{date:'2026-06-05',prev:14750,reading:14820,add:70,by:'Rajan Kumar'},{date:'2026-05-28',prev:14680,reading:14750,add:70,by:'Anand Patel'},{date:'2026-05-21',prev:14610,reading:14680,add:70,by:'Marcus Lee'}],
+  'GEN-001':[{date:'2026-06-08',prev:8290,reading:8340,add:50,by:'Ibrahim Al-Rashid'},{date:'2026-06-01',prev:8240,reading:8290,add:50,by:'Rajan Kumar'}],
+};
+
+function renderTable(){
+  const tbody=document.getElementById('rh-tbody');
+  tbody.innerHTML=equipment.map((e,i)=>{
+    const add=e.current-e.prev;
+    const rowCls=e.status==='danger'?'row-danger':e.status==='warn'?'row-warn':'';
+    const statusBadge=e.status==='danger'?'<span class="b b-danger">Near Threshold</span>':e.status==='warn'?'<span class="b b-warn">Within 20%</span>':'<span class="b b-ok">Normal</span>';
+    const addCls=e.status==='danger'?'danger':e.status==='warn'?'warn':'pos';
+    return `<tr class="${rowCls}">
+      <td style="font-weight:700">${e.name}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--muted)">${e.code}</td>
+      <td style="font-weight:800">${e.current.toLocaleString()} hrs</td>
+      <td><input class="reading-input" type="number" value="${e.current}" id="inp-${i}" oninput="calcAdd(${i})" step="1"/></td>
+      <td>${e.prev.toLocaleString()} hrs</td>
+      <td><span class="add-hrs ${addCls}" id="add-${i}">+${add} hrs</span></td>
+      <td><input type="date" value="${e.date}" style="border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12.5px;font-family:inherit;font-weight:600;background:#f9fafb;outline:none;"/></td>
+      <td>${statusBadge}</td>
+      <td><button class="btn sm" onclick="openHistory('${e.code}','${e.name}')">📋 History</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('me-total').textContent=equipment[0].current.toLocaleString();
+}
+function calcAdd(i){
+  const inp=document.getElementById('inp-'+i);
+  const val=parseInt(inp.value)||0;
+  const add=val-equipment[i].prev;
+  const span=document.getElementById('add-'+i);
+  span.textContent=(add>=0?'+':'')+add+' hrs';
+  span.className='add-hrs '+(add<0?'danger':add>50?'warn':'pos');
+}
+function saveAllReadings(){showToast('All running hour readings saved successfully');}
+function openHistory(code,name){
+  document.getElementById('hist-equip').textContent=name+' ('+code+')';
+  const rows=history[code]||[];
+  document.getElementById('hist-tbody').innerHTML=rows.length?rows.map(r=>`<tr><td>${r.date}</td><td>${r.prev.toLocaleString()}</td><td>${r.reading.toLocaleString()}</td><td style="color:var(--green);font-weight:800">+${r.add}</td><td>${r.by}</td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">No history available</td></tr>';
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('hist-panel').classList.add('open');
+}
+function closeHistory(){document.getElementById('overlay').classList.remove('open');document.getElementById('hist-panel').classList.remove('open');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function toggleSidebar(){const sb=document.getElementById('sidebar');const m=document.getElementById('main');sb.classList.toggle('visible');m.classList.toggle('with-sidebar');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k;const ch=document.getElementById('ch-'+k);p.classList.toggle('open');ch.classList.toggle('open');});});
+renderTable();
+</script>
+</body>
+</html>

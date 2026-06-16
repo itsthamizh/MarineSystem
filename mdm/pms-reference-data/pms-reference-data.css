@@ -1,0 +1,5 @@
+/* pms-reference-data.css — Page-specific styles for pms-reference-data
+   Shared sidebar & common styles: ../../shared/sidebar.css
+   Add page-specific overrides below.
+*/
+@import url('../../shared/sidebar.css');

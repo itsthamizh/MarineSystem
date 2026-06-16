@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Users &amp; Roles | Administration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="users-roles.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;--purple-bd:#e9d5ff;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* SIDEBAR */
+
+/* MAIN */
+
+/* TOPBAR */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-bc{font-size:13px;color:var(--muted);flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.success{background:var(--green-bg);color:var(--green);border-color:var(--green-bd);}
+.tbtn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+.tbtn.icon-only{padding:7px 10px;font-size:16px;}
+
+/* CONTENT */
+.content{flex:1;padding:20px;}
+.content::-webkit-scrollbar{width:5px;}
+
+/* MAIN TABS */
+.main-tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:4px;margin-bottom:18px;width:fit-content;}
+.main-tab{padding:7px 18px;border-radius:7px;font-size:13.5px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .13s;}
+.main-tab:hover{color:var(--text);}
+.main-tab.active{background:var(--blue);color:#fff;}
+
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* PAGE HEADER */
+.pg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.pg-title{font-size:17px;font-weight:800;}
+.pg-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
+.card-title{font-size:14px;font-weight:700;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border-lt);font-weight:600;color:var(--text2);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#fafbfc;}
+.tbl-toolbar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border-lt);flex-wrap:wrap;}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-x{background:#f1f5f9;color:var(--muted);}
+.b-p{background:var(--purple-bg);color:var(--purple);}
+
+/* TOGGLE */
+.toggle{position:relative;display:inline-block;width:34px;height:18px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#d1d5db;transition:.2s;border-radius:18px;}
+.toggle-sl:before{position:absolute;content:"";height:12px;width:12px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%;}
+.toggle input:checked+.toggle-sl{background:var(--green);}
+.toggle input:checked+.toggle-sl:before{transform:translateX(16px);}
+
+/* ACTION ICONS */
+.act-ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:#fff;font-size:12px;transition:all .12s;}
+.act-ico:hover{background:#f6f8fa;}
+
+/* SELECT / INPUT */
+.fs{background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;font-weight:500;cursor:pointer;}
+.fs:focus{border-color:var(--blue-bd);background:#fff;}
+.fi{background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:7px 11px;font-size:13px;font-family:inherit;outline:none;font-weight:500;}
+.fi:focus{border-color:var(--blue-bd);background:#fff;}
+
+/* CHECKBOX */
+.chk{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;}
+
+/* AVATAR */
+.ava{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0;}
+.ava.green{background:linear-gradient(135deg,var(--green),#0d9488);}
+.ava.purple{background:linear-gradient(135deg,var(--purple),#7c3aed);}
+.ava.amber{background:linear-gradient(135deg,var(--amber),#ea580c);}
+.ava.red{background:linear-gradient(135deg,var(--red),#dc2626);}
+
+/* ROLE PANEL LAYOUT */
+.roles-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start;}
+.role-list{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.role-list-hdr{padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-lt);background:#f9fafb;border-bottom:1px solid var(--border);}
+.role-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border-lt);transition:all .12s;}
+.role-item:last-child{border-bottom:none;}
+.role-item:hover{background:#f6f8fa;}
+.role-item.active{background:var(--blue-bg);}
+.role-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.role-name{font-size:13px;font-weight:700;color:var(--text);}
+.role-item.active .role-name{color:var(--blue);}
+.role-desc{font-size:11.5px;color:var(--muted);}
+.role-badge{font-size:11px;font-weight:700;background:#f1f5f9;color:var(--muted);padding:2px 7px;border-radius:12px;margin-left:auto;flex-shrink:0;}
+.role-item.active .role-badge{background:var(--blue-bg);color:var(--blue);}
+
+/* PERMISSION MATRIX */
+.perm-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.perm-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+.perm-title{font-size:14px;font-weight:700;}
+.perm-tbl{width:100%;border-collapse:collapse;}
+.perm-tbl th{padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);text-align:left;}
+.perm-tbl th.center{text-align:center;}
+.perm-tbl td{padding:10px 16px;border-bottom:1px solid var(--border-lt);vertical-align:middle;}
+.perm-tbl tr:last-child td{border-bottom:none;}
+.perm-tbl tr:hover td{background:#fafbfc;}
+.perm-mod{font-size:12.5px;font-weight:700;color:var(--text2);}
+.perm-sub{font-size:11.5px;color:var(--muted);padding-left:20px;}
+.perm-chk{text-align:center;}
+.perm-chk input{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;}
+
+/* SLIDE PANEL */
+.slide-panel{position:fixed;top:0;right:-480px;width:460px;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:500;display:flex;flex-direction:column;transition:right .2s ease;box-shadow:-4px 0 20px rgba(0,0,0,.08);}
+.slide-panel.open{right:0;}
+.sp-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sp-title{font-size:15px;font-weight:800;}
+.sp-close{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:#fff;font-size:16px;transition:all .12s;}
+.sp-close:hover{background:#f6f8fa;}
+.sp-body{flex:1;overflow-y:auto;padding:20px;}
+.sp-body::-webkit-scrollbar{width:5px;}
+.sp-body::-webkit-scrollbar-thumb{background:#d1d5db;}
+.sp-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+
+/* FORM */
+.fg{display:grid;gap:16px;}
+.fg2{grid-template-columns:1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.span2{grid-column:span 2;}
+.fl{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.fi2,.fs2{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;outline:none;background:#fff;color:var(--text);transition:border .13s;}
+.fi2:focus,.fs2:focus{border-color:var(--blue-bd);}
+
+/* VESSEL CHECKBOXES */
+.vessel-list{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;background:#f9fafb;}
+.vessel-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* MFA CARD */
+.mfa-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:16px;}
+.mfa-hdr{padding:14px 18px;border-bottom:1px solid var(--border-lt);}
+.mfa-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-lt);}
+.mfa-row:last-child{border-bottom:none;}
+.mfa-domain{font-size:13.5px;font-weight:700;}
+.mfa-domain-desc{font-size:11.5px;color:var(--muted);}
+
+/* RANK MAPPING */
+.rank-tbl{width:100%;border-collapse:collapse;}
+.rank-tbl th{padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.rank-tbl td{padding:10px 14px;border-bottom:1px solid var(--border-lt);font-weight:600;color:var(--text2);}
+.rank-tbl tr:last-child td{border-bottom:none;}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:490;}
+.overlay.show{display:block;}
+
+/* INFO NOTE */
+.info-note{background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:8px;padding:10px 14px;font-size:12.5px;color:var(--blue);font-weight:600;margin-bottom:12px;}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../MarineDashb.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint" data-title="Maintenance">
+      <a class="sb-child" href="../../maintenance/equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="../../maintenance/due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs</a>
+      <a class="sb-child" href="../../maintenance/job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order</a>
+      <a class="sb-child" href="../../maintenance/running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="../../maintenance/technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="../../maintenance/reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="../../maintenance/guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="../../maintenance/dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="../../maintenance/pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="../../mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="../../mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="../../mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="../users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="../access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <a class="sb-child" href="../system-config/system-config.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</a>
+      <a class="sb-child" href="../livefleet/livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</a>
+      <a class="sb-child" href="../monitoring-audit/monitoring-audit.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <button class="tbtn icon-only" id="sidebarToggle" title="Toggle sidebar">☰</button>
+    <div style="width:1px;height:20px;background:var(--border);"></div>
+    <div class="tb-bc">Administration &rsaquo; <span>Users &amp; Roles</span></div>
+    <div class="tb-ava">RK</div>
+  </div>
+
+  <div class="content">
+    <!-- MAIN TABS -->
+    <div class="main-tabs">
+      <div class="main-tab active" onclick="switchMainTab('users',this)">👥 Users</div>
+      <div class="main-tab" onclick="switchMainTab('roles',this)">🔐 Roles &amp; Permissions</div>
+    </div>
+
+    <!-- ═══════════════ USERS TAB ═══════════════ -->
+    <div class="tab-panel active" id="tab-users">
+      <div class="pg-hdr">
+        <div>
+          <div class="pg-title">Users</div>
+          <div class="pg-sub">Manage system users, access and authentication settings</div>
+        </div>
+        <button class="tbtn primary" onclick="openPanel()">+ Invite User</button>
+      </div>
+
+      <div class="card">
+        <div class="tbl-toolbar">
+          <input type="text" class="fi" placeholder="🔍  Search users…" style="max-width:260px;" oninput="filterTable(this,'usersTbl')"/>
+          <select class="fs">
+            <option value="">All Roles</option>
+            <option>Admin</option>
+            <option>Fleet Manager</option>
+            <option>Technical Superintendent</option>
+            <option>Chief Engineer</option>
+            <option>Vessel Officer</option>
+            <option>Read Only</option>
+          </select>
+          <select class="fs">
+            <option value="">All Statuses</option>
+            <option>Active</option>
+            <option>Inactive</option>
+          </select>
+          <div style="flex:1;"></div>
+          <span style="font-size:12.5px;color:var(--muted);font-weight:600;">12 users</span>
+        </div>
+        <table class="tbl" id="usersTbl">
+          <thead>
+            <tr>
+              <th style="width:32px;"><input class="chk" type="checkbox" onchange="toggleAll(this)"/></th>
+              <th>User</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Designation</th>
+              <th>Vessel Access</th>
+              <th>MFA</th>
+              <th>Last Active</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava">RK</div><div><div style="font-size:13px;font-weight:700;">Rajan Kumar</div><div style="font-size:11.5px;color:var(--muted);">Chief Engineer</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">ce@mvsar.com</td>
+              <td><span class="b b-b">Chief Engineer</span></td>
+              <td>Chief Engineer</td>
+              <td><span class="b b-x">MV Sarvesh</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td><span style="color:var(--green);font-weight:700;">Just now</span></td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" title="Edit" style="font-size:13px;">✏️</span>
+                <span class="act-ico" title="Reset Password" style="font-size:13px;">🔑</span>
+                <span class="act-ico" title="Deactivate" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava green">TS</div><div><div style="font-size:13px;font-weight:700;">Thamizh Selvan</div><div style="font-size:11.5px;color:var(--muted);">Administrator</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">thamizh@mariapps.com</td>
+              <td><span class="b b-p">Admin</span></td>
+              <td>System Administrator</td>
+              <td><span class="b b-x">All Vessels</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>2 min ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava amber">AM</div><div><div style="font-size:13px;font-weight:700;">Arun Mishra</div><div style="font-size:11.5px;color:var(--muted);">Technical Superintendent</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">a.mishra@mariapps.com</td>
+              <td><span class="b b-a">Tech. Supt.</span></td>
+              <td>Technical Superintendent</td>
+              <td><span class="b b-x">Fleet A</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>1 hr ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava purple">RS</div><div><div style="font-size:13px;font-weight:700;">Capt. Rajesh Sharma</div><div style="font-size:11.5px;color:var(--muted);">Captain</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">capt@mvsar.com</td>
+              <td><span class="b b-b">Fleet Manager</span></td>
+              <td>Master</td>
+              <td><span class="b b-x">MV Sarvesh</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>3 hrs ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava green">PN</div><div><div style="font-size:13px;font-weight:700;">Eng. Priya Nair</div><div style="font-size:11.5px;color:var(--muted);">2nd Engineer</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">p.nair@neptune.com</td>
+              <td><span class="b b-b">Vessel Officer</span></td>
+              <td>2nd Engineer</td>
+              <td><span class="b b-x">MV Neptune Star</span></td>
+              <td><span class="b b-x">No</span></td>
+              <td>Yesterday</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava amber">DC</div><div><div style="font-size:13px;font-weight:700;">David Chen</div><div style="font-size:11.5px;color:var(--muted);">Captain</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">d.chen@neptune.com</td>
+              <td><span class="b b-b">Fleet Manager</span></td>
+              <td>Master</td>
+              <td><span class="b b-x">MV Neptune Star</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>2 days ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava red">KP</div><div><div style="font-size:13px;font-weight:700;">Kiran Pillai</div><div style="font-size:11.5px;color:var(--muted);">3rd Engineer</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">k.pillai@mvsar.com</td>
+              <td><span class="b b-b">Vessel Officer</span></td>
+              <td>3rd Engineer</td>
+              <td><span class="b b-x">MV Sarvesh</span></td>
+              <td><span class="b b-x">No</span></td>
+              <td>3 days ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava">JL</div><div><div style="font-size:13px;font-weight:700;">James Liu</div><div style="font-size:11.5px;color:var(--muted);">Fleet Manager</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">j.liu@mariapps.com</td>
+              <td><span class="b b-b">Fleet Manager</span></td>
+              <td>Fleet Manager</td>
+              <td><span class="b b-x">All Vessels</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>1 week ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava purple">SA</div><div><div style="font-size:13px;font-weight:700;">Sree Anand</div><div style="font-size:11.5px;color:var(--muted);">Superintendent</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">s.anand@mariapps.com</td>
+              <td><span class="b b-a">Tech. Supt.</span></td>
+              <td>Technical Superintendent</td>
+              <td><span class="b b-x">Fleet B</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>2 weeks ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava red">MK</div><div><div style="font-size:13px;font-weight:700;">Mohamed Karim</div><div style="font-size:11.5px;color:var(--muted);">Officer</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">m.karim@pvl.com</td>
+              <td><span class="b b-b">Vessel Officer</span></td>
+              <td>Chief Officer</td>
+              <td><span class="b b-x">MV Pacific Voyager</span></td>
+              <td><span class="b b-x">No</span></td>
+              <td>1 month ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava amber">NK</div><div><div style="font-size:13px;font-weight:700;">Naresh Kumar</div><div style="font-size:11.5px;color:var(--muted);">Auditor</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">n.kumar@audit.in</td>
+              <td><span class="b b-x">Read Only</span></td>
+              <td>External Auditor</td>
+              <td><span class="b b-x">Restricted</span></td>
+              <td><span class="b b-x">No</span></td>
+              <td>2 months ago</td>
+              <td><span class="b b-r">Inactive</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+            <tr>
+              <td><input class="chk" type="checkbox"/></td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="ava green">LB</div><div><div style="font-size:13px;font-weight:700;">Lena Bergman</div><div style="font-size:11.5px;color:var(--muted);">ISM Manager</div></div></div></td>
+              <td style="font-family:monospace;font-size:12.5px;">l.bergman@mariapps.com</td>
+              <td><span class="b b-a">Tech. Supt.</span></td>
+              <td>ISM / DPA Manager</td>
+              <td><span class="b b-x">All Vessels</span></td>
+              <td><span class="b b-g">✓ Yes</span></td>
+              <td>5 days ago</td>
+              <td><span class="b b-g">Active</span></td>
+              <td style="white-space:nowrap;">
+                <span class="act-ico" onclick="openPanel()" style="font-size:13px;">✏️</span>
+                <span class="act-ico" style="font-size:13px;">🔑</span>
+                <span class="act-ico" style="font-size:13px;">⛔</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /tab-users -->
+
+    <!-- ═══════════════ ROLES TAB ═══════════════ -->
+    <div class="tab-panel" id="tab-roles">
+      <div class="pg-hdr">
+        <div>
+          <div class="pg-title">Roles &amp; Permissions</div>
+          <div class="pg-sub">Define what each role can read, write and execute across all modules</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="tbtn">📤 Export Audit Report</button>
+          <button class="tbtn primary">+ New Role</button>
+        </div>
+      </div>
+
+      <div class="roles-layout">
+        <!-- Role List -->
+        <div class="role-list">
+          <div class="role-list-hdr">6 Roles</div>
+          <div class="role-item" onclick="selectRole(this,'Admin')" style="background:var(--blue-bg);">
+            <div class="role-icon" style="background:var(--purple-bg);">🛡️</div>
+            <div style="flex:1;">
+              <div class="role-name" style="color:var(--blue);">Admin</div>
+              <div class="role-desc">Full system access</div>
+            </div>
+            <span class="role-badge" style="background:var(--blue-bg);color:var(--blue);">2</span>
+          </div>
+          <div class="role-item" onclick="selectRole(this,'Fleet Manager')">
+            <div class="role-icon" style="background:#fef3c7;">🚢</div>
+            <div style="flex:1;">
+              <div class="role-name">Fleet Manager</div>
+              <div class="role-desc">Fleet oversight &amp; reporting</div>
+            </div>
+            <span class="role-badge">3</span>
+          </div>
+          <div class="role-item" onclick="selectRole(this,'Technical Superintendent')">
+            <div class="role-icon" style="background:var(--amber-bg);">🔧</div>
+            <div style="flex:1;">
+              <div class="role-name">Technical Superintendent</div>
+              <div class="role-desc">Technical ops &amp; planning</div>
+            </div>
+            <span class="role-badge">4</span>
+          </div>
+          <div class="role-item active" onclick="selectRole(this,'Chief Engineer')">
+            <div class="role-icon" style="background:var(--blue-bg);">⚙️</div>
+            <div style="flex:1;">
+              <div class="role-name">Chief Engineer</div>
+              <div class="role-desc">Vessel maintenance operations</div>
+            </div>
+            <span class="role-badge" style="background:var(--blue-bg);color:var(--blue);">8</span>
+          </div>
+          <div class="role-item" onclick="selectRole(this,'Vessel Officer')">
+            <div class="role-icon" style="background:var(--green-bg);">👷</div>
+            <div style="flex:1;">
+              <div class="role-name">Vessel Officer</div>
+              <div class="role-desc">Job execution &amp; reporting</div>
+            </div>
+            <span class="role-badge">15</span>
+          </div>
+          <div class="role-item" onclick="selectRole(this,'Read Only')">
+            <div class="role-icon" style="background:#f1f5f9;">👁️</div>
+            <div style="flex:1;">
+              <div class="role-name">Read Only</div>
+              <div class="role-desc">View access — no edits</div>
+            </div>
+            <span class="role-badge">5</span>
+          </div>
+        </div>
+
+        <!-- Permissions Matrix -->
+        <div>
+          <div class="perm-card">
+            <div class="perm-hdr">
+              <div>
+                <div class="perm-title" id="perm-role-name">Chief Engineer — Permissions</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Click checkboxes to update access rights</div>
+              </div>
+              <button class="tbtn primary" style="font-size:12.5px;">💾 Save Permissions</button>
+            </div>
+            <table class="perm-tbl" id="permMatrix">
+              <thead>
+                <tr>
+                  <th style="width:55%;">Module / Screen</th>
+                  <th class="center" style="width:15%;">Read</th>
+                  <th class="center" style="width:15%;">Write</th>
+                  <th class="center" style="width:15%;">Execute</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="perm-mod">Dashboard</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-mod" style="background:#f9fafb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);" colspan="4">Maintenance</td></tr>
+                <tr><td class="perm-sub">Due Jobs</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td></tr>
+                <tr><td class="perm-sub">Equipments</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-sub">Job Order</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td></tr>
+                <tr><td class="perm-sub">Running Hours</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox" checked></td></tr>
+                <tr><td class="perm-sub">Reports</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-mod" style="background:#f9fafb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);" colspan="4">MDM</td></tr>
+                <tr><td class="perm-sub">Vessel Register</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-sub">Common</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-sub">PMS Reference Data</td><td class="perm-chk"><input type="checkbox" checked></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-mod" style="background:#f9fafb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);" colspan="4">Administration</td></tr>
+                <tr><td class="perm-sub">Users &amp; Roles</td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-sub">System Config</td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+                <tr><td class="perm-sub">Monitoring &amp; Audit</td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td><td class="perm-chk"><input type="checkbox"></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Role to Rank Mapping -->
+          <div class="card" style="margin-top:16px;">
+            <div style="padding:14px 18px;border-bottom:1px solid var(--border-lt);display:flex;align-items:center;justify-content:space-between;">
+              <div class="card-title">Role-to-Rank Mapping</div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Mapping</button>
+            </div>
+            <div style="padding:10px 16px 6px;font-size:12px;color:var(--muted);font-weight:600;">Auto-assign roles when a new user is created with a matching rank</div>
+            <table class="rank-tbl">
+              <thead><tr><th>Rank / Designation</th><th>Auto-Assigned Role</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Master</strong></td><td><span class="b b-b">Fleet Manager</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>Chief Officer</strong></td><td><span class="b b-b">Fleet Manager</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>Chief Engineer</strong></td><td><span class="b b-b">Chief Engineer</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>2nd Engineer</strong></td><td><span class="b b-b">Vessel Officer</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>2nd Officer</strong></td><td><span class="b b-b">Vessel Officer</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>3rd Engineer</strong></td><td><span class="b b-b">Vessel Officer</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>Electrical Officer</strong></td><td><span class="b b-b">Vessel Officer</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+                <tr><td><strong>Technical Superintendent</strong></td><td><span class="b b-a">Tech. Supt.</span></td><td><span class="act-ico" style="font-size:13px;">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MFA Configuration -->
+      <div class="mfa-card">
+        <div class="mfa-hdr" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:14px;font-weight:700;">MFA Configuration</div>
+            <div style="font-size:12.5px;color:var(--muted);margin-top:2px;">Control multi-factor authentication requirements per email domain</div>
+          </div>
+          <button class="tbtn" style="font-size:12.5px;">📧 Send Test Email</button>
+        </div>
+        <div class="mfa-row">
+          <div><div class="mfa-domain">mariapps.com</div><div class="mfa-domain-desc">Internal staff — all roles</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><span class="b b-g">Enforced</span><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></div>
+        </div>
+        <div class="mfa-row">
+          <div><div class="mfa-domain">mvsar.com</div><div class="mfa-domain-desc">MV Sarvesh vessel crew</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><span class="b b-g">Enforced</span><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></div>
+        </div>
+        <div class="mfa-row">
+          <div><div class="mfa-domain">neptune.com</div><div class="mfa-domain-desc">Neptune vessels crew</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><span class="b b-a">Optional</span><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></div>
+        </div>
+        <div class="mfa-row">
+          <div><div class="mfa-domain">External / Guest users</div><div class="mfa-domain-desc">Auditors, inspectors and third-party access</div></div>
+          <div style="display:flex;align-items:center;gap:12px;"><span class="b b-x">Disabled</span><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></div>
+        </div>
+      </div>
+    </div><!-- /tab-roles -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- SLIDE PANEL: Edit / Invite User -->
+<div class="slide-panel" id="slidePanel">
+  <div class="sp-hdr">
+    <div class="sp-title">Edit User — Rajan Kumar</div>
+    <div class="sp-close" onclick="closePanel()">✕</div>
+  </div>
+  <div class="sp-body">
+    <div class="info-note">Changes take effect on next login. MFA settings apply immediately.</div>
+    <div class="fg fg2">
+      <div class="form-group">
+        <label class="fl">First Name</label>
+        <input class="fi2" type="text" value="Rajan"/>
+      </div>
+      <div class="form-group">
+        <label class="fl">Last Name</label>
+        <input class="fi2" type="text" value="Kumar"/>
+      </div>
+      <div class="form-group span2">
+        <label class="fl">Email Address</label>
+        <input class="fi2" type="email" value="ce@mvsar.com"/>
+      </div>
+      <div class="form-group">
+        <label class="fl">Role</label>
+        <select class="fs2">
+          <option>Chief Engineer</option>
+          <option>Fleet Manager</option>
+          <option>Technical Superintendent</option>
+          <option>Vessel Officer</option>
+          <option>Admin</option>
+          <option>Read Only</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="fl">Designation</label>
+        <select class="fs2">
+          <option>Chief Engineer</option>
+          <option>Master</option>
+          <option>Chief Officer</option>
+          <option>2nd Engineer</option>
+          <option>2nd Officer</option>
+          <option>Electrical Officer</option>
+        </select>
+      </div>
+      <div class="form-group span2">
+        <label class="fl">Company</label>
+        <select class="fs2">
+          <option>Neptune Vessel Technologies</option>
+          <option>Sarvesh Shipping Ltd</option>
+          <option>Mariapps Ship Management</option>
+        </select>
+      </div>
+      <div class="form-group span2">
+        <label class="fl">Vessel Distribution</label>
+        <div class="vessel-list">
+          <label class="vessel-item"><input class="chk" type="checkbox" checked> MV Sarvesh</label>
+          <label class="vessel-item"><input class="chk" type="checkbox"> MV Neptune Star</label>
+          <label class="vessel-item"><input class="chk" type="checkbox"> MV Pacific Voyager</label>
+        </div>
+      </div>
+      <div class="form-group span2" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border-lt);">
+        <div>
+          <div style="font-size:13.5px;font-weight:700;">MFA Domain Requirement</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Enforce multi-factor authentication for this user</div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="sp-foot">
+    <button class="tbtn danger" style="font-size:13px;">🔑 Reset Password</button>
+    <div style="flex:1;"></div>
+    <button class="tbtn" onclick="closePanel()">Cancel</button>
+    <button class="tbtn primary">Save Changes</button>
+  </div>
+</div>
+
+<script src="../../data/sample-data.js"></script>
+<script>
+// Sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('visible');
+  main.classList.toggle('with-sidebar');
+});
+
+// Sidebar accordion
+document.querySelectorAll('.sb-parent').forEach(p => {
+  p.addEventListener('click', () => {
+    const k = p.dataset.k;
+    const ch = document.getElementById('ch-' + k);
+    p.classList.toggle('open');
+    ch.classList.toggle('open');
+  });
+});
+
+// Main tabs
+function switchMainTab(tabId, el) {
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  el.classList.add('active');
+}
+
+// Slide panel
+function openPanel() {
+  document.getElementById('slidePanel').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closePanel() {
+  document.getElementById('slidePanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// Select role
+function selectRole(el, roleName) {
+  document.querySelectorAll('.role-item').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('perm-role-name').textContent = roleName + ' — Permissions';
+}
+
+// Toggle all checkboxes
+function toggleAll(masterChk) {
+  document.querySelectorAll('#usersTbl tbody .chk').forEach(c => c.checked = masterChk.checked);
+}
+
+// Filter table
+function filterTable(input, tblId) {
+  const q = input.value.toLowerCase();
+  const tbl = document.getElementById(tblId);
+  if (!tbl) return;
+  tbl.querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

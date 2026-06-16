@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Technical Forms | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-menu{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;font-size:18px;color:var(--muted);}
+.tb-menu:hover{background:#f6f8fa;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+#content{flex:1;padding:20px;display:flex;flex-direction:column;gap:20px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:#f6f8fa;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{background:var(--blue-lt);}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-hdr h2{font-size:14px;font-weight:700;}
+.card-body{padding:16px;}
+.selector-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.form-group select,.form-group input{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-weight:600;color:var(--text);background:#f6f8fa;outline:none;font-family:inherit;transition:border .13s;}
+.form-group select:focus,.form-group input:focus{border-color:var(--blue-bd);background:#fff;}
+/* INLINE FORM */
+.inline-form{border:1.5px solid var(--blue-bd);border-radius:10px;background:var(--blue-bg);padding:18px;margin-top:14px;}
+.inline-form h3{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:14px;}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.form-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.cyl-table{width:100%;border-collapse:collapse;margin-top:8px;}
+.cyl-table th{padding:7px 10px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;}
+.cyl-table td{padding:6px 8px;border-bottom:1px solid var(--border-lt);}
+.cyl-table input{width:100%;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;font-weight:600;background:#fff;outline:none;font-family:inherit;text-align:right;}
+/* TOM GRID */
+.tom-grid-wrap{overflow-x:auto;}
+.tom-grid{width:100%;border-collapse:collapse;font-size:12.5px;}
+.tom-grid th{padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;text-align:center;}
+.tom-grid th:first-child{text-align:left;}
+.tom-grid td{padding:8px 10px;border-bottom:1px solid var(--border-lt);text-align:center;vertical-align:middle;}
+.tom-grid td:first-child{text-align:left;font-weight:700;color:var(--text);}
+.tom-grid tr:hover td{background:#f6f8fa;cursor:pointer;}
+.cell-done{color:var(--green);font-size:16px;cursor:pointer;}
+.cell-pending{color:var(--amber);font-size:16px;}
+.cell-none{color:var(--muted-lt);font-size:16px;}
+.pct-bar{height:6px;background:var(--border);border-radius:3px;margin-top:4px;min-width:60px;}
+.pct-fill{height:100%;background:var(--green);border-radius:3px;}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;width:560px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;border-radius:12px 12px 0 0;}
+.modal-hdr h3{font-size:14px;font-weight:700;}
+.modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;}
+.modal-body{padding:20px;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-maint">
+      <a class="sb-child" href="equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child" href="due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child" href="job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child active" href="technical-forms.html"><span class="sb-cico">📝</span>Technical Forms</a>
+      <a class="sb-child" href="reports.html"><span class="sb-cico">📊</span>Reports</a>
+      <a class="sb-child" href="guarantee-claims.html"><span class="sb-cico">🛡️</span>Guarantee Claims</a>
+      <a class="sb-child" href="dynamic-forms.html"><span class="sb-cico">📐</span>Dynamic Forms</a>
+      <a class="sb-child" href="pms-administration.html"><span class="sb-cico">⚙️</span>PMS Administration</a>
+    </div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm"><a class="sb-child" href="#"><span class="sb-cico">🚢</span>Vessel Register</a></div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin"><a class="sb-child" href="#"><span class="sb-cico">👥</span>Users &amp; Roles</a></div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tb-menu" onclick="toggleSidebar()">☰</button>
+    <a class="tb-back" href="../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Technical Forms</div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div>MV Pacific Star</div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </div>
+  <div id="content">
+    <!-- SECTION 1: FORM SELECTOR -->
+    <div class="card">
+      <div class="card-hdr"><h2>Load Technical Form</h2></div>
+      <div class="card-body">
+        <div class="selector-row">
+          <div class="form-group">
+            <label>Month</label>
+            <select id="sel-month">
+              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+              <option value="4">April</option><option value="5">May</option><option value="6" selected>June</option>
+              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Year</label>
+            <select id="sel-year"><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option></select>
+          </div>
+          <div class="form-group" style="flex:1;min-width:220px;">
+            <label>Form Type</label>
+            <select id="sel-form">
+              <option value="me-perf">ME Performance Check</option>
+              <option value="fw-analysis">FW Analysis</option>
+              <option value="sounding">Sounding Report</option>
+              <option value="bilge">Bilge Water Log</option>
+              <option value="fo-analysis">Fuel Oil Analysis</option>
+              <option value="lo-analysis">LO Analysis</option>
+              <option value="cyl-oil">Cylinder Oil Check</option>
+              <option value="air-cooler">Air Cooler Inspection</option>
+            </select>
+          </div>
+          <button class="btn primary" onclick="loadForm()">Load Form</button>
+        </div>
+        <div id="form-container" style="display:none;" class="inline-form">
+          <!-- form injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: TOM FORMS OVERVIEW -->
+    <div class="card">
+      <div class="card-hdr">
+        <h2>TOM Forms Overview — 2026</h2>
+        <div style="display:flex;gap:12px;font-size:12.5px;font-weight:600;color:var(--muted);align-items:center;">
+          <span style="color:var(--green)">✓ Completed</span>
+          <span style="color:var(--amber)">! Due / Pending</span>
+          <span style="color:var(--muted-lt)">○ Not Yet</span>
+        </div>
+      </div>
+      <div class="tom-grid-wrap">
+        <table class="tom-grid" id="tom-table">
+          <!-- injected by JS -->
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL for completed form data -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><h3 id="modal-title">Form Data</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../data/sample-data.js"></script>
+<script>
+function toggleSidebar(){const sb=document.getElementById('sidebar');const m=document.getElementById('main');sb.classList.toggle('visible');m.classList.toggle('with-sidebar');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k;const ch=document.getElementById('ch-'+k);p.classList.toggle('open');ch.classList.toggle('open');});});
+
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const formTypes=[
+  {id:'me-perf',name:'ME Performance Check'},
+  {id:'fw-analysis',name:'FW Analysis'},
+  {id:'sounding',name:'Sounding Report'},
+  {id:'bilge',name:'Bilge Water Log'},
+  {id:'fo-analysis',name:'Fuel Oil Analysis'},
+  {id:'lo-analysis',name:'LO Analysis'},
+  {id:'cyl-oil',name:'Cylinder Oil Check'},
+  {id:'air-cooler',name:'Air Cooler Inspection'},
+];
+// Random status: 1=done, 2=pending, 0=none (future months)
+const tomData=formTypes.map(()=>Array.from({length:12},(_,i)=>i<5?1:i===5?2:i===6?2:0));
+
+function renderTomGrid(){
+  const t=document.getElementById('tom-table');
+  let html='<thead><tr><th>Form Type</th>';
+  months.forEach(m=>html+=`<th>${m}</th>`);
+  html+='<th>Complete %</th></tr></thead><tbody>';
+  formTypes.forEach((f,fi)=>{
+    const row=tomData[fi];
+    const done=row.filter(v=>v===1).length;
+    const pct=Math.round(done/12*100);
+    html+=`<tr><td>${f.name}</td>`;
+    row.forEach((v,mi)=>{
+      if(v===1) html+=`<td class="cell-done" onclick="showFormData('${f.name}','${months[mi]} 2026')">✓</td>`;
+      else if(v===2) html+=`<td class="cell-pending">!</td>`;
+      else html+=`<td class="cell-none">○</td>`;
+    });
+    html+=`<td><div style="font-size:12px;font-weight:700;color:var(--muted)">${pct}%</div><div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div></td></tr>`;
+  });
+  html+='</tbody>';
+  t.innerHTML=html;
+}
+
+function loadForm(){
+  const type=document.getElementById('sel-form').value;
+  const month=document.querySelector('#sel-month option:checked').text;
+  const year=document.getElementById('sel-year').value;
+  const c=document.getElementById('form-container');
+  c.style.display='block';
+  let html='';
+  if(type==='me-perf'){
+    html=`<h3>ME Performance Check — ${month} ${year}</h3>
+    <div class="form-grid-3" style="margin-bottom:12px;">
+      <div class="form-group"><label>Engine Speed (RPM)</label><input type="number" value="98"/></div>
+      <div class="form-group"><label>Power Output (kW)</label><input type="number" value="8240"/></div>
+      <div class="form-group"><label>Scav. Air Pressure (bar)</label><input type="number" value="2.4" step="0.1"/></div>
+      <div class="form-group"><label>Fuel Index</label><input type="number" value="42"/></div>
+      <div class="form-group"><label>TC Speed (RPM)</label><input type="number" value="12800"/></div>
+      <div class="form-group"><label>FO Inlet Temp (°C)</label><input type="number" value="135"/></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Exhaust Temperature per Cylinder (°C)</div>
+    <table class="cyl-table"><thead><tr><th>Cyl 1</th><th>Cyl 2</th><th>Cyl 3</th><th>Cyl 4</th><th>Cyl 5</th><th>Cyl 6</th></tr></thead>
+    <tbody><tr><td><input type="number" value="390"/></td><td><input type="number" value="385"/></td><td><input type="number" value="392"/></td><td><input type="number" value="388"/></td><td><input type="number" value="391"/></td><td><input type="number" value="387"/></td></tr></tbody></table>`;
+  } else if(type==='fw-analysis'){
+    html=`<h3>Fresh Water Analysis — ${month} ${year}</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>pH Value</label><input type="number" value="8.5" step="0.1"/></div>
+      <div class="form-group"><label>Chloride (ppm)</label><input type="number" value="12"/></div>
+      <div class="form-group"><label>Hardness (ppm)</label><input type="number" value="5"/></div>
+      <div class="form-group"><label>Inhibitor Conc. (%)</label><input type="number" value="3.2" step="0.1"/></div>
+      <div class="form-group"><label>Nitrite Level (ppm)</label><input type="number" value="1200"/></div>
+      <div class="form-group"><label>Iron Content (ppm)</label><input type="number" value="0.3" step="0.1"/></div>
+      <div class="form-group" style="grid-column:span 4"><label>Remarks</label><input type="text" placeholder="Enter remarks…"/></div>
+    </div>`;
+  } else {
+    html=`<h3>${document.querySelector('#sel-form option:checked').text} — ${month} ${year}</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Parameter 1</label><input type="number" value="—"/></div>
+      <div class="form-group"><label>Parameter 2</label><input type="number" value="—"/></div>
+      <div class="form-group"><label>Parameter 3</label><input type="number" value="—"/></div>
+      <div class="form-group"><label>Parameter 4</label><input type="number" value="—"/></div>
+      <div class="form-group" style="grid-column:span 4"><label>Remarks</label><input type="text" placeholder="Enter remarks…"/></div>
+    </div>`;
+  }
+  html+=`<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;"><button class="btn" onclick="document.getElementById('form-container').style.display='none'">Cancel</button><button class="btn primary" onclick="showToast('Form submitted successfully')">Submit Form</button></div>`;
+  c.innerHTML=html;
+}
+
+function showFormData(formName,period){
+  document.getElementById('modal-title').textContent=formName+' — '+period;
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;">
+      <div><span style="color:var(--muted);font-weight:600">Submitted By:</span> <span style="font-weight:700">Rajan Kumar</span></div>
+      <div><span style="color:var(--muted);font-weight:600">Date:</span> <span style="font-weight:700">${period}</span></div>
+      <div><span style="color:var(--muted);font-weight:600">Status:</span> <span style="color:var(--green);font-weight:700">✓ Completed</span></div>
+      <div><span style="color:var(--muted);font-weight:600">Signature:</span> <span style="font-weight:700">RK</span></div>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:#f9fafb;border-radius:8px;font-size:13px;color:var(--muted);font-weight:600">Form data archived. Click Export to download PDF copy.</div>
+    <div style="display:flex;gap:8px;margin-top:14px;"><button class="btn sm" onclick="showToast('Exported as PDF')">Export PDF</button></div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+renderTomGrid();
+</script>
+</body>
+</html>

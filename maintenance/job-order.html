@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Job Order | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --bg:#f0f2f5;--card:#fff;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-menu{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;font-size:18px;color:var(--muted);}
+.tb-menu:hover{background:#f6f8fa;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+#content{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.tab-bar{background:#fff;border:1px solid var(--border);border-radius:var(--r);display:flex;overflow:hidden;}
+.tab{flex:1;padding:12px 10px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;text-align:center;transition:all .12s;border-right:1px solid var(--border);}
+.tab:last-child{border-right:none;}
+.tab:hover{background:#f6f8fa;color:var(--text);}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--blue-bg);font-weight:700;}
+.tab-panel{display:none;}
+.tab-panel.active{display:flex;flex-direction:column;gap:16px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-hdr h2{font-size:14px;font-weight:700;color:var(--text);}
+.card-body{padding:16px;}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.form-group input,.form-group select,.form-group textarea{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-weight:600;color:var(--text);background:#f6f8fa;outline:none;font-family:inherit;transition:border .13s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue-bd);background:#fff;}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;padding-top:12px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:#f6f8fa;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{background:var(--blue-lt);}
+.btn.success{background:var(--green);color:#fff;border-color:var(--green);}
+.btn.danger{background:var(--red);color:#fff;border-color:var(--red);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.filter-bar{padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fb-select{background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-weight:600;color:var(--text2);outline:none;font-family:inherit;cursor:pointer;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:9px 13px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
+td{padding:9px 13px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f6f8fa;}
+.tbl-info{padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--muted);}
+.tbl-info span{color:var(--text);font-weight:800;}
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.b-open{background:var(--blue-bg);color:var(--blue);}
+.b-progress{background:#fef3c7;color:#92400e;}
+.b-closed{background:var(--green-bg);color:var(--green);}
+.b-defect{background:var(--purple-bg);color:var(--purple);}
+.b-pending{background:var(--amber-bg);color:var(--amber);}
+.b-approved{background:var(--green-bg);color:var(--green);}
+.b-rejected{background:var(--red-bg);color:var(--red);}
+.b-urgent{background:var(--red-bg);color:var(--red);}
+.b-high{background:#fff7ed;color:#c2410c;}
+.b-medium{background:var(--amber-bg);color:var(--amber);}
+.b-low{background:var(--green-bg);color:var(--green);}
+.b-critical{background:var(--red-bg);color:var(--red);}
+.b-safety{background:var(--amber-bg);color:var(--amber);}
+.b-std{background:#f3f4f6;color:#6b7280;}
+.mono{font-family:monospace;font-weight:800;color:var(--blue);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;display:none;}
+.overlay.open{display:block;}
+.slide-panel{position:fixed;top:0;right:0;width:480px;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:401;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;}
+.slide-panel.open{transform:translateX(0);}
+.sp-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;flex-shrink:0;}
+.sp-hdr h3{font-size:15px;font-weight:700;}
+.sp-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.sp-body{padding:20px;flex:1;}
+.sp-section{margin-bottom:18px;}
+.sp-section h4{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-lt);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-lbl{font-size:13px;font-weight:600;color:var(--text2);}
+.toggle{position:relative;width:40px;height:22px;cursor:pointer;display:inline-block;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:#d1d5db;border-radius:11px;transition:.2s;}
+.toggle input:checked ~ .toggle-track{background:var(--blue);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle input:checked ~ .toggle-thumb{left:21px;}
+.sp-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+.reject-input{display:none;margin-top:6px;}
+.reject-input.show{display:flex;gap:6px;}
+.reject-input input{flex:1;padding:6px 10px;border:1.5px solid var(--red-bd);border-radius:6px;font-size:12px;font-weight:600;color:var(--text);background:#fff;outline:none;font-family:inherit;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-maint">
+      <a class="sb-child" href="equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child" href="due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child active" href="job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child" href="technical-forms.html"><span class="sb-cico">📝</span>Technical Forms</a>
+      <a class="sb-child" href="reports.html"><span class="sb-cico">📊</span>Reports</a>
+      <a class="sb-child" href="guarantee-claims.html"><span class="sb-cico">🛡️</span>Guarantee Claims</a>
+      <a class="sb-child" href="dynamic-forms.html"><span class="sb-cico">📐</span>Dynamic Forms</a>
+      <a class="sb-child" href="pms-administration.html"><span class="sb-cico">⚙️</span>PMS Administration</a>
+    </div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm"><a class="sb-child" href="#"><span class="sb-cico">🚢</span>Vessel Register</a></div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin"><a class="sb-child" href="#"><span class="sb-cico">👥</span>Users &amp; Roles</a></div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tb-menu" onclick="toggleSidebar()">☰</button>
+    <a class="tb-back" href="../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Job Order</div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div>MV Pacific Star</div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </div>
+  <div id="content">
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('breakdown')">🔴 Log Breakdown Jobs</div>
+      <div class="tab" onclick="switchTab('defects')">⚠️ Defect List</div>
+      <div class="tab" onclick="switchTab('postponed')">⏳ Postponed Jobs Approval</div>
+      <div class="tab" onclick="switchTab('approval')">✅ Approval Cycle</div>
+    </div>
+
+    <!-- BREAKDOWN -->
+    <div class="tab-panel active" id="tab-breakdown">
+      <div class="card">
+        <div class="card-hdr"><h2>Log Breakdown Job</h2></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Equipment</label><select><option>Main Engine</option><option>Generator #1</option><option>Generator #2</option><option>Aux Engine #1</option><option>FO Purifier</option><option>LO Purifier</option><option>Cargo Pump</option><option>Air Compressor</option></select></div>
+            <div class="form-group"><label>Incident Number</label><input type="text" placeholder="INC-2026-####"/></div>
+            <div class="form-group"><label>Job Title</label><input type="text" placeholder="Enter job title"/></div>
+            <div class="form-group"><label>Due Date</label><input type="date" value="2026-06-20"/></div>
+            <div class="form-group"><label>Reported Date</label><input type="date" value="2026-06-12"/></div>
+            <div class="form-group"><label>Reporting Officer</label><select><option>Rajan Kumar (Chief Engineer)</option><option>Anand Patel (2nd Engineer)</option><option>Marcus Lee (3rd Engineer)</option><option>Ibrahim Al-Rashid (4th Engineer)</option></select></div>
+          </div>
+          <div class="form-actions"><button class="btn">Clear</button><button class="btn primary" onclick="showToast('Breakdown job logged successfully')">Log Job</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-info"><span>5</span> Breakdown Jobs Logged</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>JO No.</th><th>Equipment</th><th>Title</th><th>Reported Date</th><th>Due Date</th><th>Status</th><th>Incident No.</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">BD-2026-001</span></td><td>Main Engine</td><td>Fuel injection pump leakage</td><td>12 Jun 2026</td><td>15 Jun 2026</td><td><span class="b b-progress">In Progress</span></td><td>INC-2026-045</td></tr>
+            <tr><td><span class="mono">BD-2026-002</span></td><td>Generator #1</td><td>Abnormal vibration detected</td><td>10 Jun 2026</td><td>13 Jun 2026</td><td><span class="b b-open">Open</span></td><td>INC-2026-043</td></tr>
+            <tr><td><span class="mono">BD-2026-003</span></td><td>FO Purifier</td><td>Bearing temperature high</td><td>08 Jun 2026</td><td>11 Jun 2026</td><td><span class="b b-defect">Linked to Defect</span></td><td>INC-2026-041</td></tr>
+            <tr><td><span class="mono">BD-2026-004</span></td><td>Air Compressor</td><td>Pressure safety valve sticking</td><td>05 Jun 2026</td><td>10 Jun 2026</td><td><span class="b b-closed">Closed</span></td><td>INC-2026-038</td></tr>
+            <tr><td><span class="mono">BD-2026-005</span></td><td>Cargo Pump</td><td>Seal failure on #2 cargo pump</td><td>03 Jun 2026</td><td>08 Jun 2026</td><td><span class="b b-closed">Closed</span></td><td>INC-2026-035</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- DEFECTS -->
+    <div class="tab-panel" id="tab-defects">
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Defect List</h2>
+          <button class="btn primary" onclick="openDefectPanel()">+ Log New Defect</button>
+        </div>
+        <div class="filter-bar">
+          <select class="fb-select"><option>All Equipment</option><option>Main Engine</option><option>Generator #1</option><option>FO Purifier</option></select>
+          <select class="fb-select"><option>All Departments</option><option>Engine</option><option>Deck</option><option>Electrical</option></select>
+          <select class="fb-select"><option>All Status</option><option>Open</option><option>In Progress</option><option>Closed</option></select>
+          <select class="fb-select"><option>All Priority</option><option>Urgent</option><option>High</option><option>Medium</option><option>Low</option></select>
+        </div>
+        <div class="tbl-info"><span>9</span> Defects</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Defect ID</th><th>Equipment</th><th>Department</th><th>Job Title</th><th>Priority</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">DEF-001</span></td><td>Main Engine</td><td>Engine</td><td>Cylinder liner wear check</td><td><span class="b b-urgent">Urgent</span></td><td>10 Jun 2026</td><td>14 Jun 2026</td><td><span class="b b-open">Open</span></td></tr>
+            <tr><td><span class="mono">DEF-002</span></td><td>Generator #1</td><td>Electrical</td><td>AVR fault diagnosis</td><td><span class="b b-high">High</span></td><td>09 Jun 2026</td><td>16 Jun 2026</td><td><span class="b b-progress">In Progress</span></td></tr>
+            <tr><td><span class="mono">DEF-003</span></td><td>LO Purifier</td><td>Engine</td><td>Bowl disc replacement</td><td><span class="b b-high">High</span></td><td>07 Jun 2026</td><td>18 Jun 2026</td><td><span class="b b-open">Open</span></td></tr>
+            <tr><td><span class="mono">DEF-004</span></td><td>Aux Engine #1</td><td>Engine</td><td>Turbocharger fouling</td><td><span class="b b-medium">Medium</span></td><td>06 Jun 2026</td><td>20 Jun 2026</td><td><span class="b b-progress">In Progress</span></td></tr>
+            <tr><td><span class="mono">DEF-005</span></td><td>FO Purifier</td><td>Engine</td><td>Gravity disc damaged</td><td><span class="b b-medium">Medium</span></td><td>04 Jun 2026</td><td>22 Jun 2026</td><td><span class="b b-open">Open</span></td></tr>
+            <tr><td><span class="mono">DEF-006</span></td><td>Cargo Pump</td><td>Deck</td><td>Strainer clogged</td><td><span class="b b-low">Low</span></td><td>03 Jun 2026</td><td>25 Jun 2026</td><td><span class="b b-closed">Closed</span></td></tr>
+            <tr><td><span class="mono">DEF-007</span></td><td>Air Compressor</td><td>Engine</td><td>Unloader valve leaking</td><td><span class="b b-medium">Medium</span></td><td>01 Jun 2026</td><td>15 Jun 2026</td><td><span class="b b-open">Open</span></td></tr>
+            <tr><td><span class="mono">DEF-008</span></td><td>Generator #2</td><td>Electrical</td><td>Brush gear worn out</td><td><span class="b b-high">High</span></td><td>30 May 2026</td><td>12 Jun 2026</td><td><span class="b b-progress">In Progress</span></td></tr>
+            <tr><td><span class="mono">DEF-009</span></td><td>Main Engine</td><td>Engine</td><td>Exhaust valve seat erosion</td><td><span class="b b-urgent">Urgent</span></td><td>28 May 2026</td><td>10 Jun 2026</td><td><span class="b b-closed">Closed</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- POSTPONED -->
+    <div class="tab-panel" id="tab-postponed">
+      <div class="card">
+        <div class="card-hdr"><h2>Postponed Jobs Approval</h2></div>
+        <div class="filter-bar">
+          <select class="fb-select"><option>All Equipment</option><option>Main Engine</option><option>Generator #2</option></select>
+          <select class="fb-select"><option>All Job Types</option><option>PMS</option><option>Breakdown</option><option>Class</option></select>
+          <select class="fb-select"><option>All Safety Levels</option><option>Critical</option><option>Safety</option><option>Standard</option></select>
+          <select class="fb-select"><option>All Approval Status</option><option>Pending Approval</option><option>Approved</option><option>Rejected</option></select>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>JO No.</th><th>Equipment</th><th>Job Title</th><th>Safety Level</th><th>Original Due</th><th>Postponed To</th><th>Count</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">JO-2026-088</span></td><td>Main Engine</td><td>Piston overhaul</td>
+              <td><span class="b b-critical">Critical</span></td><td>05 Jun 2026</td><td>25 Jun 2026</td><td style="text-align:center">2</td>
+              <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Spare parts awaited from port</td>
+              <td><span class="b b-pending">Pending Approval</span></td>
+              <td><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;gap:5px;"><button class="btn success sm" onclick="approveRow(this)">Approve</button><button class="btn danger sm" onclick="showReject(this)">Reject</button></div><div class="reject-input"><input type="text" placeholder="Rejection reason…"/><button class="btn sm" onclick="confirmReject(this)">Submit</button></div></div></td>
+            </tr>
+            <tr>
+              <td><span class="mono">JO-2026-071</span></td><td>Generator #2</td><td>Injector calibration</td>
+              <td><span class="b b-std">Standard</span></td><td>01 Jun 2026</td><td>20 Jun 2026</td><td style="text-align:center">1</td>
+              <td>Shore technician scheduling conflict</td>
+              <td><span class="b b-approved">Approved</span></td>
+              <td><span style="font-size:11.5px;color:var(--muted)">Approved by CE on 02 Jun</span></td>
+            </tr>
+            <tr>
+              <td><span class="mono">JO-2026-065</span></td><td>FO Purifier</td><td>Bowl assembly overhaul</td>
+              <td><span class="b b-safety">Safety</span></td><td>28 May 2026</td><td>15 Jun 2026</td><td style="text-align:center">1</td>
+              <td>Vessel in restricted area</td>
+              <td><span class="b b-pending">Pending Approval</span></td>
+              <td><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;gap:5px;"><button class="btn success sm" onclick="approveRow(this)">Approve</button><button class="btn danger sm" onclick="showReject(this)">Reject</button></div><div class="reject-input"><input type="text" placeholder="Rejection reason…"/><button class="btn sm" onclick="confirmReject(this)">Submit</button></div></div></td>
+            </tr>
+            <tr>
+              <td><span class="mono">JO-2026-052</span></td><td>Air Compressor</td><td>Valve plate renewal</td>
+              <td><span class="b b-std">Standard</span></td><td>20 May 2026</td><td>30 Jun 2026</td><td style="text-align:center">3</td>
+              <td>Manpower shortage on board</td>
+              <td><span class="b b-rejected">Rejected</span></td>
+              <td><span style="font-size:11.5px;color:var(--red)">Exceeded max postponements</span></td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- APPROVAL CYCLE -->
+    <div class="tab-panel" id="tab-approval">
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Approval Cycle</h2>
+          <select class="fb-select"><option>All Disciplines</option><option>Engine</option><option>Deck</option><option>Electrical</option></select>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>JO No.</th><th>Equipment</th><th>Job Title</th><th>Submitted By</th><th>Submitted Date</th><th>Current Approver</th><th>Priority</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">JO-2026-091</span></td><td>Main Engine</td><td>Main bearing renewal</td><td>Marcus Lee</td><td>11 Jun 2026</td><td>Rajan Kumar (CE)</td><td><span class="b b-critical">Critical</span></td><td><span class="b b-pending">Awaiting CE Approval</span></td></tr>
+            <tr><td><span class="mono">JO-2026-089</span></td><td>Aux Engine #1</td><td>Cooling water pump overhaul</td><td>Anand Patel</td><td>10 Jun 2026</td><td>Supt. Vijay Sharma</td><td><span class="b b-high">High</span></td><td><span class="b b-progress">Awaiting Supt. Approval</span></td></tr>
+            <tr><td><span class="mono">JO-2026-083</span></td><td>Generator #1</td><td>Major overhaul 12,000 hrs</td><td>Ibrahim Al-Rashid</td><td>08 Jun 2026</td><td>—</td><td><span class="b b-medium">Medium</span></td><td><span class="b b-approved">Fully Approved</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEFECT SLIDE PANEL -->
+<div class="overlay" id="overlay" onclick="closeDefectPanel()"></div>
+<div class="slide-panel" id="defect-panel">
+  <div class="sp-hdr"><h3>Log New Defect</h3><button class="sp-close" onclick="closeDefectPanel()">✕</button></div>
+  <div class="sp-body">
+    <div class="sp-section">
+      <h4>Equipment</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label>System / Section</label><select><option>Machinery</option><option>Deck</option><option>Electrical</option><option>Hull</option></select></div>
+        <div class="form-group"><label>Equipment</label><select><option>Main Engine</option><option>Generator #1</option><option>Generator #2</option><option>Aux Engine #1</option><option>FO Purifier</option><option>LO Purifier</option><option>Cargo Pump</option><option>Air Compressor</option></select></div>
+        <div class="form-group"><label>Department</label><select><option>Engine</option><option>Deck</option><option>Electrical</option></select></div>
+        <div class="form-group"><label>Responsible Discipline</label><select><option>Chief Engineer</option><option>2nd Engineer</option><option>3rd Engineer</option></select></div>
+      </div>
+    </div>
+    <div class="sp-section">
+      <h4>Job Details</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group" style="grid-column:span 2"><label>Job Title</label><input type="text" placeholder="Enter job title"/></div>
+        <div class="form-group"><label>Job Type</label><select><option>Corrective</option><option>Preventive</option><option>Inspection</option><option>Overhaul</option></select></div>
+        <div class="form-group"><label>Defect Priority</label><select><option>Urgent</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+        <div class="form-group" style="grid-column:span 2"><label>Job Description</label><textarea placeholder="Describe the defect in detail…"></textarea></div>
+        <div class="form-group"><label>Issue Date</label><input type="date" value="2026-06-12"/></div>
+        <div class="form-group"><label>Due Date</label><input type="date"/></div>
+        <div class="form-group" style="grid-column:span 2"><label>Incident Number</label><input type="text" placeholder="INC-2026-####"/></div>
+      </div>
+    </div>
+    <div class="sp-section">
+      <h4>Options &amp; Toggles</h4>
+      <div class="toggle-row"><span class="toggle-lbl">Risk Assessment Required</span><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+      <div class="toggle-row"><span class="toggle-lbl">Work Permit Required</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+      <div class="toggle-row"><span class="toggle-lbl">Service / Shore Support Required</span><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+      <div class="toggle-row"><span class="toggle-lbl">Spares Required</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+    </div>
+    <div class="sp-section" style="border:1.5px solid var(--amber-bd);border-radius:8px;padding:12px;background:var(--amber-bg);">
+      <div class="toggle-row" style="border:none;padding:0;">
+        <div><div style="font-size:13px;font-weight:700;color:var(--amber)">Equipment Operational</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px;">Turning off cascades to all child equipment</div></div>
+        <label class="toggle"><input type="checkbox" checked/><span class="toggle-track" style="background:var(--amber)"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="sp-footer"><button class="btn" onclick="closeDefectPanel()">Cancel</button><button class="btn primary" onclick="saveDefect()">Save Defect</button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../data/sample-data.js"></script>
+<script>
+function toggleSidebar(){const sb=document.getElementById('sidebar');const m=document.getElementById('main');sb.classList.toggle('visible');m.classList.toggle('with-sidebar');}
+function switchTab(name){
+  const names=['breakdown','defects','postponed','approval'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function openDefectPanel(){document.getElementById('overlay').classList.add('open');document.getElementById('defect-panel').classList.add('open');}
+function closeDefectPanel(){document.getElementById('overlay').classList.remove('open');document.getElementById('defect-panel').classList.remove('open');}
+function saveDefect(){closeDefectPanel();showToast('Defect logged successfully');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function approveRow(btn){const td=btn.closest('td');td.innerHTML='<span style="font-size:12px;color:var(--green);font-weight:700">✓ Approved</span>';showToast('Job approved');}
+function showReject(btn){btn.closest('div').nextElementSibling.classList.toggle('show');}
+function confirmReject(btn){const td=btn.closest('td');td.innerHTML='<span style="font-size:12px;color:var(--red);font-weight:700">✕ Rejected</span>';showToast('Job rejected');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k;const ch=document.getElementById('ch-'+k);p.classList.toggle('open');ch.classList.toggle('open');});});
+</script>
+</body>
+</html>

@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PAL4 — Dashboard | Mariapps Marine Solutions</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --blue:     #1565c0;
+  --blue-lt:  #1e88e5;
+  --blue-bg:  #eff6ff;
+  --red:      #dc2626;
+  --red-bg:   #fef2f2;
+  --amber:    #d97706;
+  --amber-bg: #fffbeb;
+  --green:    #16a34a;
+  --green-bg: #f0fdf4;
+  --purple:   #7c3aed;
+  --purple-bg:#faf5ff;
+  --teal:     #0891b2;
+  --teal-bg:  #f0fdfa;
+  --bg:       #f1f5f9;
+  --card:     #ffffff;
+  --border:   #e2e8f0;
+  --text:     #0f172a;
+  --text2:    #334155;
+  --muted:    #64748b;
+  --sidebar:  256px;
+  --hdr:      56px;
+  --r:        10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:13.5px;}
+
+/* ── TWO-PANEL SIDEBAR JS ── */
+document.querySelectorAll(".sb-parent").forEach(p=>{
+  p.addEventListener("click",e=>{
+    e.stopPropagation();
+    const k=p.dataset.k;
+    const ch=document.getElementById("ch-"+k);
+    if(!ch)return;
+    const isOpen=ch.classList.contains("open");
+    // Close all panels
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+    // Open this one if it was closed
+    if(!isOpen){
+      ch.classList.add("open");
+      p.classList.add("p2-open");
+      document.body.classList.add("p2-open");
+    }
+  });
+});
+// Close panel 2 when clicking outside sidebar
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#sidebar")){
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+  }
+});
+
+/* Top-level items */
+.sb-item,.sb-parent{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px;cursor:pointer;color:var(--text2);
+  font-size:13.5px;font-weight:600;border-left:3px solid transparent;
+  transition:all .13s;user-select:none;
+}
+.sb-item:hover,.sb-parent:hover{background:#f8fafc;color:var(--text);}
+.sb-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-parent.open{background:#f8fafc;color:var(--text);}
+.sb-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-label{flex:1;}
+.sb-chevron{
+  font-size:16px;color:var(--muted);
+  transition:transform .22s;display:inline-block;
+  font-style:normal;
+}
+.sb-parent.open .sb-chevron{transform:rotate(90deg);}
+
+/* Children */
+.sb-children{
+  display:none;
+  background:#fafcff;
+  border-left:3px solid var(--blue-bg);
+  margin-left:0;
+}
+.sb-children.open{display:block;}
+.sb-child{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px 8px 44px;
+  cursor:pointer;color:var(--muted);
+  font-size:13px;font-weight:500;
+  transition:all .13s;user-select:none;
+  border-left:3px solid transparent;
+}
+.sb-child:hover{background:#eff6ff;color:var(--blue);}
+.sb-child.active{color:var(--blue);font-weight:600;background:var(--blue-bg);border-left-color:var(--blue);}
+.sb-cico{font-size:14px;width:16px;text-align:center;flex-shrink:0;}
+
+.sb-badge{
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;
+  margin-left:auto;
+}
+.sb-badge.amber{background:var(--amber);}
+.sb-badge.blue{background:var(--blue);}
+/* push badge right when inside child */
+.sb-child .sb-badge{margin-left:auto;}
+
+.sb-bottom{
+  margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);background:#fff;
+}
+.sb-user{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;
+  border-radius:8px;background:#f8fafc;cursor:pointer;
+}
+.sb-avatar{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),#26c6da);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700;
+}
+.sb-user-name{font-size:12px;font-weight:700;}
+.sb-user-role{font-size:10.5px;color:var(--muted);}
+
+/* ── MAIN ── */
+#main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+#topbar{
+  height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:12px;
+  position:sticky;top:0;z-index:50;
+}
+.tb-title{font-size:16px;font-weight:800;flex:1;}
+.tb-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.tb-date{font-size:12px;color:var(--muted);padding:5px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:7px;}
+.tb-notif{
+  position:relative;width:34px;height:34px;background:#f8fafc;
+  border:1px solid var(--border);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;
+}
+.tb-notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff;}
+.tb-avatar{
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  background:linear-gradient(135deg,var(--blue),#26c6da);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;
+}
+.tb-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 14px;
+  border-radius:7px;font-size:12.5px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);
+  background:#fff;color:var(--text2);transition:all .13s;
+}
+.tb-btn:hover{background:#f8fafc;}
+.tb-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tb-btn.primary:hover{background:var(--blue-lt);}
+
+/* ── CONTENT ── */
+#content{padding:22px 24px;flex:1;}
+
+/* ── ALERT BANNER ── */
+.alert{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:12.5px;
+}
+.alert-red{background:var(--red-bg);border:1px solid #fecaca;color:#991b1b;}
+.alert-amber{background:var(--amber-bg);border:1px solid #fde68a;color:#92400e;}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:18px;}
+.kpi{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;position:relative;overflow:hidden;cursor:pointer;
+  transition:box-shadow .15s;
+}
+.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi.kred::before  {background:var(--red);}
+.kpi.kamber::before{background:var(--amber);}
+.kpi.kgreen::before{background:var(--green);}
+.kpi.kblue::before {background:var(--blue);}
+.kpi.kpurp::before {background:var(--purple);}
+.kpi.kteal::before {background:var(--teal);}
+.kpi-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;}
+.kpi-val{font-size:30px;font-weight:800;line-height:1;margin-bottom:5px;}
+.kpi-sub{font-size:11px;display:flex;align-items:center;gap:4px;}
+.kpi-ico{position:absolute;right:12px;top:12px;font-size:26px;opacity:.1;}
+.kred   .kpi-val{color:var(--red);}
+.kamber .kpi-val{color:var(--amber);}
+.kgreen .kpi-val{color:var(--green);}
+.kblue  .kpi-val{color:var(--blue);}
+.kpurp  .kpi-val{color:var(--purple);}
+.kteal  .kpi-val{color:var(--teal);}
+.up{color:var(--green);}
+.down{color:var(--red);}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.g7-5{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:16px;}
+.g5-7{display:grid;grid-template-columns:5fr 7fr;gap:16px;margin-bottom:16px;}
+.g4-8{display:grid;grid-template-columns:4fr 8fr;gap:16px;margin-bottom:16px;}
+
+/* ── CARD ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.card-title{font-size:13.5px;font-weight:700;}
+.card-action{font-size:12px;color:var(--blue);cursor:pointer;font-weight:500;}
+.card-action:hover{text-decoration:underline;}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{
+  text-align:left;padding:8px 12px;
+  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);background:#f8fafc;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+td{padding:9px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafcff;}
+.row-overdue td{background:#fff5f5!important;border-left:3px solid var(--red);}
+.row-amber   td{background:#fffdf5!important;border-left:3px solid var(--amber);}
+
+/* ── BADGE ── */
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;}
+.bd-red   {background:var(--red-bg);color:var(--red);}
+.bd-amber {background:var(--amber-bg);color:var(--amber);}
+.bd-green {background:var(--green-bg);color:var(--green);}
+.bd-blue  {background:var(--blue-bg);color:var(--blue);}
+.bd-gray  {background:#f8fafc;color:var(--muted);border:1px solid var(--border);}
+.bd-purple{background:var(--purple-bg);color:var(--purple);}
+.bd-teal  {background:var(--teal-bg);color:var(--teal);}
+
+/* ── PROGRESS ── */
+.pbar{height:5px;border-radius:3px;background:#e2e8f0;overflow:hidden;}
+.pfill{height:100%;border-radius:3px;transition:width .6s;}
+.pf-blue {background:var(--blue);}
+.pf-green{background:var(--green);}
+.pf-amber{background:var(--amber);}
+.pf-red  {background:var(--red);}
+
+/* ── VESSEL CARD ── */
+.vessel-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;}
+.vessel-item:last-child{border-bottom:none;}
+.vessel-flag{font-size:18px;flex-shrink:0;}
+.vessel-name{font-size:13px;font-weight:600;}
+.vessel-type{font-size:11px;color:var(--muted);}
+.vessel-right{margin-left:auto;text-align:right;}
+.vessel-loc{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── ACTIVITY ── */
+.act-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.act-text{font-weight:500;margin-bottom:2px;line-height:1.35;}
+.act-time{font-size:11px;color:var(--muted);}
+
+/* ── APPROVAL ── */
+.appr-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;
+}
+.appr-item:last-child{border-bottom:none;}
+.appr-num{font-family:monospace;font-size:12px;font-weight:700;color:var(--blue);}
+.appr-vessel{font-size:11px;color:var(--muted);}
+.appr-actions{margin-left:auto;display:flex;gap:6px;}
+.btn-sm{
+  padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:600;
+  cursor:pointer;border:none;transition:all .13s;
+}
+.btn-approve{background:var(--green-bg);color:var(--green);}
+.btn-approve:hover{background:#dcfce7;}
+.btn-reject{background:var(--red-bg);color:var(--red);}
+.btn-reject:hover{background:#fee2e2;}
+
+/* ── MA MATRIX ── */
+.ma-table{font-size:11.5px;width:100%;border-collapse:collapse;}
+.ma-table th{background:#f8fafc;padding:7px 10px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);font-weight:700;}
+.ma-table td{padding:7px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.ma-table tr:hover td{background:#fafcff;}
+.ma-cell{text-align:center;font-weight:700;}
+.ma-cell.red{color:var(--red);}
+.ma-cell.amber{color:var(--amber);}
+.ma-cell.green{color:var(--green);}
+.ma-hl td{background:#fff5f5!important;}
+
+/* ── DONUT LEGEND ── */
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;padding:5px 0;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.legend-val{margin-left:auto;font-weight:700;}
+
+/* ── MINI STAT ── */
+.mini-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px;}
+.mini-stat:last-child{border-bottom:none;}
+.mini-stat-val{font-weight:700;}
+
+/* ── SECTION HEADER ── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-hdr h2{font-size:14px;font-weight:800;color:var(--text);}
+.sec-hdr-right{display:flex;gap:8px;}
+
+/* ── TOOLTIP ── */
+[title]{cursor:help;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1300px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr);}
+  .g7-5,.g5-7{grid-template-columns:1fr;}
+}
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .g2,.g3{grid-template-columns:1fr;}
+  #sidebar{display:none;}
+  #main{margin-left:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">⚓</div>
+    <div>
+      <div class="sb-logo-title">Mariapps PAL4</div>
+      <div class="sb-logo-ver">v4.0 · Marine Solutions</div>
+    </div>
+  </div>
+
+  <div class="sb-vessel">
+    <div class="sb-vessel-flag">🚢</div>
+    <div>
+      <div class="sb-vessel-name">MV Saraswati</div>
+      <div class="sb-vessel-imo">IMO 9234567 · Cargo Carrier</div>
+    </div>
+    <div class="sb-vessel-status"><span class="bdg bd-green">● Live</span></div>
+  </div>
+
+  <div class="sb-nav">
+    <!-- Dashboard -->
+    <div class="sb-item active" data-key="dashboard">
+      <span class="sb-ico">🏠</span>
+      <span class="sb-label">Dashboard</span>
+    </div>
+
+    <!-- Maintenance -->
+    <div class="sb-parent" data-key="maintenance">
+      <span class="sb-ico">🔧</span>
+      <span class="sb-label">Maintenance</span>
+      <span class="sb-badge">11</span>
+      <span class="sb-chevron">›</span>
+    </div>
+    <div class="sb-children" id="ch-maintenance">
+      <div class="sb-child" data-key="due-jobs"><span class="sb-cico">📋</span>Due Jobs<span class="sb-badge">8</span></div>
+      <div class="sb-child" data-key="equipments"><span class="sb-cico">🔩</span>Equipments</div>
+      <div class="sb-child" data-key="job-order"><span class="sb-cico">🗒️</span>Job Order<span class="sb-badge amber">3</span></div>
+      <div class="sb-child" data-key="running-hours"><span class="sb-cico">⏱️</span>Running Hours</div>
+      <div class="sb-child" data-key="technical-forms"><span class="sb-cico">📝</span>Technical Forms</div>
+      <div class="sb-child" data-key="reports"><span class="sb-cico">📊</span>Reports</div>
+      <div class="sb-child" data-key="guarantee-claims"><span class="sb-cico">🛡️</span>Guarantee Claims</div>
+      <div class="sb-child" data-key="dynamic-forms"><span class="sb-cico">📐</span>Dynamic Forms</div>
+      <div class="sb-child" data-key="pms-admin"><span class="sb-cico">⚙️</span>PMS Administration</div>
+    </div>
+
+    <!-- MDM -->
+    <div class="sb-parent" data-key="mdm">
+      <span class="sb-ico">🗄️</span>
+      <span class="sb-label">MDM</span>
+      <span class="sb-chevron">›</span>
+    </div>
+    <div class="sb-children" id="ch-mdm">
+      <div class="sb-child" data-key="vessel-register"><span class="sb-cico">🚢</span>Vessel Register</div>
+      <div class="sb-child" data-key="common"><span class="sb-cico">🏢</span>Common</div>
+      <div class="sb-child" data-key="pms-ref"><span class="sb-cico">📑</span>PMS Reference Data</div>
+    </div>
+
+    <!-- Administration -->
+    <div class="sb-parent" data-key="administration">
+      <span class="sb-ico">⚙️</span>
+      <span class="sb-label">Administration</span>
+      <span class="sb-chevron">›</span>
+    </div>
+    <div class="sb-children" id="ch-administration">
+      <div class="sb-child" data-key="users-roles"><span class="sb-cico">👥</span>Users &amp; Roles</div>
+      <div class="sb-child" data-key="access-rights"><span class="sb-cico">🔑</span>Access Rights</div>
+      <div class="sb-child" data-key="system-config"><span class="sb-cico">🖥️</span>System Config</div>
+      <div class="sb-child" data-key="livefleet"><span class="sb-cico">🛰️</span>LiveFleet</div>
+      <div class="sb-child" data-key="monitoring"><span class="sb-cico">📡</span>Monitoring &amp; Audit</div>
+    </div>
+  </div>
+
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar">T</div>
+      <div>
+        <div class="sb-user-name">Thamizh Selvan</div>
+        <div class="sb-user-role">Technical Superintendent</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <div>
+      <div class="tb-title">Dashboard</div>
+    </div>
+    <div class="tb-date">📅 11 June 2026</div>
+    <div class="tb-btn">🚢 MV Saraswati ▾</div>
+    <div class="tb-btn primary">+ New Job Order</div>
+    <div class="tb-notif">🔔<div class="tb-notif-dot"></div></div>
+    <div class="tb-avatar">T</div>
+  </header>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ALERT BANNERS -->
+    <div class="alert alert-red">
+      ⚠️ <strong>3 overdue jobs</strong> require immediate attention — V-2841 Engine Overhaul (4 days overdue), V-2845 Generator Repair (6 days overdue), O-1923 Hull Survey (2 days overdue)
+      <span style="margin-left:auto;cursor:pointer;font-weight:600;">View Due Jobs →</span>
+    </div>
+    <div class="alert alert-amber">
+      🕐 <strong>5 jobs due within 7 days</strong> — postponement approval pending for 2 jobs (VSL→TSI routing)
+      <span style="margin-left:auto;cursor:pointer;font-weight:600;">View Pending →</span>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi kred">
+        <div class="kpi-ico">🔴</div>
+        <div class="kpi-lbl">Overdue Jobs</div>
+        <div class="kpi-val">3</div>
+        <div class="kpi-sub down">▲ 1 since yesterday</div>
+      </div>
+      <div class="kpi kamber">
+        <div class="kpi-ico">🟡</div>
+        <div class="kpi-lbl">Due Shortly (7d)</div>
+        <div class="kpi-val">5</div>
+        <div class="kpi-sub" style="color:var(--muted)">Within next 7 days</div>
+      </div>
+      <div class="kpi kblue">
+        <div class="kpi-ico">📋</div>
+        <div class="kpi-lbl">Total Due Jobs</div>
+        <div class="kpi-val">24</div>
+        <div class="kpi-sub" style="color:var(--muted)">8 Critical · 16 Normal</div>
+      </div>
+      <div class="kpi kgreen">
+        <div class="kpi-ico">✅</div>
+        <div class="kpi-lbl">Completed (MTD)</div>
+        <div class="kpi-val">37</div>
+        <div class="kpi-sub up">▲ 84.1% completion rate</div>
+      </div>
+      <div class="kpi kpurp">
+        <div class="kpi-ico">🗒️</div>
+        <div class="kpi-lbl">Open Defects</div>
+        <div class="kpi-val">6</div>
+        <div class="kpi-sub down">2 Urgent · 4 High</div>
+      </div>
+      <div class="kpi kteal">
+        <div class="kpi-ico">⏳</div>
+        <div class="kpi-lbl">Pending Approvals</div>
+        <div class="kpi-val">4</div>
+        <div class="kpi-sub" style="color:var(--muted)">VSL→TSI queue</div>
+      </div>
+    </div>
+
+    <!-- ROW 1: MA Summary + Fleet Status -->
+    <div class="g7-5">
+
+      <!-- MA Summary Table -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">📊 MA Summary — Fleet KPI</div>
+          <span class="card-action">Fleetwide Report →</span>
+        </div>
+        <div class="tbl-wrap">
+          <table class="ma-table">
+            <thead>
+              <tr>
+                <th>Vessel</th>
+                <th>Total Jobs</th>
+                <th>Completed</th>
+                <th>% Done</th>
+                <th>Overdue</th>
+                <th style="color:#dc2626">Critical OD</th>
+                <th>Defects</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>MV Saraswati</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9234567</span></td>
+                <td class="ma-cell">44</td>
+                <td class="ma-cell green">37</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="pbar" style="flex:1"><div class="pfill pf-green" style="width:84%"></div></div>
+                    <span style="font-size:11px;font-weight:700;color:var(--green)">84%</span>
+                  </div>
+                </td>
+                <td class="ma-cell red">3</td>
+                <td class="ma-cell red">1</td>
+                <td class="ma-cell amber">6</td>
+                <td><span class="bdg bd-amber">Attention</span></td>
+              </tr>
+              <tr>
+                <td><strong>MV Neptune Star</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9387421</span></td>
+                <td class="ma-cell">38</td>
+                <td class="ma-cell green">36</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="pbar" style="flex:1"><div class="pfill pf-green" style="width:95%"></div></div>
+                    <span style="font-size:11px;font-weight:700;color:var(--green)">95%</span>
+                  </div>
+                </td>
+                <td class="ma-cell green">0</td>
+                <td class="ma-cell green">0</td>
+                <td class="ma-cell green">2</td>
+                <td><span class="bdg bd-green">On Track</span></td>
+              </tr>
+              <tr class="ma-hl">
+                <td><strong>TS Bay Explorer</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9112345</span></td>
+                <td class="ma-cell">52</td>
+                <td class="ma-cell amber">23</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="pbar" style="flex:1"><div class="pfill pf-red" style="width:44%"></div></div>
+                    <span style="font-size:11px;font-weight:700;color:var(--red)">44%</span>
+                  </div>
+                </td>
+                <td class="ma-cell red">7</td>
+                <td class="ma-cell red">3</td>
+                <td class="ma-cell red">11</td>
+                <td><span class="bdg bd-red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><strong>MV Trident</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9445632</span></td>
+                <td class="ma-cell">41</td>
+                <td class="ma-cell green">39</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="pbar" style="flex:1"><div class="pfill pf-green" style="width:95%"></div></div>
+                    <span style="font-size:11px;font-weight:700;color:var(--green)">95%</span>
+                  </div>
+                </td>
+                <td class="ma-cell green">0</td>
+                <td class="ma-cell green">0</td>
+                <td class="ma-cell green">1</td>
+                <td><span class="bdg bd-green">On Track</span></td>
+              </tr>
+              <tr>
+                <td><strong>TS Deep Scan</strong><br><span style="font-size:10.5px;color:var(--muted)">IMO 9501234</span></td>
+                <td class="ma-cell">29</td>
+                <td class="ma-cell green">24</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="pbar" style="flex:1"><div class="pfill pf-blue" style="width:83%"></div></div>
+                    <span style="font-size:11px;font-weight:700;color:var(--blue)">83%</span>
+                  </div>
+                </td>
+                <td class="ma-cell amber">2</td>
+                <td class="ma-cell green">0</td>
+                <td class="ma-cell amber">3</td>
+                <td><span class="bdg bd-amber">Attention</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;">
+          ⚠️ Rows highlighted red = vessel with ≥50% jobs pending (per MA Report threshold)
+        </div>
+      </div>
+
+      <!-- Fleet Status Donut -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">🚢 Fleet Status</div>
+          <span class="bdg bd-green">● 5 Vessels</span>
+        </div>
+        <canvas id="donutChart" height="180"></canvas>
+        <div style="margin-top:14px;">
+          <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Operational<div class="legend-val">3</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div>Under Maintenance<div class="legend-val">1</div></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>Offline / Dry Dock<div class="legend-val">1</div></div>
+        </div>
+        <div style="height:1px;background:var(--border);margin:12px 0;"></div>
+        <div class="card-title" style="margin-bottom:10px;">🛰️ Vessel Connectivity</div>
+        <div class="mini-stat"><span>MV Saraswati</span><span class="bdg bd-green">● Synced</span></div>
+        <div class="mini-stat"><span>MV Neptune Star</span><span class="bdg bd-green">● Synced</span></div>
+        <div class="mini-stat"><span>TS Bay Explorer</span><span class="bdg bd-amber">⚡ Intermittent</span></div>
+        <div class="mini-stat"><span>MV Trident</span><span class="bdg bd-green">● Synced</span></div>
+        <div class="mini-stat"><span>TS Deep Scan</span><span class="bdg bd-gray">○ Offline</span></div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Maintenance Analysis 12M Chart + Pending Approvals -->
+    <div class="g5-7">
+
+      <!-- Pending Approvals -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">✅ Pending Job Approvals <span class="bdg bd-amber" style="margin-left:6px">4</span></div>
+          <span class="card-action">All Approvals →</span>
+        </div>
+        <div>
+          <div class="appr-item">
+            <div>
+              <div class="appr-num">V-2841</div>
+              <div style="font-size:13px;font-weight:600;margin:2px 0;">Main Engine — Piston Overhaul</div>
+              <div class="appr-vessel">MV Saraswati · Postponement Request · <span class="bdg bd-red">Critical</span></div>
+            </div>
+            <div class="appr-actions">
+              <button class="btn-sm btn-approve">✓ Approve</button>
+              <button class="btn-sm btn-reject">✗ Reject</button>
+            </div>
+          </div>
+          <div class="appr-item">
+            <div>
+              <div class="appr-num">O-1923</div>
+              <div style="font-size:13px;font-weight:600;margin:2px 0;">Hull Inspection — Annual Survey</div>
+              <div class="appr-vessel">TS Bay Explorer · Office-Generated · <span class="bdg bd-amber">High</span></div>
+            </div>
+            <div class="appr-actions">
+              <button class="btn-sm btn-approve">✓ Approve</button>
+              <button class="btn-sm btn-reject">✗ Reject</button>
+            </div>
+          </div>
+          <div class="appr-item">
+            <div>
+              <div class="appr-num">V-2903</div>
+              <div style="font-size:13px;font-weight:600;margin:2px 0;">Fuel Oil Purifier — Overhaul</div>
+              <div class="appr-vessel">MV Trident · Vessel-Generated · <span class="bdg bd-blue">Normal</span></div>
+            </div>
+            <div class="appr-actions">
+              <button class="btn-sm btn-approve">✓ Approve</button>
+              <button class="btn-sm btn-reject">✗ Reject</button>
+            </div>
+          </div>
+          <div class="appr-item">
+            <div>
+              <div class="appr-num">V-2911</div>
+              <div style="font-size:13px;font-weight:600;margin:2px 0;">Fire Detection System — Test</div>
+              <div class="appr-vessel">TS Deep Scan · Vessel-Generated · <span class="bdg bd-red">Critical</span></div>
+            </div>
+            <div class="appr-actions">
+              <button class="btn-sm btn-approve">✓ Approve</button>
+              <button class="btn-sm btn-reject">✗ Reject</button>
+            </div>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--border);margin:14px 0 10px;"></div>
+        <div class="card-title" style="margin-bottom:10px;">🛡️ Guarantee Claims</div>
+        <div class="mini-stat"><span>GC-0042 — Main Engine Turbocharger</span><span class="bdg bd-amber">Open</span></div>
+        <div class="mini-stat"><span>GC-0039 — Navigation Radar Unit</span><span class="bdg bd-blue">Under Review</span></div>
+        <div class="mini-stat"><span>GC-0035 — Fuel Injection Pump</span><span class="bdg bd-green">Closed</span></div>
+      </div>
+
+      <!-- 12-Month Maintenance Analysis Chart -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">📈 Maintenance Analysis — 12 Month Rolling (MV Saraswati)</div>
+          <span class="card-action">Full Report →</span>
+        </div>
+        <canvas id="maChart" height="240"></canvas>
+        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:#1565c0;"></div>Jobs Due</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:#16a34a;"></div>Completed</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:10px;height:10px;border-radius:2px;background:#dc2626;"></div>Overdue</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Due Jobs Preview + Activity + Defects -->
+    <div class="g3">
+
+      <!-- Due Jobs Preview -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">📋 Due Jobs — Live Queue</div>
+          <span class="card-action">View All (24) →</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <span class="bdg bd-red">🔴 Overdue: 3</span>
+          <span class="bdg bd-amber">🟡 Due Soon: 5</span>
+          <span class="bdg bd-blue">Total: 24</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>JO No.</th>
+              <th>Equipment</th>
+              <th>Job Title</th>
+              <th>Next Due</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-overdue">
+              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2841</span></td>
+              <td>Main Engine<br><span style="font-size:10.5px;color:var(--muted)">ME-001</span></td>
+              <td>Piston Overhaul</td>
+              <td><span class="bdg bd-red">4d Overdue</span></td>
+              <td><span class="bdg bd-red">Critical</span></td>
+            </tr>
+            <tr class="row-overdue">
+              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2845</span></td>
+              <td>Generator #2<br><span style="font-size:10.5px;color:var(--muted)">GEN-002</span></td>
+              <td>Generator Repair</td>
+              <td><span class="bdg bd-red">6d Overdue</span></td>
+              <td><span class="bdg bd-red">Critical</span></td>
+            </tr>
+            <tr class="row-amber">
+              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2850</span></td>
+              <td>Fuel Oil Purifier<br><span style="font-size:10.5px;color:var(--muted)">FOP-001</span></td>
+              <td>Disk Stack Clean</td>
+              <td><span class="bdg bd-amber">Due 14 Jun</span></td>
+              <td><span class="bdg bd-amber">High</span></td>
+            </tr>
+            <tr class="row-amber">
+              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">O-1930</span></td>
+              <td>Fire Detection<br><span style="font-size:10.5px;color:var(--muted)">FD-MAIN</span></td>
+              <td>Annual Inspection</td>
+              <td><span class="bdg bd-amber">Due 16 Jun</span></td>
+              <td><span class="bdg bd-red">Critical</span></td>
+            </tr>
+            <tr>
+              <td><span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue)">V-2852</span></td>
+              <td>Steering Gear<br><span style="font-size:10.5px;color:var(--muted)">STG-001</span></td>
+              <td>Hydraulic Oil Test</td>
+              <td><span class="bdg bd-blue">Due 22 Jun</span></td>
+              <td><span class="bdg bd-blue">Normal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Defect List Preview -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">🔍 Open Defects</div>
+          <span class="card-action">Defect Register →</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Defect</th><th>Equipment</th><th>Priority</th><th>Issued</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Turbocharger Oil Leak<br><span style="font-size:10.5px;color:var(--muted)">DEF-0112</span></td>
+              <td>ME Turbocharger</td>
+              <td><span class="bdg bd-red">Urgent</span></td>
+              <td style="font-size:11.5px;color:var(--muted)">08 Jun</td>
+              <td><span class="bdg bd-amber">WIP</span></td>
+            </tr>
+            <tr>
+              <td>Hydraulic Pump Noise<br><span style="font-size:10.5px;color:var(--muted)">DEF-0111</span></td>
+              <td>Steering Gear</td>
+              <td><span class="bdg bd-red">Urgent</span></td>
+              <td style="font-size:11.5px;color:var(--muted)">06 Jun</td>
+              <td><span class="bdg bd-blue">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Navigation Light Fault<br><span style="font-size:10.5px;color:var(--muted)">DEF-0109</span></td>
+              <td>Bridge — Nav</td>
+              <td><span class="bdg bd-amber">High</span></td>
+              <td style="font-size:11.5px;color:var(--muted)">05 Jun</td>
+              <td><span class="bdg bd-blue">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Bilge Pump Inefficiency<br><span style="font-size:10.5px;color:var(--muted)">DEF-0108</span></td>
+              <td>Engine Room</td>
+              <td><span class="bdg bd-amber">High</span></td>
+              <td style="font-size:11.5px;color:var(--muted)">03 Jun</td>
+              <td><span class="bdg bd-purple">Waiting Spares</span></td>
+            </tr>
+            <tr>
+              <td>Exhaust Valve Wear<br><span style="font-size:10.5px;color:var(--muted)">DEF-0107</span></td>
+              <td>Main Engine</td>
+              <td><span class="bdg bd-amber">High</span></td>
+              <td style="font-size:11.5px;color:var(--muted)">01 Jun</td>
+              <td><span class="bdg bd-amber">Shore Asst.</span></td>
+            </tr>
+            <tr>
+              <td>Cargo Hold Hatch Seal<br><span style="font-size:10.5px;color:var(--muted)">DEF-0106</span></td>
+              <td>Cargo Hold #3</td>
+              <td><span class="bdg bd-gray">Medium</span></td>
+              <td style="font-size:11.5px;color:var(--muted)">30 May</td>
+              <td><span class="bdg bd-blue">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">⚡ System Activity</div>
+          <span class="card-action">Audit Log →</span>
+        </div>
+        <div id="activity-feed"></div>
+        <div style="height:1px;background:var(--border);margin:14px 0 10px;"></div>
+        <div class="card-title" style="margin-bottom:10px;">🔩 Spare Parts — Low Stock</div>
+        <div class="mini-stat">
+          <span>Nav Antenna Unit</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:var(--muted)">ROB: 1 / Min: 3</span>
+            <span class="bdg bd-red">Critical</span>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span>Hydraulic Pump Seal Kit</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:var(--muted)">ROB: 2 / Min: 5</span>
+            <span class="bdg bd-amber">Low</span>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span>Fuel Injector (ME)</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:var(--muted)">ROB: 3 / Min: 4</span>
+            <span class="bdg bd-amber">Low</span>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span>Main Engine Gasket Set</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:var(--muted)">ROB: 8 / Min: 5</span>
+            <span class="bdg bd-green">OK</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROW 4: Running Hours + Job Status Pie + TOM Forms -->
+    <div class="g3">
+
+      <!-- Running Hours -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">⏱️ Running Hours — Key Equipment</div>
+          <span class="card-action">Update Hours →</span>
+        </div>
+        <table>
+          <thead><tr><th>Equipment</th><th>Current (hrs)</th><th>Next Due (hrs)</th><th>Remaining</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Main Engine<br><span style="font-size:10.5px;color:var(--muted)">ME-001</span></td>
+              <td style="font-weight:700">18,420</td>
+              <td>18,500</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div class="pbar" style="width:60px"><div class="pfill pf-amber" style="width:20%"></div></div>
+                  <span style="font-size:11px;color:var(--amber);font-weight:700">80 hrs</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Aux Engine #1<br><span style="font-size:10.5px;color:var(--muted)">AE-001</span></td>
+              <td style="font-weight:700">6,210</td>
+              <td>6,500</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div class="pbar" style="width:60px"><div class="pfill pf-green" style="width:71%"></div></div>
+                  <span style="font-size:11px;color:var(--green);font-weight:700">290 hrs</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Generator #2<br><span style="font-size:10.5px;color:var(--muted)">GEN-002</span></td>
+              <td style="font-weight:700">4,890</td>
+              <td>5,000</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div class="pbar" style="width:60px"><div class="pfill pf-red" style="width:89%"></div></div>
+                  <span style="font-size:11px;color:var(--red);font-weight:700">110 hrs</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>FO Purifier<br><span style="font-size:10.5px;color:var(--muted)">FOP-001</span></td>
+              <td style="font-weight:700">2,340</td>
+              <td>2,500</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div class="pbar" style="width:60px"><div class="pfill pf-blue" style="width:50%"></div></div>
+                  <span style="font-size:11px;color:var(--blue);font-weight:700">160 hrs</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Cargo Pump<br><span style="font-size:10.5px;color:var(--muted)">CP-001</span></td>
+              <td style="font-weight:700">1,120</td>
+              <td>1,500</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div class="pbar" style="width:60px"><div class="pfill pf-green" style="width:25%"></div></div>
+                  <span style="font-size:11px;color:var(--green);font-weight:700">380 hrs</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Job Status Breakdown -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">📊 Job Status Breakdown</div>
+          <span class="card-action">Job Overview →</span>
+        </div>
+        <canvas id="jobStatusChart" height="190"></canvas>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></div>Completed: 37</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#1565c0;flex-shrink:0;"></div>Scheduled: 16</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0;"></div>WIP: 5</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0;"></div>Overdue: 3</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#7c3aed;flex-shrink:0;"></div>Postponed: 2</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;"><div style="width:8px;height:8px;border-radius:50%;background:#64748b;flex-shrink:0;"></div>Wait Spares: 3</div>
+        </div>
+      </div>
+
+      <!-- TOM Forms + MDM Quick Stats -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">📝 TOM Forms — June 2026</div>
+          <span class="card-action">TOM Overview →</span>
+        </div>
+        <div id="tom-matrix"></div>
+
+        <div style="height:1px;background:var(--border);margin:14px 0 10px;"></div>
+        <div class="card-title" style="margin-bottom:10px;">🗄️ MDM Quick Stats</div>
+        <div class="mini-stat">
+          <span>Vessel Register</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted)">5 Active</span>
+            <span class="bdg bd-green">Current</span>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span>Equipment Records</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted)">1,284 Total</span>
+            <span class="bdg bd-blue">Healthy</span>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span>Makers in Registry</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted)">142 Records</span>
+            <span class="bdg bd-green">OK</span>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span>Class References</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted)">DNV · LR · BV</span>
+            <span class="bdg bd-teal">Linked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+/* ── SIDEBAR TOGGLE ── */
+document.querySelectorAll('.sb-parent').forEach(parent => {
+  parent.addEventListener('click', () => {
+    const key   = parent.dataset.key;
+    const child = document.getElementById('ch-' + key);
+    const isOpen = parent.classList.contains('open');
+
+    // Close all others
+    document.querySelectorAll('.sb-parent').forEach(p => p.classList.remove('open'));
+    document.querySelectorAll('.sb-children').forEach(c => c.classList.remove('open'));
+
+    if (!isOpen) {
+      parent.classList.add('open');
+      child.classList.add('open');
+    }
+  });
+});
+
+// Child active state
+document.querySelectorAll('.sb-child').forEach(child => {
+  child.addEventListener('click', () => {
+    document.querySelectorAll('.sb-child').forEach(c => c.classList.remove('active'));
+    child.classList.add('active');
+  });
+});
+
+// Dashboard item
+document.querySelector('.sb-item[data-key="dashboard"]').addEventListener('click', () => {
+  document.querySelectorAll('.sb-parent').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.sb-children').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.sb-child').forEach(c => c.classList.remove('active'));
+  document.querySelector('.sb-item[data-key="dashboard"]').classList.add('active');
+});
+
+/* ── ACTIVITY FEED ── */
+const acts = [
+  { c:'#dc2626', t:'V-2845 Generator Repair flagged OVERDUE (6 days)', time:'8 min ago' },
+  { c:'#16a34a', t:'V-2838 Aux Engine Oil Change — Completed by Eng. Kumar', time:'32 min ago' },
+  { c:'#d97706', t:'Postponement request V-2841 submitted — pending TSI approval', time:'1 hr ago' },
+  { c:'#1565c0', t:'Running hours updated — Main Engine: 18,420 hrs', time:'2 hrs ago' },
+  { c:'#7c3aed', t:'GC-0042 Guarantee Claim opened — Turbocharger failure', time:'3 hrs ago' },
+  { c:'#0891b2', t:'MDM: Vessel record MV Saraswati updated by Sys Admin', time:'4 hrs ago' },
+  { c:'#16a34a', t:'O-1918 Hull Inspection — Approved by TSI', time:'5 hrs ago' },
+];
+document.getElementById('activity-feed').innerHTML = acts.map(a=>`
+  <div class="act-item">
+    <div class="act-dot" style="background:${a.c}"></div>
+    <div>
+      <div class="act-text">${a.t}</div>
+      <div class="act-time">${a.time}</div>
+    </div>
+  </div>`).join('');
+
+/* ── TOM FORMS MATRIX ── */
+const toms = [
+  { form:'ME Performance', w1:'✅', w2:'✅', w3:'✅', w4:'⬜' },
+  { form:'FW Analysis',    w1:'✅', w2:'✅', w3:'⬜', w4:'⬜' },
+  { form:'Sounding Report',w1:'✅', w2:'✅', w3:'✅', w4:'✅' },
+  { form:'Bilge Log',      w1:'✅', w2:'⬜', w3:'✅', w4:'⬜' },
+];
+document.getElementById('tom-matrix').innerHTML = `
+<table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+  <thead><tr>
+    <th style="padding:5px 8px;text-align:left;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Form</th>
+    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk1</th>
+    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk2</th>
+    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk3</th>
+    <th style="padding:5px 8px;text-align:center;background:#f8fafc;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Wk4</th>
+  </tr></thead>
+  <tbody>
+  ${toms.map(r=>`<tr>
+    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;font-weight:500;">${r.form}</td>
+    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w1}</td>
+    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w2}</td>
+    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w3}</td>
+    <td style="padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;">${r.w4}</td>
+  </tr>`).join('')}
+  </tbody>
+</table>`;
+
+/* ── CHARTS ── */
+Chart.defaults.color = '#64748b';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+const gc = 'rgba(0,0,0,0.06)';
+
+/* Donut */
+new Chart(document.getElementById('donutChart'), {
+  type:'doughnut',
+  data:{
+    labels:['Operational','Under Maintenance','Offline / Dry Dock'],
+    datasets:[{
+      data:[3,1,1],
+      backgroundColor:['#16a34a','#d97706','#dc2626'],
+      borderWidth:3, borderColor:'#fff'
+    }]
+  },
+  options:{
+    cutout:'70%',
+    plugins:{legend:{display:false}},
+    maintainAspectRatio:true
+  }
+});
+
+/* MA 12-Month Chart */
+const months=['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+new Chart(document.getElementById('maChart'), {
+  type:'bar',
+  data:{
+    labels:months,
+    datasets:[
+      { label:'Due',       data:[42,38,45,40,43,39,41,44,38,46,43,44], backgroundColor:'rgba(21,101,192,.15)', borderColor:'#1565c0', borderWidth:1.5, borderRadius:3 },
+      { label:'Completed', data:[40,36,44,39,42,37,40,43,36,45,41,37], backgroundColor:'rgba(22,163,74,.7)',   borderRadius:3 },
+      { label:'Overdue',   data:[2,2,1,1,1,2,1,1,2,1,2,3],            backgroundColor:'rgba(220,38,38,.75)',  borderRadius:3, type:'line', tension:.4, fill:false, yAxisID:'y1' },
+    ]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:gc}, ticks:{font:{size:10}}},
+      y:{grid:{color:gc}, ticks:{font:{size:10}}},
+      y1:{position:'right', grid:{display:false}, ticks:{font:{size:10}, color:'#dc2626'}, max:10}
+    }
+  }
+});
+
+/* Job Status Doughnut */
+new Chart(document.getElementById('jobStatusChart'), {
+  type:'doughnut',
+  data:{
+    labels:['Completed','Scheduled','WIP','Overdue','Postponed','Wait Spares'],
+    datasets:[{
+      data:[37,16,5,3,2,3],
+      backgroundColor:['#16a34a','#1565c0','#d97706','#dc2626','#7c3aed','#64748b'],
+      borderWidth:3, borderColor:'#fff'
+    }]
+  },
+  options:{
+    cutout:'65%',
+    plugins:{legend:{display:false}},
+    maintainAspectRatio:true
+  }
+});
+</script>
+</body>
+</html>

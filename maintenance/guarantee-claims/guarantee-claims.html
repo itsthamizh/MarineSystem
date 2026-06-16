@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Guarantee Claims | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="guarantee-claims.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-menu{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;font-size:18px;color:var(--muted);}
+.tb-menu:hover{background:#f6f8fa;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+#content{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:#f6f8fa;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{background:var(--blue-lt);}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-hdr h2{font-size:14px;font-weight:700;}
+.filter-bar{padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fb-select{background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-weight:600;color:var(--text2);outline:none;font-family:inherit;cursor:pointer;}
+.fb-input{background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-weight:600;color:var(--text);outline:none;font-family:inherit;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f6f8fa;cursor:pointer;}
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-open{background:var(--blue-bg);color:var(--blue);}
+.b-review{background:var(--amber-bg);color:var(--amber);}
+.b-closed{background:var(--green-bg);color:var(--green);}
+/* SLIDE PANEL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;display:none;}
+.overlay.open{display:block;}
+.slide-panel{position:fixed;top:0;right:0;width:560px;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:401;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;}
+.slide-panel.open{transform:translateX(0);}
+.sp-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;flex-shrink:0;}
+.sp-hdr h3{font-size:15px;font-weight:700;}
+.sp-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+/* PANEL TABS */
+.ptab-bar{display:flex;background:#f9fafb;border-bottom:1px solid var(--border);flex-shrink:0;}
+.ptab{flex:1;padding:10px 8px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;text-align:center;transition:all .12s;}
+.ptab:hover{color:var(--text);}
+.ptab.active{color:var(--blue);border-bottom-color:var(--blue);background:#fff;font-weight:700;}
+.ptab-content{display:none;padding:16px;flex:1;}
+.ptab-content.active{display:block;}
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.form-group label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.form-group input,.form-group select,.form-group textarea{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-weight:600;color:var(--text);background:#f6f8fa;outline:none;font-family:inherit;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue-bd);background:#fff;}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;color:var(--muted);font-weight:600;}
+.upload-area:hover{border-color:var(--blue-bd);background:var(--blue-bg);}
+.timeline-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-lt);}
+.timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);margin-top:4px;flex-shrink:0;}
+.timeline-date{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap;}
+.timeline-text{font-size:13px;font-weight:600;color:var(--text2);}
+.sp-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../MarineDashb.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint" data-title="Maintenance">
+      <a class="sb-child" href="../equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="../due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs</a>
+      <a class="sb-child" href="../job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order</a>
+      <a class="sb-child" href="../running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="../technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="../reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="../guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="../dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="../pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="../../mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="../../mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="../../mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="../../administration/users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="../../administration/access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <a class="sb-child" href="../../administration/system-config/system-config.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</a>
+      <a class="sb-child" href="../../administration/livefleet/livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</a>
+      <a class="sb-child" href="../../administration/monitoring-audit/monitoring-audit.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tb-menu" onclick="toggleSidebar()">☰</button>
+    <a class="tb-back" href="../../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Guarantee Claims</div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div>MV Pacific Star</div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </div>
+  <div id="content">
+    <div class="card">
+      <div class="card-hdr">
+        <h2>Guarantee Claims</h2>
+        <button class="btn primary" onclick="openClaim(null)">+ New Claim</button>
+      </div>
+      <div class="filter-bar">
+        <select class="fb-select"><option>All Equipment</option><option>Main Engine</option><option>Generator #1</option></select>
+        <select class="fb-select"><option>All Status</option><option>Open</option><option>Under Review</option><option>Closed</option></select>
+        <input class="fb-input" type="date" value="2026-01-01" placeholder="From"/>
+        <input class="fb-input" type="date" value="2026-06-12" placeholder="To"/>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Claim No.</th><th>Equipment</th><th>Vendor Ref. No.</th><th>Linked Defect JO</th><th>Status</th><th>Created Date</th><th>Open Date</th><th>Close Date</th></tr></thead>
+          <tbody>
+            <tr onclick="openClaim('GC-2026-003')">
+              <td><span style="font-family:monospace;font-weight:800;color:var(--blue)">GC-2026-003</span></td>
+              <td>Generator #1</td><td>WARTSILA-2026-0481</td><td>DEF-002</td>
+              <td><span class="b b-open">Open</span></td>
+              <td>10 Jun 2026</td><td>10 Jun 2026</td><td>—</td>
+            </tr>
+            <tr onclick="openClaim('GC-2026-002')">
+              <td><span style="font-family:monospace;font-weight:800;color:var(--blue)">GC-2026-002</span></td>
+              <td>Main Engine</td><td>MAN-ES-2026-0192</td><td>DEF-009</td>
+              <td><span class="b b-review">Under Review</span></td>
+              <td>02 May 2026</td><td>05 May 2026</td><td>—</td>
+            </tr>
+            <tr onclick="openClaim('GC-2026-001')">
+              <td><span style="font-family:monospace;font-weight:800;color:var(--blue)">GC-2026-001</span></td>
+              <td>FO Purifier</td><td>ALFA-LAVAL-2026-0044</td><td>DEF-005</td>
+              <td><span class="b b-closed">Closed</span></td>
+              <td>15 Mar 2026</td><td>20 Mar 2026</td><td>05 Jun 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLAIM PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="slide-panel" id="claim-panel">
+  <div class="sp-hdr"><h3 id="panel-title">New Guarantee Claim</h3><button class="sp-close" onclick="closePanel()">✕</button></div>
+  <div class="ptab-bar">
+    <div class="ptab active" onclick="switchPTab('details')">Details</div>
+    <div class="ptab" onclick="switchPTab('damage')">Damage</div>
+    <div class="ptab" onclick="switchPTab('attachments')">Attachments</div>
+    <div class="ptab" onclick="switchPTab('remedial')">Remedial Actions</div>
+    <div class="ptab" onclick="switchPTab('financial')">Financial</div>
+    <div class="ptab" onclick="switchPTab('history')">History</div>
+  </div>
+  <div class="ptab-content active" id="ptab-details">
+    <div class="form-grid-2">
+      <div class="form-group"><label>Claim Number</label><input type="text" id="claim-num" placeholder="Auto-generated" readonly style="background:#f3f4f6;color:var(--muted)"/></div>
+      <div class="form-group"><label>Status</label><select><option>Open</option><option>Under Review</option><option>Closed</option></select></div>
+      <div class="form-group" style="grid-column:span 2"><label>Equipment</label><select><option>Main Engine</option><option>Generator #1</option><option>Generator #2</option><option>FO Purifier</option><option>LO Purifier</option><option>Cargo Pump</option></select></div>
+      <div class="form-group"><label>Category</label><select><option>Machinery</option><option>Electrical</option><option>Hull</option><option>Navigation</option></select></div>
+      <div class="form-group"><label>Subject</label><input type="text" placeholder="Brief subject of claim"/></div>
+      <div class="form-group"><label>Maker</label><input type="text" placeholder="Equipment maker"/></div>
+      <div class="form-group"><label>Model</label><input type="text" placeholder="Equipment model"/></div>
+    </div>
+    <div class="form-grid-3">
+      <div class="form-group"><label>Sea Water Temp (°C)</label><input type="number" value="28"/></div>
+      <div class="form-group"><label>Engine Power (kW)</label><input type="number" value="8240"/></div>
+      <div class="form-group"><label>RPM</label><input type="number" value="98"/></div>
+      <div class="form-group"><label>Draft Fwd (m)</label><input type="number" value="5.4" step="0.1"/></div>
+      <div class="form-group"><label>Draft Aft (m)</label><input type="number" value="6.2" step="0.1"/></div>
+    </div>
+  </div>
+  <div class="ptab-content" id="ptab-damage">
+    <div class="form-group"><label>Damage Description</label><textarea placeholder="Describe the damage in detail…">AVR module intermittent failure causing voltage fluctuations. Evidence of overheating on PCB board. Failure within warranty period of 12 months.</textarea></div>
+    <div class="form-group"><label>Owner Comments</label><textarea placeholder="Vessel owner / operator comments…"></textarea></div>
+    <div class="form-group"><label>Superintendent Comments</label><textarea placeholder="Technical superintendent remarks…"></textarea></div>
+    <div class="form-group"><label>Additional Damage Details</label><textarea placeholder="Any additional damage observations…"></textarea></div>
+  </div>
+  <div class="ptab-content" id="ptab-attachments">
+    <div class="upload-area" onclick="showToast('File browser opened')">
+      <div style="font-size:24px;margin-bottom:8px;">📎</div>
+      <div style="font-size:13px;font-weight:700">Click to upload or drag files here</div>
+      <div style="font-size:12px;color:var(--muted-lt);margin-top:4px">PDF, JPG, PNG, DOCX up to 10MB</div>
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f9fafb;border:1px solid var(--border);border-radius:7px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span>📄</span><span style="font-size:13px;font-weight:600">AVR_Failure_Photos.pdf</span></div>
+        <div style="font-size:12px;color:var(--muted)">1.2 MB</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f9fafb;border:1px solid var(--border);border-radius:7px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span>🖼️</span><span style="font-size:13px;font-weight:600">Generator_Log_Sheet.jpg</span></div>
+        <div style="font-size:12px;color:var(--muted)">840 KB</div>
+      </div>
+    </div>
+  </div>
+  <div class="ptab-content" id="ptab-remedial">
+    <div class="form-group"><label>Vessel Actions Taken</label><textarea placeholder="Describe all remedial actions taken by vessel crew…">Temporary bypass of AVR module using alternative voltage regulation. Reduced Generator #1 load to 60% capacity. Increased monitoring frequency to 4-hourly checks.</textarea></div>
+    <div class="form-group"><label>Additional Spare Parts Required</label><textarea placeholder="List spare parts needed for permanent repair…">1x AVR Module (Part No. SP-GEN-0018)
+1x PCB Board Assembly
+2x Thermal fuses</textarea></div>
+  </div>
+  <div class="ptab-content" id="ptab-financial">
+    <div class="form-group"><label>Account / Cost Center</label><input type="text" value="ENG-GEN-2026" placeholder="Account code"/></div>
+    <div style="margin-bottom:10px;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr><th style="padding:8px;background:#f9fafb;border-bottom:2px solid var(--border);text-align:left;font-size:11px;font-weight:700;color:var(--muted)">Description</th><th style="padding:8px;background:#f9fafb;border-bottom:2px solid var(--border);text-align:right;font-size:11px;font-weight:700;color:var(--muted)">Amount (USD)</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border-lt)">Labour costs (investigation)</td><td style="padding:8px;border-bottom:1px solid var(--border-lt);text-align:right">1,200</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border-lt)">Temporary parts / consumables</td><td style="padding:8px;border-bottom:1px solid var(--border-lt);text-align:right">450</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border-lt)">Communication costs</td><td style="padding:8px;border-bottom:1px solid var(--border-lt);text-align:right">85</td></tr>
+          <tr><td style="padding:8px;font-weight:800">Total Claimed</td><td style="padding:8px;text-align:right;font-weight:800;color:var(--blue)">USD 1,735</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="form-group"><label>Miscellaneous Expenses</label><textarea placeholder="Any other expenses not listed above…"></textarea></div>
+  </div>
+  <div class="ptab-content" id="ptab-history">
+    <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-date">10 Jun 2026 — 14:32</div><div class="timeline-text">Claim opened by Rajan Kumar</div></div></div>
+    <div class="timeline-item"><div class="timeline-dot" style="background:var(--amber)"></div><div><div class="timeline-date">11 Jun 2026 — 09:15</div><div class="timeline-text">Vendor notified via email. Reference: WARTSILA-2026-0481</div></div></div>
+    <div class="timeline-item"><div class="timeline-dot" style="background:var(--purple)"></div><div><div class="timeline-date">11 Jun 2026 — 16:45</div><div class="timeline-text">Supporting documents uploaded (photos, log sheets)</div></div></div>
+    <div class="timeline-item"><div class="timeline-dot" style="background:var(--green)"></div><div><div class="timeline-date">12 Jun 2026 — 08:00</div><div class="timeline-text">Claim status: Open — Awaiting vendor acknowledgement</div></div></div>
+  </div>
+  <div class="sp-footer"><button class="btn" onclick="closePanel()">Cancel</button><button class="btn primary" onclick="saveClaim()">Save Claim</button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../../data/sample-data.js"></script>
+<script>
+function toggleSidebar(){const sb=document.getElementById('sidebar');const m=document.getElementById('main');sb.classList.toggle('visible');m.classList.toggle('with-sidebar');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k;const ch=document.getElementById('ch-'+k);p.classList.toggle('open');ch.classList.toggle('open');});});
+function openClaim(id){
+  document.getElementById('panel-title').textContent=id?'Claim: '+id:'New Guarantee Claim';
+  document.getElementById('claim-num').value=id||'GC-2026-004 (Auto)';
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('claim-panel').classList.add('open');
+}
+function closePanel(){document.getElementById('overlay').classList.remove('open');document.getElementById('claim-panel').classList.remove('open');}
+function saveClaim(){closePanel();showToast('Guarantee claim saved successfully');}
+function switchPTab(name){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ptab-content').forEach(c=>c.classList.remove('active'));
+  const tabs=['details','damage','attachments','remedial','financial','history'];
+  tabs.forEach((t,i)=>{if(t===name){document.querySelectorAll('.ptab')[i].classList.add('active');document.getElementById('ptab-'+t).classList.add('active');}});
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+</script>
+</body>
+</html>

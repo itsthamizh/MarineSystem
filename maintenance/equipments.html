@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Equipments | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --green:#16a34a;--green-bg:#f0fdf4;
+  --bg:#f0f2f5;--card:#fff;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+  --shadow:0 1px 4px rgba(0,0,0,.07),0 2px 10px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter','Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;min-height:100vh;
+  font-size:14px;              /* ← readable base */
+  font-weight:500;             /* ← semi-bold everywhere */
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* TOPBAR */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.topbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;white-space:nowrap;}
+.topbtn:hover{background:#f6f8fa;}
+.topbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.topbtn.primary:hover{background:var(--blue-lt);}
+
+/* ══ BODY ══ */
+.body-wrap{flex:1;display:flex;overflow:hidden;height:calc(100vh - var(--hdr));}
+
+/* ══ TREE TOGGLE BUTTON ══ */
+.tree-toggle-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:22px;height:48px;
+  background:#fff;border:1px solid var(--border);border-left:none;
+  border-radius:0 8px 8px 0;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:10;
+  transition:all .15s;color:var(--muted);font-size:12px;font-weight:700;
+}
+.tree-toggle-btn:hover{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd);}
+
+/* ══ LEFT TREE PANEL ══ */
+.tree-panel{
+  width:320px;flex-shrink:0;
+  background:#fff;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:width .25s, opacity .25s;
+  position:relative;
+}
+.tree-panel.hidden{
+  width:0;opacity:0;overflow:hidden;
+}
+
+.tree-hdr{
+  padding:11px 13px 9px;border-bottom:1px solid var(--border);
+  background:#fff;flex-shrink:0;
+}
+.tree-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.tree-title{font-size:14px;font-weight:800;color:var(--text);}
+.tree-title-actions{display:flex;align-items:center;gap:6px;}
+.tree-icon-btn{width:26px;height:26px;border-radius:6px;background:#f6f8fa;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);transition:all .12s;}
+.tree-icon-btn:hover{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd);}
+
+/* Search */
+.tree-search-wrap{display:flex;gap:6px;margin-bottom:9px;}
+.tree-search-box{flex:1;display:flex;align-items:center;gap:7px;background:#f6f8fa;border:1px solid var(--border);border-radius:7px;padding:6px 10px;transition:border .12s;}
+.tree-search-box:focus-within{border-color:var(--blue-bd);background:#fff;}
+.tree-search-box input{background:none;border:none;outline:none;font-size:13px;font-weight:600;color:var(--text);flex:1;font-family:inherit;}
+.tree-search-box input::placeholder{font-weight:500;color:var(--muted-lt);}
+.search-ico{color:var(--muted-lt);font-size:14px;}
+.search-btn{width:34px;height:34px;border-radius:7px;background:#f6f8fa;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;}
+.search-btn:hover{background:var(--blue-bg);}
+
+/* Show Code toggle */
+.show-code-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);}
+.tgl{position:relative;width:36px;height:20px;flex-shrink:0;}
+.tgl input{opacity:0;width:0;height:0;}
+.tgl-track{position:absolute;inset:0;border-radius:10px;background:#e2e8f0;transition:background .2s;cursor:pointer;}
+.tgl-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+.tgl input:checked + .tgl-track{background:var(--blue);}
+.tgl input:checked ~ .tgl-thumb{transform:translateX(16px);}
+
+/* Tree body */
+.tree-body{flex:1;overflow-y:auto;padding:4px 0;}
+.tree-body::-webkit-scrollbar{width:4px;}
+.tree-body::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px;}
+
+/* Root row */
+.tree-root{display:flex;align-items:center;gap:7px;padding:9px 13px;font-size:13.5px;font-weight:800;color:var(--blue);background:var(--blue-bg);border-bottom:1px solid var(--blue-bd);cursor:default;}
+.tree-root-ico{font-size:16px;}
+
+/* Group row */
+.tree-grp-row{
+  display:flex;align-items:center;gap:4px;
+  height:32px;padding:0 4px 0 8px;
+  cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);
+  transition:background .1s;
+}
+.tree-grp-row:hover{background:#f6f8fa;}
+/* Group toggle [+]/[-] */
+.tgr-toggle{
+  font-family:monospace;font-size:11px;font-weight:800;
+  color:var(--blue);flex-shrink:0;
+  width:22px;text-align:center;cursor:pointer;
+  user-select:none;
+}
+.tgr-ico{font-size:13px;margin:0 3px;flex-shrink:0;}
+.tgr-lbl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tgr-cnt{font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;margin-right:4px;}
+
+/* Equipment item toggle */
+.teq-toggle{
+  font-family:monospace;font-size:11px;font-weight:800;
+  color:var(--blue);flex-shrink:0;
+  width:22px;text-align:center;cursor:pointer;
+  user-select:none;
+}
+.teq-toggle.leaf{color:transparent;pointer-events:none;}
+.teq-node-icon{font-size:13px;flex-shrink:0;margin-right:3px;}
+
+/* Item row */
+.tree-items{display:none;}
+.tree-items.open{display:block;}
+.tree-eq-row{
+  display:flex;align-items:center;gap:6px;
+  height:30px;padding:0 8px 0 30px;
+  cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);
+  transition:all .1s;border-left:3px solid transparent;
+}
+.tree-eq-row:hover{background:#f6f8fa;color:var(--text2);}
+.tree-eq-row.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:700;}
+.teq-file-ico{font-size:13px;flex-shrink:0;margin-right:2px;}
+.teq-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.teq-lbl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ══ DETAIL PANEL ══ */
+.detail-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative;}
+
+/* Show-tree button (when hidden) */
+.show-tree-btn{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:24px;height:54px;
+  background:#fff;border:1px solid var(--border);
+  border-radius:0 10px 10px 0;
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;z-index:50;font-size:13px;font-weight:800;color:var(--muted);
+  transition:all .15s;
+}
+.show-tree-btn:hover{background:var(--blue-bg);color:var(--blue);}
+.show-tree-btn.visible{display:flex;}
+
+/* Empty state */
+.detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);}
+.de-ico{font-size:52px;opacity:.15;}
+.de-txt{font-size:15px;font-weight:700;}
+.de-sub{font-size:13px;color:var(--muted-lt);}
+
+/* Main tabs */
+.main-tabs{display:flex;align-items:center;background:#fff;border-bottom:2px solid var(--border-lt);padding:0 18px;flex-shrink:0;overflow-x:auto;}
+.main-tabs::-webkit-scrollbar{height:0;}
+.mtab{display:flex;align-items:center;gap:5px;padding:11px 15px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s;}
+.mtab:hover{color:var(--text);}
+.mtab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.mtab-n{font-size:11px;font-weight:700;padding:1px 6px;border-radius:10px;background:#f1f5f9;color:var(--muted-lt);}
+.mtab.active .mtab-n{background:var(--blue-bg);color:var(--blue);}
+.mt-actions{margin-left:auto;display:flex;gap:8px;padding:7px 0;flex-shrink:0;}
+
+/* Sub tabs */
+.sub-tabs{display:flex;background:#f9fafb;border-bottom:1px solid var(--border);padding:0 18px;flex-shrink:0;overflow-x:auto;}
+.sub-tabs::-webkit-scrollbar{height:0;}
+.stab{display:flex;align-items:center;gap:4px;padding:8px 14px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;}
+.stab:hover{color:var(--text);}
+.stab.active{color:var(--blue);border-bottom-color:var(--blue);background:#fff;}
+.stab-n{font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:10px;background:#eff6ff;color:var(--blue-lt);}
+
+/* Content area */
+.tab-scroll{flex:1;overflow-y:auto;padding:16px 18px;background:var(--bg);}
+.tab-scroll::-webkit-scrollbar{width:5px;}
+.tab-scroll::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
+.main-tab-pane{display:none;}
+.main-tab-pane.active{display:flex;flex-direction:column;flex:1;overflow:hidden;}
+.sub-tab-pane{display:none;}
+.sub-tab-pane.active{display:block;}
+
+/* ══ SINGLE EQUIPMENT FORM ══ */
+/* One card, all fields, no split sections */
+.eq-form-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  margin-bottom:14px;
+}
+.eq-form-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+}
+.ff{
+  padding:11px 15px;
+  border-right:1px solid var(--border-lt);
+  border-bottom:1px solid var(--border-lt);
+  min-height:64px;
+}
+.ff:nth-child(4n){border-right:none;}
+/* Remove bottom border on last complete row */
+.ff.no-bottom{border-bottom:none;}
+
+.ff-lbl{
+  font-size:12.5px;font-weight:700;
+  color:var(--text2);           /* dark, not faded muted */
+  margin-bottom:6px;
+  display:flex;align-items:center;gap:4px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.ff-val{font-size:15px;font-weight:700;color:var(--text);line-height:1.35;}
+.ff-val.empty{color:var(--muted);font-weight:600;font-style:normal;}
+.ff-val.link{color:var(--blue);cursor:pointer;}
+.ff-val.link:hover{text-decoration:underline;}
+
+/* Toggle field */
+.ff-tgl-row{display:flex;align-items:center;gap:9px;margin-top:2px;}
+.ff-tgl-lbl{font-size:15px;font-weight:700;color:var(--text);}
+/* Mini toggle */
+.mtgl{position:relative;width:34px;height:18px;flex-shrink:0;}
+.mtgl input{opacity:0;width:0;height:0;}
+.mt-trk{position:absolute;inset:0;border-radius:9px;background:#e2e8f0;transition:background .18s;cursor:pointer;}
+.mt-thb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.14);}
+.mtgl input:checked + .mt-trk{background:var(--blue);}
+.mtgl input:checked ~ .mt-thb{transform:translateX(16px);}
+
+/* Span full width */
+.ff.span4{grid-column:span 4;border-right:none;}
+.ff-textarea{width:100%;font-size:14.5px;font-weight:600;font-family:inherit;border:1px solid var(--border);border-radius:6px;padding:7px 10px;outline:none;background:#f9fafb;color:var(--text);resize:vertical;min-height:64px;transition:border .12s;}
+.ff-textarea:focus{border-color:var(--blue-bd);background:#fff;}
+
+/* Running hours bar inside form */
+.rh-bar-bg{height:9px;border-radius:5px;background:#f0f2f5;overflow:hidden;margin:7px 0 4px;}
+.rh-bar-fill{height:100%;border-radius:5px;transition:width .7s;}
+.rh-meta{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;color:var(--muted);}
+
+/* ══ TABLE ══ */
+.tbl-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;}
+.tbl-hdr{display:flex;align-items:center;gap:8px;padding:11px 15px;border-bottom:1px solid var(--border-lt);background:#f9fafb;}
+.tbl-hdr-title{font-size:14px;font-weight:800;color:var(--text);flex:1;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 13px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 13px;border-bottom:1px solid var(--border-lt);vertical-align:middle;font-size:13.5px;font-weight:600;color:var(--text2);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f6f8fa;}
+.row-overdue td{background:#fff5f5!important;border-left:3px solid var(--red);}
+.row-soon    td{background:#fffdf5!important;border-left:3px solid var(--amber);}
+.stk-bar{height:6px;border-radius:3px;background:#f0f2f5;overflow:hidden;margin-top:4px;}
+.stk-fill{height:100%;border-radius:3px;}
+
+/* ══ BADGES ══ */
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-x{background:#f1f5f9;color:var(--muted);border:1px solid #e2e8f0;}
+
+/* ══ PLACEHOLDER ══ */
+.tab-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;gap:10px;color:var(--muted);}
+.tp-ico{font-size:40px;opacity:.15;}
+.tp-txt{font-size:14px;font-weight:700;}
+.tp-sub{font-size:13px;color:var(--muted-lt);}
+</style>
+</head>
+<body class="sidebar-hidden">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">⚓</div>
+    <div><div class="sb-name">Mariapps</div></div>
+  </div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-maint">
+      <a class="sb-child active" href="equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child" href="due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child" href="job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child" href="technical-forms.html"><span class="sb-cico">📝</span>Technical Forms</a>
+      <a class="sb-child" href="reports.html"><span class="sb-cico">📊</span>Reports</a>
+      <a class="sb-child" href="guarantee-claims.html"><span class="sb-cico">🛡️</span>Guarantee Claims</a>
+      <a class="sb-child" href="dynamic-forms.html"><span class="sb-cico">📐</span>Dynamic Forms</a>
+      <a class="sb-child" href="pms-administration.html"><span class="sb-cico">⚙️</span>PMS Administration</a>
+    </div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm">
+      <a class="sb-child" href="#"><span class="sb-cico">🚢</span>Vessel Register</a>
+      <a class="sb-child" href="#"><span class="sb-cico">🏢</span>Common</a>
+      <a class="sb-child" href="#"><span class="sb-cico">📑</span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin">
+      <a class="sb-child" href="#"><span class="sb-cico">👥</span>Users &amp; Roles</a>
+      <a class="sb-child" href="#"><span class="sb-cico">🔑</span>Access Rights</a>
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-ava">RK</div>
+      <div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <header id="topbar">
+    <!-- Hamburger — toggles main nav sidebar -->
+    <button class="topbtn" id="menuBtn" onclick="toggleMainSidebar()" title="Toggle Navigation Menu" style="padding:7px 10px;font-size:16px;">☰</button>
+    <div class="tb-sep"></div>
+    <a class="tb-back" href="../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">Equipment Details</div>
+    <div class="tb-right">
+      <button class="topbtn primary" onclick="window.location.href='equipment-add.html'">+ Add Equipment</button>
+      <div class="vessel-chip"><div class="vdot"></div><span id="vessel-name-top">MV Saraswati</span></div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </header>
+
+  <div class="body-wrap">
+
+    <!-- LEFT TREE -->
+    <div class="tree-panel" id="treePanel">
+      <div class="tree-hdr">
+        <div class="tree-title-row">
+          <div class="tree-title">Equipment</div>
+          <div class="tree-title-actions">
+            <div class="tree-icon-btn" title="Refresh" onclick="buildTree(fullTree)">⟳</div>
+          </div>
+        </div>
+        <div class="tree-search-wrap">
+          <div class="tree-search-box">
+            <span class="search-ico">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search equipment…" oninput="filterTree(this.value)"/>
+          </div>
+          <div class="search-btn" onclick="filterTree(document.getElementById('searchInput').value)">🔍</div>
+        </div>
+        <div class="show-code-row">
+          <span>Show Code</span>
+          <label class="tgl">
+            <input type="checkbox" id="showCodeChk" checked onchange="toggleCode()"/>
+            <div class="tgl-track"></div>
+            <div class="tgl-thumb"></div>
+          </label>
+        </div>
+      </div>
+      <div class="tree-body" id="treeBody"></div>
+    </div>
+
+    <!-- RIGHT DETAIL -->
+    <div class="detail-panel" id="detailPanel">
+
+      <!-- Empty state -->
+      <div class="detail-empty" id="emptyState">
+        <div class="de-ico">🔩</div>
+        <div class="de-txt">No Equipment Selected</div>
+        <div class="de-sub">Select an item from the equipment tree</div>
+      </div>
+
+      <!-- Detail content (hidden until selection) -->
+      <div id="detailContent" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden;">
+        <!-- Main tabs, sub-tabs and form injected here -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../data/sample-data.js"></script>
+<script>
+/* ── MAIN SIDEBAR TOGGLE ── */
+function toggleMainSidebar() {
+  const sb   = document.getElementById('sidebar');
+  const main = document.getElementById('main');
+  const open = sb.classList.contains('visible');
+  if (open) {
+    sb.classList.remove('visible');
+    main.classList.remove('with-sidebar');
+  } else {
+    sb.classList.add('visible');
+    main.classList.add('with-sidebar');
+  }
+}
+
+/* ── TWO-PANEL SIDEBAR JS ── */
+document.querySelectorAll(".sb-parent").forEach(p=>{
+  p.addEventListener("click",e=>{
+    e.stopPropagation();
+    const k=p.dataset.k;
+    const ch=document.getElementById("ch-"+k);
+    if(!ch)return;
+    const isOpen=ch.classList.contains("open");
+    // Close all panels
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+    // Open this one if it was closed
+    if(!isOpen){
+      ch.classList.add("open");
+      p.classList.add("p2-open");
+      document.body.classList.add("p2-open");
+    }
+  });
+});
+// Close panel 2 when clicking outside sidebar
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#sidebar")){
+    document.querySelectorAll(".sb-children").forEach(c=>c.classList.remove("open"));
+    document.querySelectorAll(".sb-parent").forEach(x=>x.classList.remove("p2-open"));
+    document.body.classList.remove("p2-open");
+  }
+});
+
+/* ── DATA ── */
+const vid    = new URLSearchParams(window.location.search).get('vessel') || 'saraswati';
+const vessel = PAL4.getVessel(vid);
+const fullTree = PAL4.getEquipmentTree(vid);
+let showCode = true;
+
+document.getElementById('vessel-name-top').textContent = vessel.info.name;
+
+/* ── STATUS ── */
+const EQS = {
+  operational:{ dot:'#16a34a', badge:'b-g', label:'Operational' },
+  'due-soon': { dot:'#d97706', badge:'b-a', label:'Due Soon'    },
+  defect:     { dot:'#dc2626', badge:'b-r', label:'Defect'      },
+  default:    { dot:'#94a3b8', badge:'b-x', label:'—'           },
+};
+const JPS = { overdue:'b-r','due-soon':'b-a',upcoming:'b-b','not-started':'b-x',scheduled:'b-b' };
+const JPR = { overdue:'row-overdue','due-soon':'row-soon' };
+const PRI = { Critical:'b-r',High:'b-a',Normal:'b-b',Medium:'b-x' };
+
+/* ── RECURSIVE TREE BUILDER ── */
+function buildTree(data) {
+  const body = document.getElementById('treeBody');
+  body.innerHTML = '';
+
+  /* Vessel root row */
+  const root = document.createElement('div');
+  root.className = 'tree-root';
+  root.innerHTML = `<span style="font-size:13px;margin-right:5px">📂</span><span>${vessel.info.name}</span>`;
+  body.appendChild(root);
+
+  data.forEach((grp, gi) => {
+    /* ── GROUP ROW ── */
+    const grpWrap = document.createElement('div');
+
+    const grpRow = document.createElement('div');
+    grpRow.className = 'tree-grp-row';
+    const childCount = grp.items.length;
+    grpRow.innerHTML = `
+      <div class="tgr-toggle" title="Expand/Collapse">[+]</div>
+      <span class="tgr-ico grp-icon">📁</span>
+      <span class="tgr-lbl">${grp.groupCode} - ${grp.groupName}</span>
+      <span class="tgr-cnt">(${childCount})</span>`;
+    grpWrap.appendChild(grpRow);
+
+    const grpChildren = document.createElement('div');
+    grpChildren.className = 'tree-items'; /* collapsed by default */
+    grpChildren.id = `gc-${gi}`;
+
+    /* Render each equipment item (with possible sub-children) */
+    grp.items.forEach((eq, ii) => {
+      grpChildren.appendChild(renderEqNode(eq, 1, gi, ii));
+    });
+
+    grpWrap.appendChild(grpChildren);
+    body.appendChild(grpWrap);
+
+    /* Group toggle */
+    grpRow.addEventListener('click', () => {
+      const isOpen = grpChildren.classList.toggle('open');
+      grpRow.querySelector('.tgr-toggle').textContent = isOpen ? '[-]' : '[+]';
+      grpRow.querySelector('.grp-icon').textContent   = isOpen ? '📂' : '📁';
+    });
+  });
+}
+
+/* ── RENDER ONE EQUIPMENT NODE (recursive) ── */
+function renderEqNode(eq, depth, gi, ii) {
+  const sc       = EQS[eq.status] || EQS.default;
+  const lbl      = showCode ? `${eq.code} - ${eq.name}` : eq.name;
+  const hasKids  = eq.children && eq.children.length > 0;
+  const indent   = depth * 16; /* px per level */
+
+  const wrap = document.createElement('div');
+
+  /* Item row */
+  const row = document.createElement('div');
+  row.className = 'tree-eq-row';
+  row.style.paddingLeft = `${8 + indent}px`;
+
+  row.innerHTML = `
+    <div class="teq-toggle ${hasKids ? '' : 'leaf'}">${hasKids ? '[+]' : '&nbsp;&nbsp;&nbsp;'}</div>
+    <span class="teq-node-icon">${hasKids ? '📁' : '📄'}</span>
+    <span class="teq-dot" style="background:${sc.dot}"></span>
+    <span class="teq-lbl" data-code="${eq.code}" data-name="${eq.name}">${lbl}</span>
+    ${hasKids ? `<span class="tgr-cnt">(${eq.children.length})</span>` : ''}`;
+
+  /* Click on the item label → load detail */
+  row.addEventListener('click', (e) => {
+    /* If clicking the toggle box, just expand — don't load detail */
+    if (e.target.classList.contains('teq-toggle') && hasKids) return;
+    document.querySelectorAll('.tree-eq-row').forEach(r => r.classList.remove('active'));
+    row.classList.add('active');
+    renderDetail(eq);
+  });
+
+  wrap.appendChild(row);
+
+  /* Children container (collapsed by default) */
+  if (hasKids) {
+    const kidContainer = document.createElement('div');
+    kidContainer.className = 'tree-items'; /* hidden */
+
+    eq.children.forEach((child, ci) => {
+      kidContainer.appendChild(renderEqNode(child, depth + 1, gi, ii));
+    });
+
+    wrap.appendChild(kidContainer);
+
+    /* Toggle expand/collapse via the [+]/[-] box */
+    row.querySelector('.teq-toggle').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = kidContainer.classList.toggle('open');
+      e.target.textContent          = isOpen ? '[-]' : '[+]';
+      row.querySelector('.teq-node-icon').textContent = isOpen ? '📂' : '📁';
+    });
+  }
+
+  return wrap;
+}
+
+buildTree(fullTree);
+
+/* ── SHOW / HIDE TREE ── */
+function hideTree() {
+  document.getElementById('treePanel').classList.add('hidden');
+  document.getElementById('showTreeBtn').classList.add('visible');
+}
+function showTree() {
+  document.getElementById('treePanel').classList.remove('hidden');
+  document.getElementById('showTreeBtn').classList.remove('visible');
+}
+
+/* ── SHOW CODE TOGGLE ── */
+function toggleCode() {
+  showCode = document.getElementById('showCodeChk').checked;
+  document.querySelectorAll('.teq-lbl').forEach(el => {
+    el.textContent = showCode ? `${el.dataset.code} - ${el.dataset.name}` : el.dataset.name;
+  });
+}
+
+/* ── FILTER (searches items + their children) ── */
+function matchesQuery(eq, q) {
+  if (eq.name.toLowerCase().includes(q) || eq.code.toLowerCase().includes(q)) return true;
+  if (eq.children) return eq.children.some(c => matchesQuery(c, q));
+  return false;
+}
+function filterTree(q) {
+  q = q.toLowerCase().trim();
+  if (!q) { buildTree(fullTree); return; }
+  const f = fullTree
+    .map(g => ({ ...g, items: g.items.filter(e => matchesQuery(e, q)) }))
+    .filter(g => g.items.length > 0);
+  buildTree(f);
+}
+
+/* ── RENDER DETAIL ── */
+function renderDetail(eq) {
+  document.getElementById('emptyState').style.display = 'none';
+  const sc  = EQS[eq.status] || EQS.default;
+  const rhC = eq.status==='defect'?'#dc2626':eq.status==='due-soon'?'#d97706':'#16a34a';
+  const rhPct = eq.runHrs ? Math.min(90, Math.round(eq.runHrs/(eq.runHrs+600)*100)) : 0;
+  const jpN = (eq.jobPlans   ||[]).length;
+  const spN = (eq.spareParts ||[]).length;
+
+  /* Job Plan rows */
+  const jpRows = (eq.jobPlans||[]).map(jp=>`
+    <tr class="${JPR[jp.status]||''}">
+      <td><b style="font-family:monospace;font-size:12px;color:var(--blue)">${jp.id}</b></td>
+      <td style="font-weight:700">${jp.title}</td>
+      <td><span class="b b-b">${jp.freq}</span></td>
+      <td style="color:var(--muted);font-size:13px">${jp.lastDone}</td>
+      <td style="font-weight:700">${jp.nextDue}</td>
+      <td><span class="b ${JPS[jp.status]||'b-x'}">${jp.status.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></td>
+      <td><span class="b ${PRI[jp.priority]||'b-x'}">${jp.priority}</span></td>
+    </tr>`).join('') ||
+    '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px;font-size:14px">No job plans defined</td></tr>';
+
+  /* Spare Parts rows */
+  const spRows = (eq.spareParts||[]).map(sp=>{
+    const pct = sp.min>0?Math.min(100,Math.round(sp.stock/(sp.min*2)*100)):100;
+    const stC = sp.stock<sp.min?'#dc2626':sp.stock===sp.min?'#d97706':'#16a34a';
+    const stB = sp.stock<sp.min?'b-r':sp.stock===sp.min?'b-a':'b-g';
+    return `<tr>
+      <td><b style="font-family:monospace;font-size:12.5px">${sp.partNo}</b></td>
+      <td style="font-weight:700">${sp.name}</td>
+      <td style="text-align:center;color:var(--muted)">${sp.unit}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <b style="font-size:15px;min-width:20px">${sp.stock}</b>
+          <div class="stk-bar" style="flex:1"><div class="stk-fill" style="width:${pct}%;background:${stC}"></div></div>
+          <span style="font-size:12px;color:var(--muted);white-space:nowrap">Min: ${sp.min}</span>
+        </div>
+      </td>
+      <td><span class="b ${stB}">${sp.stock<sp.min?'Low Stock':sp.stock===sp.min?'At Min':'In Stock'}</span></td>
+      <td>${sp.critical?'<span class="b b-r">Critical</span>':'<span class="b b-x">Standard</span>'}</td>
+    </tr>`;
+  }).join('') ||
+    '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:28px;font-size:14px">No spare parts linked</td></tr>';
+
+  /* Spec fields */
+  const specFlds = Object.entries(eq.specs||{}).map(([k,v])=>
+    `<div class="ff"><div class="ff-lbl">${k}</div><div class="ff-val">${v}</div></div>`).join('');
+
+  const dc = document.getElementById('detailContent');
+  dc.style.display = 'flex';
+  dc.innerHTML = `
+
+    <!-- MAIN TABS -->
+    <div class="main-tabs">
+      <div class="mtab active" data-target="mt-gen" onclick="switchMain(this)">General</div>
+      <div class="mtab" data-target="mt-jp"     onclick="switchMain(this)">Job Plan <span class="mtab-n">${jpN}</span></div>
+      <div class="mtab" data-target="mt-sp"     onclick="switchMain(this)">Spare Parts <span class="mtab-n">${spN}</span></div>
+      <div class="mtab" data-target="mt-sl"     onclick="switchMain(this)">Service Letter <span class="mtab-n">0</span></div>
+      <div class="mtab" data-target="mt-qd"     onclick="switchMain(this)">QDMS <span class="mtab-n">0</span></div>
+      <div class="mtab" data-target="mt-ph"     onclick="switchMain(this)">Purchase History <span class="mtab-n">0</span></div>
+      <div class="mtab" data-target="mt-md"     onclick="switchMain(this)">Mount/Dismount History <span class="mtab-n">0</span></div>
+      <div class="mt-actions">
+        <button class="topbtn">Create Unscheduled Job</button>
+        <button class="topbtn primary">✏️ Edit</button>
+      </div>
+    </div>
+
+    <!-- ══ GENERAL TAB ══ -->
+    <div id="mt-gen" class="main-tab-pane active" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="sub-tabs">
+        <div class="stab active" data-target="st-basic" onclick="switchSub(this)">Basic Details</div>
+        <div class="stab" data-target="st-spec"   onclick="switchSub(this)">Specification</div>
+        <div class="stab" data-target="st-attach" onclick="switchSub(this)">Attachments <span class="stab-n">0</span></div>
+        <div class="stab" data-target="st-manual" onclick="switchSub(this)">User Manual <span class="stab-n">0</span></div>
+        <div class="stab" data-target="st-survey" onclick="switchSub(this)">Survey <span class="stab-n">0</span></div>
+        <div class="stab" data-target="st-coc"    onclick="switchSub(this)">Condition Of Class <span class="stab-n">0</span></div>
+        <div class="stab" data-target="st-memo"   onclick="switchSub(this)">Memoranda <span class="stab-n">0</span></div>
+        <div class="stab" data-target="st-hseq"   onclick="switchSub(this)">HSEQ</div>
+      </div>
+
+      <div class="tab-scroll" id="genScroll">
+
+        <!-- ── BASIC DETAILS: single flat form ── -->
+        <div id="st-basic" class="sub-tab-pane active">
+          <div class="eq-form-card">
+            <div class="eq-form-grid">
+
+              <div class="ff"><div class="ff-lbl">Equipment Code ℹ</div><div class="ff-val">${eq.code}</div></div>
+              <div class="ff"><div class="ff-lbl">Equipment Name</div><div class="ff-val">${eq.name}</div></div>
+              <div class="ff"><div class="ff-lbl">Class Reference</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">Parent Equipment</div><div class="ff-val empty">—</div></div>
+
+              <div class="ff"><div class="ff-lbl">Equipment Type</div><div class="ff-val empty">Select</div></div>
+              <div class="ff"><div class="ff-lbl">Serial Number</div><div class="ff-val">${eq.serial}</div></div>
+              <div class="ff"><div class="ff-lbl">Builder / License</div><div class="ff-val">${eq.maker}</div></div>
+              <div class="ff"><div class="ff-lbl">Drawing Number</div><div class="ff-val empty">—</div></div>
+
+              <div class="ff"><div class="ff-lbl">Maker</div><div class="ff-val">${eq.maker}</div></div>
+              <div class="ff"><div class="ff-lbl">Model</div><div class="ff-val">${eq.model}</div></div>
+              <div class="ff"><div class="ff-lbl">Safety Level</div><div class="ff-val"><span class="b ${eq.safetyLevel==='Critical'?'b-r':'b-b'}">${eq.safetyLevel}</span></div></div>
+              <div class="ff"><div class="ff-lbl">Equipment Status</div><div class="ff-val"><span class="b ${sc.badge}">${sc.label}</span></div></div>
+
+              <div class="ff"><div class="ff-lbl">Department</div><div class="ff-val">${eq.dept}</div></div>
+              <div class="ff"><div class="ff-lbl">Location</div><div class="ff-val">${eq.location}</div></div>
+              <div class="ff"><div class="ff-lbl">Class Name</div><div class="ff-val empty">Select</div></div>
+              <div class="ff"><div class="ff-lbl">Installation Date</div><div class="ff-val">${eq.installed}</div></div>
+
+              <div class="ff"><div class="ff-lbl">Main Engine</div>
+                <div class="ff-tgl-row"><label class="mtgl"><input type="checkbox" ${eq.code==='ME-001'?'checked':''}/><div class="mt-trk"></div><div class="mt-thb"></div></label><span class="ff-tgl-lbl">${eq.code==='ME-001'?'Yes':'No'}</span></div></div>
+              <div class="ff"><div class="ff-lbl">Circulating</div>
+                <div class="ff-tgl-row"><label class="mtgl"><input type="checkbox"/><div class="mt-trk"></div><div class="mt-thb"></div></label><span class="ff-tgl-lbl">No</span></div></div>
+              <div class="ff"><div class="ff-lbl">Mount Allowed</div>
+                <div class="ff-tgl-row"><label class="mtgl"><input type="checkbox"/><div class="mt-trk"></div><div class="mt-thb"></div></label><span class="ff-tgl-lbl">No</span></div></div>
+              <div class="ff"><div class="ff-lbl">RHrs. Separately</div>
+                <div class="ff-tgl-row"><label class="mtgl"><input type="checkbox" ${eq.runHrs?'checked':''}/><div class="mt-trk"></div><div class="mt-thb"></div></label><span class="ff-tgl-lbl">${eq.runHrs?'Yes':'No'}</span></div></div>
+
+              <div class="ff"><div class="ff-lbl">Inherit RHrs. from</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">Current RHrs.</div>
+                ${eq.runHrs ? `
+                <div class="ff-val" style="color:${rhC}">${eq.runHrs.toLocaleString()} hrs</div>
+                <div class="rh-bar-bg"><div class="rh-bar-fill" style="width:${rhPct}%;background:${rhC}"></div></div>
+                <div class="rh-meta"><span>0</span><span>${eq.runHrs.toLocaleString()} hrs</span></div>` :
+                '<div class="ff-val empty">—</div>'}
+              </div>
+              <div class="ff"><div class="ff-lbl">Preferred Vendor</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">Circ. Equipment Group</div><div class="ff-val empty">Select</div></div>
+
+              <div class="ff"><div class="ff-lbl">Equipment Dimension</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">Equipment Material</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">ID Number</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">Part Number</div><div class="ff-val empty">—</div></div>
+
+              <div class="ff"><div class="ff-lbl">MD Required</div>
+                <div class="ff-tgl-row"><label class="mtgl"><input type="checkbox"/><div class="mt-trk"></div><div class="mt-thb"></div></label><span class="ff-tgl-lbl">No</span></div></div>
+              <div class="ff"><div class="ff-lbl">SDoc Required</div>
+                <div class="ff-tgl-row"><label class="mtgl"><input type="checkbox"/><div class="mt-trk"></div><div class="mt-thb"></div></label><span class="ff-tgl-lbl">No</span></div></div>
+              <div class="ff"><div class="ff-lbl">Reference Field 1</div><div class="ff-val empty">—</div></div>
+              <div class="ff"><div class="ff-lbl">IMO Tier</div><div class="ff-val empty">—</div></div>
+
+              <div class="ff span4">
+                <div class="ff-lbl">Remarks</div>
+                <textarea class="ff-textarea" placeholder="Enter remarks…"></textarea>
+              </div>
+            </div>
+          </div>
+        </div><!-- /st-basic -->
+
+        <!-- SPECIFICATION -->
+        <div id="st-spec" class="sub-tab-pane">
+          <div class="eq-form-card">
+            <div class="eq-form-grid">
+              ${specFlds || '<div class="ff span4" style="border-right:none"><div class="ff-val empty" style="padding:8px 0">No specification data defined for this equipment</div></div>'}
+            </div>
+          </div>
+        </div>
+
+        ${['st-attach','st-manual','st-survey','st-coc','st-memo','st-hseq'].map(id=>`
+        <div id="${id}" class="sub-tab-pane">
+          <div class="tab-ph"><div class="tp-ico">📄</div><div class="tp-txt">No Records</div><div class="tp-sub">No records found for this equipment.</div></div>
+        </div>`).join('')}
+
+      </div><!-- /genScroll -->
+    </div><!-- /mt-gen -->
+
+    <!-- JOB PLAN -->
+    <div id="mt-jp" class="main-tab-pane" style="display:none;flex:1;overflow:hidden;">
+      <div class="tab-scroll">
+        <div class="tbl-card">
+          <div class="tbl-hdr"><span class="tbl-hdr-title">Job Plans — ${eq.name}</span><button class="topbtn">+ Add Job Plan</button></div>
+          <table><thead><tr><th>Plan ID</th><th>Job Title</th><th>Frequency</th><th>Last Done</th><th>Next Due</th><th>Status</th><th>Priority</th></tr></thead>
+          <tbody>${jpRows}</tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPARE PARTS -->
+    <div id="mt-sp" class="main-tab-pane" style="display:none;flex:1;overflow:hidden;">
+      <div class="tab-scroll">
+        <div class="tbl-card">
+          <div class="tbl-hdr"><span class="tbl-hdr-title">Spare Parts — ${eq.name}</span><button class="topbtn">+ Add Spare Part</button><button class="topbtn" style="margin-left:6px">Create Requisition</button></div>
+          <table><thead><tr><th>Part No.</th><th>Part Name</th><th>Unit</th><th>Stock Level (ROB)</th><th>Status</th><th>Criticality</th></tr></thead>
+          <tbody>${spRows}</tbody></table>
+        </div>
+      </div>
+    </div>
+
+    ${['mt-sl','mt-qd','mt-ph','mt-md'].map(id=>`
+    <div id="${id}" class="main-tab-pane" style="display:none;flex:1;overflow:hidden;">
+      <div class="tab-scroll"><div class="tab-ph"><div class="tp-ico">📋</div><div class="tp-txt">No Records</div><div class="tp-sub">No records available for this equipment.</div></div></div>
+    </div>`).join('')}
+  `;
+}
+
+/* ── TAB SWITCHING ── */
+function switchMain(el) {
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.main-tab-pane').forEach(p=>p.style.display='none');
+  el.classList.add('active');
+  const pane = document.getElementById(el.dataset.target);
+  if (pane) pane.style.display = 'flex';
+}
+function switchSub(el) {
+  const scroll = document.getElementById('genScroll');
+  if (!scroll) return;
+  scroll.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
+  scroll.querySelectorAll('.sub-tab-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const pane = document.getElementById(el.dataset.target);
+  if (pane) pane.classList.add('active');
+}
+</script>
+</body>
+</html>

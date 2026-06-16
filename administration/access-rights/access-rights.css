@@ -1,0 +1,5 @@
+/* access-rights.css — Page-specific styles for access-rights
+   Shared sidebar & common styles: ../../shared/sidebar.css
+   Add page-specific overrides below.
+*/
+@import url('../../shared/sidebar.css');

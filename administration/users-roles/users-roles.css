@@ -1,0 +1,5 @@
+/* users-roles.css — Page-specific styles for users-roles
+   Shared sidebar & common styles: ../../shared/sidebar.css
+   Add page-specific overrides below.
+*/
+@import url('../../shared/sidebar.css');

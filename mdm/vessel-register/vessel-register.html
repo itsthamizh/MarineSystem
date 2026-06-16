@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Vessel Register | MDM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="vessel-register.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* SIDEBAR */
+
+/* MAIN */
+
+/* TOPBAR */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-back{font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;text-decoration:none;transition:all .12s;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-bc{font-size:13px;color:var(--muted);flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.success{background:var(--green-bg);color:var(--green);border-color:var(--green-bd);}
+.tbtn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+
+/* ══ VESSEL LIST VIEW ══ */
+#listView{flex:1;padding:20px;}
+.lv-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.lv-title{font-size:16px;font-weight:800;}
+.lv-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.lv-search{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.lv-search input{flex:1;max-width:320px;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:8px 13px;font-size:13.5px;font-family:inherit;outline:none;}
+.lv-search input:focus{border-color:var(--blue-bd);}
+.lv-table{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.lv-table table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.lv-table th{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.lv-table td{padding:12px 14px;border-bottom:1px solid var(--border-lt);font-weight:600;color:var(--text2);vertical-align:middle;}
+.lv-table tr:last-child td{border-bottom:none;}
+.lv-table tr:hover td{background:#f6f8fa;cursor:pointer;}
+.v-name-cell{font-size:14px;font-weight:800;color:var(--text);}
+.v-imo-cell{font-family:monospace;font-size:12.5px;color:var(--muted);}
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-x{background:#f1f5f9;color:var(--muted);border:1px solid #e2e8f0;}
+
+/* ══ WIZARD VIEW ══ */
+#wizardView{display:none;flex:1;flex-direction:column;}
+
+/* WIZARD HEADER */
+.wiz-hdr{background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.wiz-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;cursor:pointer;transition:all .12s;}
+.wiz-back:hover{background:#f6f8fa;color:var(--blue);}
+.wiz-vessel-name{font-size:15px;font-weight:800;flex:1;}
+.wiz-vessel-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* STEP PROGRESS */
+.step-progress{background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;flex-shrink:0;}
+.steps-track{display:flex;align-items:center;gap:0;}
+.step-item{display:flex;align-items:center;flex:1;}
+.step-item:last-child{flex:0 0 auto;}
+.step-circle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;flex-shrink:0;
+  transition:all .2s;
+  border:2px solid var(--border);background:#f9fafb;color:var(--muted-lt);
+}
+.step-circle.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.step-circle.done{background:var(--green);border-color:var(--green);color:#fff;}
+.step-info{margin-left:10px;}
+.step-num-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);}
+.step-name-lbl{font-size:13px;font-weight:700;color:var(--muted);}
+.step-name-lbl.active{color:var(--blue);}
+.step-name-lbl.done{color:var(--green);}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 12px;transition:background .2s;}
+.step-line.done{background:var(--green);}
+
+/* STEP CONTENT */
+.step-body{flex:1;overflow-y:auto;padding:24px;}
+.step-body::-webkit-scrollbar{width:5px;}
+.step-body::-webkit-scrollbar-thumb{background:#d1d5db;}
+.step-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:24px;max-width:720px;margin:0 auto;}
+.step-card-title{font-size:16px;font-weight:800;margin-bottom:4px;}
+.step-card-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+/* Form grid */
+.fg{display:grid;gap:18px;}
+.fg2{grid-template-columns:1fr 1fr;}
+.fg3{grid-template-columns:1fr 1fr 1fr;}
+.fg1{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.span2{grid-column:span 2;}
+.fl{font-size:12.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:4px;}
+.req-star{color:var(--red);}
+.fi,.fs{
+  width:100%;font-family:inherit;font-size:14px;font-weight:600;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 13px;outline:none;background:#fff;color:var(--text);
+  transition:border .13s,box-shadow .13s;
+}
+.fi:focus,.fs:focus{border-color:var(--blue-bd);box-shadow:0 0 0 3px rgba(21,101,192,.08);}
+.fi::placeholder{color:var(--muted-lt);font-weight:400;}
+.fi.error,.fs.error{border-color:var(--red);background:var(--red-bg);}
+.ferr{font-size:12px;color:var(--red);font-weight:600;display:none;}
+.ferr.show{display:block;}
+.fhint{font-size:12px;color:var(--muted-lt);font-weight:400;}
+/* Toggle field */
+.toggle-field{display:flex;align-items:center;gap:10px;padding:10px 13px;background:#f9fafb;border:1.5px solid var(--border);border-radius:8px;}
+.tgl{position:relative;width:40px;height:22px;flex-shrink:0;}
+.tgl input{opacity:0;width:0;height:0;position:absolute;}
+.tgl-track{position:absolute;inset:0;border-radius:11px;background:#e2e8f0;transition:background .2s;cursor:pointer;border:1.5px solid var(--border);}
+.tgl-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+.tgl input:checked+.tgl-track{background:var(--blue);border-color:var(--blue);}
+.tgl input:checked~.tgl-thumb{transform:translateX(18px);}
+.tgl-lbl{font-size:14px;font-weight:700;color:var(--text);}
+
+/* STEP NAV BAR */
+.step-nav{
+  background:#fff;border-top:1px solid var(--border);
+  padding:14px 24px;display:flex;align-items:center;
+  gap:12px;flex-shrink:0;
+}
+.step-nav-info{flex:1;font-size:12.5px;color:var(--muted);}
+.step-nav-info span{color:var(--text);font-weight:700;}
+
+/* ══ REVIEW STEP ══ */
+.review-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-width:720px;margin:0 auto;}
+.rv-section{border-bottom:1px solid var(--border);}
+.rv-section:last-child{border-bottom:none;}
+.rv-sec-hdr{padding:11px 18px;background:#f9fafb;border-bottom:1px solid var(--border);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;align-items:center;gap:7px;}
+.rv-grid{display:grid;grid-template-columns:repeat(3,1fr);}
+.rv-field{padding:11px 18px;border-right:1px solid var(--border-lt);border-bottom:1px solid var(--border-lt);}
+.rv-field:nth-child(3n){border-right:none;}
+.rv-field.span2{grid-column:span 2;}
+.rv-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;}
+.rv-val{font-size:14px;font-weight:700;color:var(--text);}
+.rv-val.empty{color:var(--muted-lt);font-style:italic;font-weight:400;}
+.rv-success{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 24px;text-align:center;gap:14px;
+}
+.rv-success.show{display:flex;}
+.rv-success-icon{font-size:52px;}
+.rv-success-title{font-size:18px;font-weight:800;color:var(--green);}
+.rv-success-sub{font-size:13.5px;color:var(--muted);max-width:380px;}
+
+#toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:700;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;display:none;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../MarineDashb.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint" data-title="Maintenance">
+      <a class="sb-child" href="../../maintenance/equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="../../maintenance/due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs</a>
+      <a class="sb-child" href="../../maintenance/job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order</a>
+      <a class="sb-child" href="../../maintenance/running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="../../maintenance/technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="../../maintenance/reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="../../maintenance/guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="../../maintenance/dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="../../maintenance/pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="../../mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="../../mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="../../mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="../../administration/users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="../../administration/access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <a class="sb-child" href="../../administration/system-config/system-config.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</a>
+      <a class="sb-child" href="../../administration/livefleet/livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</a>
+      <a class="sb-child" href="../../administration/monitoring-audit/monitoring-audit.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <header id="topbar">
+    <button class="tbtn" onclick="toggleSidebar()" style="padding:7px 10px;font-size:16px;">☰</button>
+    <div class="tb-sep"></div>
+    <a class="tb-back" href="../../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-bc">MDM &nbsp;›&nbsp; <span>Vessel Register</span></div>
+    <div style="margin-left:auto"><div class="tb-ava">RK</div></div>
+  </header>
+
+  <!-- ══ LIST VIEW ══ -->
+  <div id="listView">
+    <div class="lv-hdr">
+      <div>
+        <div class="lv-title">Vessel Register</div>
+        <div class="lv-sub">Master record for all managed vessels — select to view or edit, or add a new vessel</div>
+      </div>
+      <button class="tbtn primary" onclick="startWizard('new')">+ Add New Vessel</button>
+    </div>
+    <div class="lv-search">
+      <input type="text" id="listSearch" placeholder="🔍  Search vessels…" oninput="filterList(this.value)"/>
+      <span id="listCount" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+    </div>
+    <div class="lv-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Vessel Name</th>
+            <th>IMO Number</th>
+            <th>Type</th>
+            <th>Flag</th>
+            <th>Management Type</th>
+            <th>Fleet</th>
+            <th>Service Status</th>
+            <th>Record Status</th>
+          </tr>
+        </thead>
+        <tbody id="vesselListBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ WIZARD VIEW ══ -->
+  <div id="wizardView">
+
+    <!-- Wizard header -->
+    <div class="wiz-hdr">
+      <div class="wiz-back" onclick="backToList()">← Vessel List</div>
+      <div class="tb-sep"></div>
+      <div>
+        <div class="wiz-vessel-name" id="wizTitle">New Vessel</div>
+        <div class="wiz-vessel-sub" id="wizSub">Fill in the details step by step</div>
+      </div>
+    </div>
+
+    <!-- Step Progress -->
+    <div class="step-progress">
+      <div class="steps-track" id="stepsTrack"></div>
+    </div>
+
+    <!-- Step Body -->
+    <div class="step-body" id="stepBody"></div>
+
+    <!-- Step Nav -->
+    <div class="step-nav">
+      <button class="tbtn" id="btnBack" onclick="prevStep()">← Back</button>
+      <div class="step-nav-info">Step <span id="stepCurrent">1</span> of <span id="stepTotal">6</span></div>
+      <button class="tbtn primary" id="btnNext" onclick="nextStep()">Next →</button>
+      <button class="tbtn success" id="btnSave" onclick="saveRecord()" style="display:none;">✓ Save Vessel Record</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="../../data/sample-data.js"></script>
+<script>
+/* ══ SIDEBAR ══ */
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('visible');document.getElementById('main').classList.toggle('with-sidebar');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k,ch=document.getElementById('ch-'+k);if(!ch)return;const open=p.classList.contains('open');document.querySelectorAll('.sb-parent').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.sb-children').forEach(x=>x.classList.remove('open'));if(!open){p.classList.add('open');ch.classList.add('open');}});});
+
+/* ══ VESSEL DATA ══ */
+const VESSELS=[
+  {id:'saraswati',name:'MV Saraswati',imo:'9234567',hull:'HN-2018-001',yard:'Hyundai Heavy Industries',buildon:'2018-01-15',loa:'225.4',breadth:'32.6',depth:'20.1',draft:'14.8',deckgear:'2×35T Cranes',lifeboat:'30',sec:'6',gmdss:'SOLAS Class A',namec:'MV Saraswati',code:'SAR-001',nameo:'Saraswati Shipping Co.',owner:'IndOcean Holdings Pvt. Ltd.',newvo:'',regowner:'IndOcean Shipping Ltd.',mgmttype:'Full Management',primgr:'Mariapps Marine Solutions',submgr:'',flag:'India',flagport:'Mumbai',flagno:'MH-2018-9234567',callsign:'VTAL9',vclass:'IRS',takeover:'2018-01-15',outmgmt:'',active:true,recstatus:'Current',status:'IN Management',fleet:'IndOcean Cargo Fleet',type:'Cargo Carrier',subtype:'General Cargo',size:'Handymax',memaker:'MAN B&W',memodel:'6S60ME-C',output:'12840',builder:'Hyundai Heavy Industries',meunits:'1',speed:'14.2',dwt:'52400',grt:'31840',nrt:'18920'},
+  {id:'neptune',name:'MV Neptune Star',imo:'9387421',hull:'HN-2019-003',yard:'Samsung Heavy Industries',buildon:'2019-06-10',loa:'249.8',breadth:'44.0',depth:'23.5',draft:'16.2',deckgear:'',lifeboat:'40',sec:'8',gmdss:'SOLAS Class A',namec:'MV Neptune Star',code:'NEP-001',nameo:'Neptune Shipping Corp.',owner:'OceanPath Holdings',newvo:'',regowner:'Neptune Shipping Corp.',mgmttype:'Technical Management',primgr:'Mariapps Marine Solutions',submgr:'',flag:'Panama',flagport:'Panama City',flagno:'PA-2019-9387421',callsign:'HP3NM',vclass:'DNV GL',takeover:'2019-06-10',outmgmt:'',active:true,recstatus:'Current',status:'IN Management',fleet:'OceanPath Tanker Fleet',type:'Tanker',subtype:'Chemical Tanker',size:'MR Tanker',memaker:'Wartsila',memodel:'6RT-flex58T',output:'14280',builder:'Samsung Heavy Industries',meunits:'1',speed:'15.1',dwt:'47500',grt:'29600',nrt:'16200'},
+  {id:'bayexplorer',name:'TS Bay Explorer',imo:'9112345',hull:'HN-2010-007',yard:'Daewoo Shipbuilding',buildon:'2010-03-20',loa:'68.4',breadth:'14.8',depth:'6.2',draft:'4.1',deckgear:'Survey Crane 5T',lifeboat:'20',sec:'4',gmdss:'SOLAS Class B',namec:'TS Bay Explorer',code:'BAY-001',nameo:'Bay Survey Ltd.',owner:'IndOcean Holdings Pvt. Ltd.',newvo:'',regowner:'Bay Survey Ltd.',mgmttype:'Full Management',primgr:'Mariapps Marine Solutions',submgr:'Bay Survey Ltd.',flag:'India',flagport:'Chennai',flagno:'TN-2010-9112345',callsign:'VTBA3',vclass:'IRS',takeover:'2010-03-20',outmgmt:'2026-12-31',active:true,recstatus:'Current',status:'IN Management',fleet:'IndOcean Survey Fleet',type:'Survey Vessel',subtype:'Hydrographic Survey',size:'Small',memaker:'Caterpillar',memodel:'C32 ACERT',output:'1260',builder:'Daewoo Shipbuilding',meunits:'2',speed:'12.0',dwt:'850',grt:'1240',nrt:'372'},
+  {id:'trident',name:'MV Trident',imo:'9445632',hull:'HN-2020-012',yard:'Hyundai Heavy Industries',buildon:'2020-05-05',loa:'294.1',breadth:'32.2',depth:'24.0',draft:'13.5',deckgear:'Container cranes',lifeboat:'35',sec:'7',gmdss:'SOLAS Class A',namec:'MV Trident',code:'TRI-001',nameo:'Trident Cargo Corp.',owner:'IndOcean Holdings Pvt. Ltd.',newvo:'',regowner:'Trident Cargo Corp.',mgmttype:'Full Management',primgr:'Mariapps Marine Solutions',submgr:'',flag:'India',flagport:'Mumbai',flagno:'MH-2020-9445632',callsign:'VTTR4',vclass:'IRS',takeover:'2020-05-05',outmgmt:'',active:true,recstatus:'Current',status:'IN Management',fleet:'IndOcean Container Fleet',type:'Container Ship',subtype:'Feeder Container',size:'Panamax',memaker:'MAN B&W',memodel:'7S65ME-C',output:'18660',builder:'Hyundai Heavy Industries',meunits:'1',speed:'22.5',dwt:'68400',grt:'51280',nrt:'28640'},
+  {id:'deepscan',name:'TS Deep Scan',imo:'9501234',hull:'HN-2015-005',yard:'Uljanik Shipyard',buildon:'2015-09-12',loa:'72.5',breadth:'16.2',depth:'7.4',draft:'5.0',deckgear:'Research crane 3T',lifeboat:'25',sec:'5',gmdss:'SOLAS Class A',namec:'TS Deep Scan',code:'DPS-001',nameo:'Deep Survey Corp.',owner:'IndOcean Holdings Pvt. Ltd.',newvo:'',regowner:'Deep Survey Corp.',mgmttype:'Technical Management',primgr:'Mariapps Marine Solutions',submgr:'',flag:'India',flagport:'Visakhapatnam',flagno:'AP-2015-9501234',callsign:'VTDS5',vclass:'Bureau Veritas',takeover:'2015-09-12',outmgmt:'',active:false,recstatus:'Inactive',status:'OUT Management',fleet:'IndOcean Research Fleet',type:'Research Vessel',subtype:'Oceanographic',size:'Small',memaker:'MTU',memodel:'16V 4000 M63',output:'2400',builder:'Uljanik Shipyard',meunits:'2',speed:'14.0',dwt:'620',grt:'1820',nrt:'546'},
+];
+
+/* ══ LIST VIEW ══ */
+function renderList(vessels){
+  document.getElementById('listCount').textContent=`${vessels.length} vessel${vessels.length!==1?'s':''}`;
+  document.getElementById('vesselListBody').innerHTML=vessels.map(v=>`
+    <tr onclick="startWizard('edit','${v.id}')">
+      <td><div class="v-name-cell">${v.name}</div><div class="v-imo-cell">IMO ${v.imo} &nbsp;·&nbsp; ${v.code}</div></td>
+      <td style="font-family:monospace;font-size:13px;font-weight:700">${v.imo}</td>
+      <td>${v.type}</td>
+      <td>${v.flag} 🏳️</td>
+      <td>${v.mgmttype}</td>
+      <td>${v.fleet||'—'}</td>
+      <td>${v.status==='IN Management'?'<span class="b b-g">● IN Management</span>':'<span class="b b-r">● '+v.status+'</span>'}</td>
+      <td>${v.recstatus==='Current'?'<span class="b b-g">Current</span>':'<span class="b b-r">'+v.recstatus+'</span>'}</td>
+    </tr>`).join('');
+}
+function filterList(q){
+  q=q.toLowerCase();
+  renderList(VESSELS.filter(v=>v.name.toLowerCase().includes(q)||v.imo.includes(q)||v.code.toLowerCase().includes(q)||v.type.toLowerCase().includes(q)));
+}
+renderList(VESSELS);
+
+/* ══ WIZARD STEPS DEFINITION ══ */
+const STEPS=[
+  {
+    id:'identification', title:'Identification', icon:'🔖',
+    desc:'Basic identification details for the vessel',
+    fields:[
+      {key:'imo',     label:'IMO Number',    type:'text',   req:true,  ph:'e.g. 9234567',          hint:'7-digit IMO number'},
+      {key:'hull',    label:'Hull Number',   type:'text',   req:false, ph:'e.g. HN-2018-001'},
+      {key:'namec',   label:'Name (Charterer)', type:'text', req:true,  ph:'Official vessel name',  span2:true},
+      {key:'code',    label:'Vessel Code',   type:'text',   req:true,  ph:'e.g. SAR-001'},
+      {key:'nameo',   label:'Maiden Name (Owner)', type:'text', req:false, ph:'Owner\'s vessel name', span2:true},
+      {key:'yard',    label:'Build Yard',    type:'text',   req:false, ph:'e.g. Hyundai Heavy Industries', span2:true},
+      {key:'buildon', label:'Build On (Date)', type:'date', req:false},
+    ]
+  },
+  {
+    id:'ownership', title:'Ownership & Management', icon:'🏢',
+    desc:'Owner, manager and flag information',
+    fields:[
+      {key:'owner',    label:'Ultimate Owner',   type:'text',   req:true,  ph:'Company name',         span2:true},
+      {key:'regowner', label:'Registered Owner', type:'text',   req:false, ph:'Legal registered owner',span2:true},
+      {key:'mgmttype', label:'Management Type',  type:'select', req:true,  opts:['Full Management','Technical Management','Crew Management','Commercial Management']},
+      {key:'primgr',   label:'Primary Manager',  type:'text',   req:true,  ph:'e.g. Mariapps Marine Solutions'},
+      {key:'submgr',   label:'Sub Manager',      type:'text',   req:false, ph:'If applicable'},
+      {key:'flag',     label:'Flag',             type:'select', req:true,  opts:['India','Panama','Marshall Islands','Liberia','Singapore','Bahamas','Malta','Cyprus','Greece']},
+      {key:'flagport', label:'Flag Registration Port', type:'text', req:false, ph:'e.g. Mumbai'},
+      {key:'flagno',   label:'Flag Official No.',type:'text',   req:false, ph:'e.g. MH-2018-9234567'},
+      {key:'callsign', label:'Call Sign',        type:'text',   req:false, ph:'e.g. VTAL9'},
+      {key:'vclass',   label:'Classification Society', type:'select', req:true, opts:['Indian Register of Shipping (IRS)','DNV GL','Lloyd\'s Register','Bureau Veritas','ABS','ClassNK','RINA','Korean Register (KRS)']},
+    ]
+  },
+  {
+    id:'technical', title:'Technical Details', icon:'⚙️',
+    desc:'Vessel type, fleet and main engine specifications',
+    fields:[
+      {key:'status',   label:'Service Status',  type:'select', req:true,  opts:['IN Management','OUT Management','Laid Up','Under Construction']},
+      {key:'fleet',    label:'Fleet',           type:'text',   req:true,  ph:'e.g. IndOcean Cargo Fleet'},
+      {key:'type',     label:'Vessel Type',     type:'select', req:true,  opts:['Cargo Carrier','Tanker','Container Ship','Bulk Carrier','Survey Vessel','Research Vessel','Offshore Support','Passenger','Ro-Ro','LNG Carrier']},
+      {key:'subtype',  label:'Sub Type',        type:'text',   req:false, ph:'e.g. General Cargo'},
+      {key:'size',     label:'Size Category',   type:'text',   req:false, ph:'e.g. Handymax, VLCC'},
+      {key:'memaker',  label:'ME Maker',        type:'text',   req:true,  ph:'e.g. MAN B&W, Wartsila'},
+      {key:'memodel',  label:'ME Model',        type:'text',   req:true,  ph:'e.g. 6S60ME-C'},
+      {key:'meunits',  label:'ME No. of Units', type:'number', req:true,  ph:'1'},
+      {key:'output',   label:'ME Output (kW)',  type:'number', req:false, ph:'e.g. 12840'},
+      {key:'builder',  label:'Builder',         type:'text',   req:false, ph:'Shipyard name'},
+    ]
+  },
+  {
+    id:'dimensions', title:'Dimensions & Capacities', icon:'📐',
+    desc:'Physical dimensions and safety capacities',
+    fields:[
+      {key:'loa',      label:'Length Overall (m)', type:'number', req:false, ph:'e.g. 225.4'},
+      {key:'breadth',  label:'Breadth (m)',         type:'number', req:false, ph:'e.g. 32.6'},
+      {key:'depth',    label:'Depth (m)',            type:'number', req:false, ph:'e.g. 20.1'},
+      {key:'draft',    label:'Draft (m)',            type:'number', req:false, ph:'e.g. 14.8'},
+      {key:'speed',    label:'Speed (kn)',           type:'number', req:false, ph:'e.g. 14.2'},
+      {key:'dwt',      label:'DWT (MT)',             type:'number', req:false, ph:'e.g. 52400'},
+      {key:'grt',      label:'GRT',                  type:'number', req:false, ph:'e.g. 31840'},
+      {key:'nrt',      label:'NRT',                  type:'number', req:false, ph:'e.g. 18920'},
+      {key:'deckgear', label:'Deck Gear',            type:'text',   req:false, ph:'e.g. 2×35T Cranes', span2:true},
+      {key:'lifeboat', label:'Life Boat Capacity',   type:'number', req:false, ph:'e.g. 30'},
+      {key:'sec',      label:'SEC Capacity',         type:'number', req:false, ph:'e.g. 6'},
+      {key:'gmdss',    label:'GMDSS Class',          type:'select', req:false, opts:['SOLAS Class A','SOLAS Class B','SOLAS Class C','SOLAS Class D']},
+    ]
+  },
+  {
+    id:'management', title:'Management Dates & Status', icon:'📅',
+    desc:'Takeover dates, record status and active flags',
+    fields:[
+      {key:'hull',     label:'Hull Number',           type:'text',   req:false, ph:'e.g. HN-2018-001'},
+      {key:'takeover', label:'Expected Takeover Date (In Management)', type:'date', req:false, span2:true},
+      {key:'outmgmt',  label:'Expected Out of Management Date', type:'date', req:false, span2:true},
+      {key:'recstatus',label:'Record Status', type:'select', req:true, opts:['Current','Inactive']},
+      {key:'active',   label:'Active Vessel',  type:'toggle', req:false},
+    ]
+  },
+  {
+    id:'review', title:'Review & Confirm', icon:'✅',
+    desc:'Review all vessel details before saving'
+  }
+];
+
+/* ══ WIZARD STATE ══ */
+let currentStep = 0;
+let formData = {};
+let editMode = false;
+let editId = null;
+
+function startWizard(mode, vid){
+  editMode = (mode==='edit');
+  formData = {};
+  if(editMode && vid){
+    const v = VESSELS.find(x=>x.id===vid);
+    if(v) formData = {...v};
+    editId = vid;
+    document.getElementById('wizTitle').textContent = formData.namec || formData.name;
+    document.getElementById('wizSub').textContent = 'IMO '+formData.imo+' · Edit vessel record';
+  } else {
+    editId = null;
+    document.getElementById('wizTitle').textContent = 'New Vessel';
+    document.getElementById('wizSub').textContent = 'Fill in the details step by step';
+  }
+  currentStep = 0;
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('wizardView').style.display = 'flex';
+  renderStepProgress();
+  renderStepContent();
+}
+
+function backToList(){
+  document.getElementById('wizardView').style.display = 'none';
+  document.getElementById('listView').style.display = '';
+  renderList(VESSELS);
+}
+
+/* ══ RENDER PROGRESS ══ */
+function renderStepProgress(){
+  const track = document.getElementById('stepsTrack');
+  track.innerHTML = STEPS.map((s,i)=>{
+    const state = i<currentStep?'done':i===currentStep?'active':'';
+    const circleIcon = i<currentStep ? '✓' : (i+1);
+    const line = i<STEPS.length-1 ? `<div class="step-line ${i<currentStep?'done':''}"></div>` : '';
+    return `<div class="step-item">
+      <div class="step-circle ${state}">${circleIcon}</div>
+      <div class="step-info">
+        <div class="step-num-lbl">Step ${i+1}</div>
+        <div class="step-name-lbl ${state}">${s.title}</div>
+      </div>
+    </div>${line}`;
+  }).join('');
+  document.getElementById('stepCurrent').textContent = currentStep+1;
+  document.getElementById('stepTotal').textContent   = STEPS.length;
+  document.getElementById('btnBack').disabled   = currentStep === 0;
+  document.getElementById('btnBack').style.opacity  = currentStep===0 ? '.4':'1';
+  const isLast = currentStep === STEPS.length-1;
+  document.getElementById('btnNext').style.display = isLast?'none':'';
+  document.getElementById('btnSave').style.display = isLast?'':'none';
+}
+
+/* ══ RENDER STEP CONTENT ══ */
+function renderStepContent(){
+  const step = STEPS[currentStep];
+  const body = document.getElementById('stepBody');
+
+  if(step.id === 'review'){
+    body.innerHTML = renderReview();
+    return;
+  }
+
+  const fields = step.fields || [];
+  const gridItems = fields.map(f=>{
+    const val = formData[f.key] || '';
+    const spanClass = f.span2 ? 'span2':'';
+    if(f.type === 'toggle'){
+      const checked = formData[f.key]!==false ? 'checked':'';
+      return `<div class="form-group ${spanClass}">
+        <label class="fl">${f.label}</label>
+        <div class="toggle-field">
+          <label class="tgl"><input type="checkbox" id="f_${f.key}" ${checked} onchange="formData['${f.key}']=this.checked"/><div class="tgl-track"></div><div class="tgl-thumb"></div></label>
+          <span class="tgl-lbl" id="tgl_${f.key}">${formData[f.key]!==false?'Yes':'No'}</span>
+        </div>
+      </div>`;
+    }
+    if(f.type === 'select'){
+      const opts = (f.opts||[]).map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('');
+      return `<div class="form-group ${spanClass}">
+        <label class="fl" for="f_${f.key}">${f.label} ${f.req?'<span class="req-star">*</span>':''}</label>
+        <select class="fs" id="f_${f.key}" onchange="formData['${f.key}']=this.value">
+          <option value="">— Select —</option>${opts}
+        </select>
+        <span class="ferr" id="err_${f.key}">This field is required</span>
+      </div>`;
+    }
+    return `<div class="form-group ${spanClass}">
+      <label class="fl" for="f_${f.key}">${f.label} ${f.req?'<span class="req-star">*</span>':''}</label>
+      <input class="fi" type="${f.type}" id="f_${f.key}" value="${val}" placeholder="${f.ph||''}" oninput="formData['${f.key}']=this.value"/>
+      <span class="ferr" id="err_${f.key}">This field is required</span>
+      ${f.hint?`<span class="fhint">${f.hint}</span>`:''}
+    </div>`;
+  }).join('');
+
+  body.innerHTML = `
+    <div class="step-card">
+      <div class="step-card-title">${step.icon} ${step.title}</div>
+      <div class="step-card-sub">${step.desc}</div>
+      <div class="fg ${fields.some(f=>f.span2)?'fg2':fields.length>=3?'fg2':'fg2'}">${gridItems}</div>
+    </div>`;
+
+  /* Wire toggles */
+  fields.filter(f=>f.type==='toggle').forEach(f=>{
+    const cb = document.getElementById('f_'+f.key);
+    const lbl = document.getElementById('tgl_'+f.key);
+    if(cb&&lbl) cb.addEventListener('change',()=>{ lbl.textContent=cb.checked?'Yes':'No'; formData[f.key]=cb.checked; });
+  });
+}
+
+/* ══ REVIEW RENDER ══ */
+function renderReview(){
+  const rv = (lbl,key,empty)=>`<div class="rv-field"><div class="rv-lbl">${lbl}</div><div class="rv-val ${!formData[key]?'empty':''}">${formData[key]||empty||'—'}</div></div>`;
+  return `<div class="review-card">
+    <div class="rv-section">
+      <div class="rv-sec-hdr">🔖 Identification</div>
+      <div class="rv-grid">
+        ${rv('Vessel Name (Charterer)','namec')}${rv('Vessel Code','code')}${rv('IMO Number','imo')}
+        ${rv('Maiden Name (Owner)','nameo')}${rv('Hull Number','hull')}${rv('Build On','buildon')}
+        <div class="rv-field span2"><div class="rv-lbl">Build Yard</div><div class="rv-val ${!formData.yard?'empty':''}">${formData.yard||'—'}</div></div>
+      </div>
+    </div>
+    <div class="rv-section">
+      <div class="rv-sec-hdr">🏢 Ownership & Management</div>
+      <div class="rv-grid">
+        ${rv('Ultimate Owner','owner')}${rv('Registered Owner','regowner')}${rv('Management Type','mgmttype')}
+        ${rv('Primary Manager','primgr')}${rv('Sub Manager','submgr')}${rv('Flag','flag')}
+        ${rv('Flag Port','flagport')}${rv('Flag Official No.','flagno')}${rv('Call Sign','callsign')}
+        <div class="rv-field"><div class="rv-lbl">Classification Society</div><div class="rv-val ${!formData.vclass?'empty':''}">${formData.vclass||'—'}</div></div>
+      </div>
+    </div>
+    <div class="rv-section">
+      <div class="rv-sec-hdr">⚙️ Technical Details</div>
+      <div class="rv-grid">
+        ${rv('Service Status','status')}${rv('Fleet','fleet')}${rv('Vessel Type','type')}
+        ${rv('Sub Type','subtype')}${rv('Size Category','size')}${rv('ME Maker','memaker')}
+        ${rv('ME Model','memodel')}${rv('ME Units','meunits')}${rv('Output (kW)','output')}
+        ${rv('Builder','builder')}${rv('Speed (kn)','speed')}
+      </div>
+    </div>
+    <div class="rv-section">
+      <div class="rv-sec-hdr">📐 Dimensions & Capacities</div>
+      <div class="rv-grid">
+        ${rv('LOA (m)','loa')}${rv('Breadth (m)','breadth')}${rv('Depth (m)','depth')}
+        ${rv('Draft (m)','draft')}${rv('DWT (MT)','dwt')}${rv('GRT','grt')}
+        ${rv('NRT','nrt')}${rv('Deck Gear','deckgear')}${rv('Lifeboat Cap.','lifeboat')}
+        ${rv('SEC Cap.','sec')}${rv('GMDSS','gmdss')}
+      </div>
+    </div>
+    <div class="rv-section">
+      <div class="rv-sec-hdr">📅 Management Dates & Status</div>
+      <div class="rv-grid">
+        ${rv('Takeover Date','takeover')}${rv('Out of Management','outmgmt')}${rv('Record Status','recstatus')}
+        <div class="rv-field"><div class="rv-lbl">Active</div><div class="rv-val">${formData.active!==false?'Yes':'No'}</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ══ NAVIGATION ══ */
+function collectStep(){
+  const step = STEPS[currentStep];
+  if(!step.fields) return true;
+  let valid = true;
+  step.fields.forEach(f=>{
+    if(f.req){
+      const el = document.getElementById('f_'+f.key);
+      const err = document.getElementById('err_'+f.key);
+      if(el && !el.value.trim()){
+        el.classList.add('error');
+        if(err) err.classList.add('show');
+        valid = false;
+      } else if(el){
+        el.classList.remove('error');
+        if(err) err.classList.remove('show');
+        formData[f.key] = el.value;
+      }
+    } else {
+      const el = document.getElementById('f_'+f.key);
+      if(el && f.type!=='toggle') formData[f.key] = el.value;
+    }
+  });
+  return valid;
+}
+
+function nextStep(){
+  if(!collectStep()){ showToast('Please fill in all required fields (*)','#dc2626'); return; }
+  if(currentStep < STEPS.length-1){ currentStep++; renderStepProgress(); renderStepContent(); window.scrollTo(0,0); }
+}
+function prevStep(){
+  if(currentStep > 0){ currentStep--; renderStepProgress(); renderStepContent(); window.scrollTo(0,0); }
+}
+
+/* ══ SAVE ══ */
+function saveRecord(){
+  const step = STEPS[currentStep];
+  const body = document.getElementById('stepBody');
+  body.innerHTML = `
+    <div class="step-card" style="max-width:720px;margin:0 auto;text-align:center;">
+      <div class="rv-success show">
+        <div class="rv-success-icon">✅</div>
+        <div class="rv-success-title">${editMode?'Vessel Record Updated':'Vessel Record Saved!'}</div>
+        <div class="rv-success-sub">${formData.namec||'The vessel'} has been ${editMode?'updated':'added'} to the Vessel Register successfully.</div>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button class="tbtn primary" onclick="backToList()">← Back to Vessel List</button>
+          <button class="tbtn" onclick="startWizard('new')">+ Add Another Vessel</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('btnBack').style.display  = 'none';
+  document.getElementById('btnNext').style.display  = 'none';
+  document.getElementById('btnSave').style.display  = 'none';
+  renderStepProgress();
+}
+
+function showToast(msg,bg){const t=document.getElementById('toast');t.textContent=msg;t.style.cssText=`background:${bg||'#0f172a'};color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:700;position:fixed;bottom:24px;right:24px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.25);display:block;`;clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3000);}
+</script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Common | MDM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/sidebar.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* SIDEBAR */
+
+/* MAIN */
+
+/* TOPBAR */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-bc{font-size:13px;color:var(--muted);flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.icon-only{padding:7px 10px;font-size:16px;}
+
+/* CONTENT LAYOUT */
+#content-area{flex:1;display:flex;overflow:hidden;height:calc(100vh - var(--hdr));}
+
+/* LEFT NAV TABS */
+.lnav{width:210px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);padding:12px 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.lnav-item{display:flex;align-items:center;gap:9px;padding:10px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:600;border-left:3px solid transparent;transition:all .12s;user-select:none;}
+.lnav-item:hover{background:#f6f8fa;color:var(--text);}
+.lnav-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:700;}
+.lnav-ico{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.lnav-head{padding:6px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-lt);margin-top:8px;}
+
+/* MAIN SCROLL AREA */
+.main-scroll{flex:1;overflow-y:auto;padding:20px;}
+.main-scroll::-webkit-scrollbar{width:5px;}
+.main-scroll::-webkit-scrollbar-thumb{background:#d1d5db;}
+
+/* TAB PANELS */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* PAGE HEADER */
+.pg-hdr{margin-bottom:18px;}
+.pg-title{font-size:17px;font-weight:800;}
+.pg-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;}
+.card-title{font-size:14px;font-weight:700;}
+.card-count{font-size:12px;color:var(--muted);background:#f1f5f9;padding:2px 8px;border-radius:20px;font-weight:600;}
+.card-arr{font-size:13px;color:var(--muted-lt);transition:transform .18s;}
+.card-hdr.collapsed .card-arr{transform:rotate(-90deg);}
+.card-body.hidden{display:none;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border-lt);font-weight:600;color:var(--text2);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#fafbfc;}
+.tbl-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:10px;border-bottom:1px solid var(--border-lt);}
+.tbl-search{display:flex;align-items:center;gap:8px;flex:1;max-width:300px;}
+.tbl-search input{flex:1;background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:7px 11px;font-size:13px;font-family:inherit;outline:none;font-weight:500;}
+.tbl-search input:focus{border-color:var(--blue-bd);background:#fff;}
+.tbl-actions{display:flex;align-items:center;gap:8px;}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-x{background:#f1f5f9;color:var(--muted);}
+
+/* TOGGLE SWITCH */
+.toggle{position:relative;display:inline-block;width:34px;height:18px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#d1d5db;transition:.2s;border-radius:18px;}
+.toggle-sl:before{position:absolute;content:"";height:12px;width:12px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%;}
+.toggle input:checked+.toggle-sl{background:var(--green);}
+.toggle input:checked+.toggle-sl:before{transform:translateX(16px);}
+
+/* ACTION ICONS */
+.act-ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:#fff;font-size:13px;transition:all .12s;}
+.act-ico:hover{background:#f6f8fa;}
+.act-ico.edit:hover{border-color:var(--blue-bd);color:var(--blue);}
+.act-ico.del:hover{border-color:var(--red-bd);color:var(--red);background:var(--red-bg);}
+
+/* SELECT */
+.fs{background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;font-weight:500;cursor:pointer;}
+.fs:focus{border-color:var(--blue-bd);background:#fff;}
+
+/* CHECKBOX */
+.chk{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;}
+
+/* INNER TABS */
+.itabs{display:flex;gap:2px;padding:12px 16px 0;border-bottom:1px solid var(--border);background:#f9fafb;}
+.itab{padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;}
+.itab:hover{color:var(--text);}
+.itab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.itab-panel{display:none;}
+.itab-panel.active{display:block;}
+
+/* ADD ROW */
+.add-row td{background:var(--blue-bg);border-top:2px dashed var(--blue-bd);}
+.add-row input,.add-row select{background:#fff;border:1.5px solid var(--blue-bd);border-radius:6px;padding:5px 9px;font-size:12.5px;font-family:inherit;font-weight:500;outline:none;width:100%;}
+.add-row input:focus{border-color:var(--blue);}
+
+/* GRID CARDS */
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+.card-hdr-inner{display:flex;align-items:center;gap:10px;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../MarineDashb.html"><span class="sb-ico">🏠</span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent" data-k="maint"><span class="sb-ico">🔧</span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint">
+      <a class="sb-child" href="../maintenance/equipments.html"><span class="sb-cico">🔩</span>Equipments</a>
+      <a class="sb-child" href="../maintenance/due-jobs.html"><span class="sb-cico">📋</span>Due Jobs</a>
+      <a class="sb-child" href="../maintenance/job-order.html"><span class="sb-cico">🗒️</span>Job Order</a>
+      <a class="sb-child" href="../maintenance/running-hours.html"><span class="sb-cico">⏱️</span>Running Hours</a>
+      <a class="sb-child" href="../maintenance/reports.html"><span class="sb-cico">📊</span>Reports</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico">🗄️</span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-mdm">
+      <a class="sb-child" href="vessel-register.html"><span class="sb-cico">🚢</span>Vessel Register</a>
+      <a class="sb-child active" href="common.html"><span class="sb-cico">🏢</span>Common</a>
+      <a class="sb-child" href="pms-reference-data.html"><span class="sb-cico">📑</span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico">⚙️</span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin">
+      <a class="sb-child" href="../administration/users-roles.html"><span class="sb-cico">👥</span>Users &amp; Roles</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <button class="tbtn icon-only" id="sidebarToggle" title="Toggle sidebar">☰</button>
+    <div style="width:1px;height:20px;background:var(--border);"></div>
+    <div class="tb-bc">MDM &rsaquo; <span>Common</span></div>
+    <div class="tb-ava">RK</div>
+  </div>
+
+  <div id="content-area">
+    <!-- LEFT NAV -->
+    <div class="lnav">
+      <div class="lnav-head">Sections</div>
+      <div class="lnav-item active" onclick="switchTab('company',this)">
+        <span class="lnav-ico">🏢</span>Company Reference Data
+      </div>
+      <div class="lnav-item" onclick="switchTab('vessel',this)">
+        <span class="lnav-ico">🚢</span>Vessel Reference Data
+      </div>
+      <div class="lnav-item" onclick="switchTab('geo',this)">
+        <span class="lnav-ico">🌍</span>Geographical Data
+      </div>
+    </div>
+
+    <!-- SCROLL AREA -->
+    <div class="main-scroll">
+
+      <!-- ═══ COMPANY REFERENCE DATA ═══ -->
+      <div class="tab-panel active" id="tab-company">
+        <div class="pg-hdr">
+          <div class="pg-title">Company Reference Data</div>
+          <div class="pg-sub">Manage company types, groups, register and department master</div>
+        </div>
+
+        <!-- Company Types -->
+        <div class="card">
+          <div class="card-hdr" onclick="toggleCard(this)">
+            <div class="card-hdr-inner">
+              <div class="card-title">Company Types</div>
+              <span class="card-count">6 types</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="tbtn primary" onclick="event.stopPropagation();showAddRow('ct')" style="font-size:12px;padding:5px 11px;">+ Add Type</button>
+              <span class="card-arr">▾</span>
+            </div>
+          </div>
+          <div class="card-body" id="cbody-ct">
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Group</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">SMC</span></td><td>Ship Management Centre</td><td>Owner-related</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">OWN</span></td><td>Owner</td><td>Owner-related</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CSC</span></td><td>Crew Service Centre</td><td>Crewing</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">SUP</span></td><td>Supplier</td><td>Supply Chain</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CHT</span></td><td>Charterer</td><td>Owner-related</td><td><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">AGT</span></td><td>Agent</td><td>Supply Chain</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr id="add-row-ct" style="display:none;" class="add-row">
+                  <td><input placeholder="Code"/></td>
+                  <td><input placeholder="Name"/></td>
+                  <td><input placeholder="Group"/></td>
+                  <td><span class="b b-g">Active</span></td>
+                  <td><button class="tbtn primary" style="font-size:12px;padding:4px 10px;" onclick="cancelAddRow('ct')">Save</button> <button class="tbtn" style="font-size:12px;padding:4px 10px;" onclick="cancelAddRow('ct')">Cancel</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Company Groups -->
+        <div class="card">
+          <div class="card-hdr" onclick="toggleCard(this)">
+            <div class="card-hdr-inner">
+              <div class="card-title">Company Groups</div>
+              <span class="card-count">3 groups</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="tbtn primary" onclick="event.stopPropagation();showAddRow('cg')" style="font-size:12px;padding:5px 11px;">+ Add Group</button>
+              <span class="card-arr">▾</span>
+            </div>
+          </div>
+          <div class="card-body" id="cbody-cg">
+            <table class="tbl">
+              <thead><tr><th>Group Name</th><th>Types Count</th><th>Description</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Owner-related</strong></td><td><span class="b b-b">3</span></td><td>Vessel owners, ship managers and charterers</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><strong>Supply Chain</strong></td><td><span class="b b-b">2</span></td><td>Suppliers and port agents for vessel operations</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><strong>Crewing</strong></td><td><span class="b b-b">1</span></td><td>Crew management and manning agencies</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr id="add-row-cg" style="display:none;" class="add-row">
+                  <td><input placeholder="Group Name"/></td>
+                  <td>—</td>
+                  <td><input placeholder="Description"/></td>
+                  <td><button class="tbtn primary" style="font-size:12px;padding:4px 10px;" onclick="cancelAddRow('cg')">Save</button> <button class="tbtn" style="font-size:12px;padding:4px 10px;" onclick="cancelAddRow('cg')">Cancel</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Company Register -->
+        <div class="card">
+          <div class="card-hdr" onclick="toggleCard(this)">
+            <div class="card-hdr-inner">
+              <div class="card-title">Company Register</div>
+              <span class="card-count">8 companies</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="tbtn primary" onclick="event.stopPropagation();" style="font-size:12px;padding:5px 11px;">+ Add Company</button>
+              <span class="card-arr">▾</span>
+            </div>
+          </div>
+          <div class="card-body" id="cbody-cr">
+            <div class="tbl-toolbar">
+              <div class="tbl-search"><input type="text" placeholder="Search companies…" oninput="filterTable(this,'creg')"/></div>
+              <div class="tbl-actions">
+                <select class="fs" style="font-size:12.5px;padding:6px 10px;">
+                  <option value="">All Types</option>
+                  <option>Ship Management Centre</option>
+                  <option>Owner</option>
+                  <option>Crew Service Centre</option>
+                  <option>Supplier</option>
+                  <option>Charterer</option>
+                  <option>Agent</option>
+                </select>
+              </div>
+            </div>
+            <table class="tbl" id="creg">
+              <thead><tr><th>Code</th><th>Company Name</th><th>Type</th><th>Country</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">NVT</span></td><td><strong>Neptune Vessel Technologies</strong></td><td>Ship Management Centre</td><td>🇸🇬 Singapore</td><td>info@nvt.sg</td><td>+65 6123 4567</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">SAR</span></td><td><strong>Sarvesh Shipping Ltd</strong></td><td>Owner</td><td>🇮🇳 India</td><td>ops@sarvesh.in</td><td>+91 22 6655 4400</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">MRM</span></td><td><strong>Mariapps Ship Management</strong></td><td>Ship Management Centre</td><td>🇮🇳 India</td><td>mgmt@mariapps.com</td><td>+91 484 404 5000</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CGS</span></td><td><strong>Crew Global Services</strong></td><td>Crew Service Centre</td><td>🇵🇭 Philippines</td><td>crew@cgs.ph</td><td>+63 2 8820 1234</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">PNS</span></td><td><strong>Pacific Naval Supplies</strong></td><td>Supplier</td><td>🇸🇬 Singapore</td><td>supply@pns.sg</td><td>+65 6789 0123</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">HRB</span></td><td><strong>Hamburg Reederei Brokers</strong></td><td>Charterer</td><td>🇩🇪 Germany</td><td>charter@hrb.de</td><td>+49 40 6800 7890</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">PAG</span></td><td><strong>Port Associates Group</strong></td><td>Agent</td><td>🇦🇪 UAE</td><td>agent@pag-uae.com</td><td>+971 4 5678 9012</td><td><span class="b b-g">Active</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">MTC</span></td><td><strong>Maritime Tech Corp</strong></td><td>Supplier</td><td>🇳🇱 Netherlands</td><td>info@mtc.nl</td><td>+31 10 4567 890</td><td><span class="b b-r">Inactive</span></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Department Master -->
+        <div class="card">
+          <div class="card-hdr" onclick="toggleCard(this)">
+            <div class="card-hdr-inner">
+              <div class="card-title">Department Master</div>
+              <span class="card-count">6 departments</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="tbtn primary" onclick="event.stopPropagation();showAddRow('dm')" style="font-size:12px;padding:5px 11px;">+ Add Dept.</button>
+              <span class="card-arr">▾</span>
+            </div>
+          </div>
+          <div class="card-body" id="cbody-dm">
+            <table class="tbl">
+              <thead><tr><th>Dept. Code</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">ENGR</span></td><td>Engineering</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">DECK</span></td><td>Deck</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">ELEC</span></td><td>Electrical</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">HTEC</span></td><td>HR &amp; Admin</td><td><span class="b b-a">User</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">SFTY</span></td><td>Safety &amp; Quality</td><td><span class="b b-a">User</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CAGO</span></td><td>Cargo Operations</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr id="add-row-dm" style="display:none;" class="add-row">
+                  <td><input placeholder="Code"/></td>
+                  <td><input placeholder="Name"/></td>
+                  <td><select><option>Equipment</option><option>User</option></select></td>
+                  <td><span class="b b-g">Active</span></td>
+                  <td><button class="tbtn primary" style="font-size:12px;padding:4px 10px;" onclick="cancelAddRow('dm')">Save</button> <button class="tbtn" style="font-size:12px;padding:4px 10px;" onclick="cancelAddRow('dm')">Cancel</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /tab-company -->
+
+      <!-- ═══ VESSEL REFERENCE DATA ═══ -->
+      <div class="tab-panel" id="tab-vessel">
+        <div class="pg-hdr">
+          <div class="pg-title">Vessel Reference Data</div>
+          <div class="pg-sub">Configure vessel sub-types, fleet categories, classification societies and flag master</div>
+        </div>
+
+        <div class="ref-grid">
+          <!-- Vessel Sub-Types -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+              <div class="card-hdr-inner"><div class="card-title">Vessel Sub-Types</div><span class="card-count">6 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <div class="card-body">
+              <table class="tbl">
+                <thead><tr><th>Code</th><th>Name</th><th>Oil</th><th>Chem</th><th>Gas</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="b b-x">VLCC</span></td><td>VLCC Tanker</td><td><input class="chk" type="checkbox" checked></td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">AFRA</span></td><td>Aframax</td><td><input class="chk" type="checkbox" checked></td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">CHEM</span></td><td>Chemical Tanker</td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox" checked></td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">LNG</span></td><td>LNG Carrier</td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox" checked></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">LPG</span></td><td>LPG Carrier</td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox" checked></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">BULK</span></td><td>Bulk Carrier</td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox"></td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Vessel Types -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+              <div class="card-hdr-inner"><div class="card-title">Vessel Types</div><span class="card-count">5 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <div class="card-body">
+              <table class="tbl">
+                <thead><tr><th>Code</th><th>Name</th><th>Sub-Types</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="b b-x">TNK</span></td><td>Tanker</td><td><span class="b b-b">3</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">BLK</span></td><td>Bulk Carrier</td><td><span class="b b-b">1</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">GAS</span></td><td>Gas Carrier</td><td><span class="b b-b">2</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">CNT</span></td><td>Container Ship</td><td><span class="b b-b">1</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">OSV</span></td><td>Offshore Support</td><td><span class="b b-b">2</span></td><td><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Fleet Categories -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+              <div class="card-hdr-inner"><div class="card-title">Fleet Categories</div><span class="card-count">4 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <div class="card-body">
+              <table class="tbl">
+                <thead><tr><th>Code</th><th>Name</th><th>Vessel Types</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="b b-x">TF1</span></td><td>Tanker Fleet A</td><td><span class="b b-b">2</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">BF1</span></td><td>Bulk Fleet B</td><td><span class="b b-b">1</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">GF1</span></td><td>Gas Fleet C</td><td><span class="b b-b">2</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">OSF</span></td><td>Offshore Fleet</td><td><span class="b b-b">1</span></td><td><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Classification Societies -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+              <div class="card-hdr-inner"><div class="card-title">Classification Societies</div><span class="card-count">6 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <div class="card-body">
+              <table class="tbl">
+                <thead><tr><th>Code</th><th>Name</th><th>Short</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="b b-x">DNV</span></td><td>Det Norske Veritas GL</td><td>DNV GL</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">LR</span></td><td>Lloyd's Register</td><td>LR</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">BV</span></td><td>Bureau Veritas</td><td>BV</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">ABS</span></td><td>American Bureau of Shipping</td><td>ABS</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">NK</span></td><td>Nippon Kaiji Kyokai</td><td>ClassNK</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">IRS</span></td><td>Indian Register of Shipping</td><td>IRS</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Flag Master -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+              <div class="card-hdr-inner"><div class="card-title">Flag Master</div><span class="card-count">8 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <div class="card-body">
+              <table class="tbl">
+                <thead><tr><th>Code</th><th>Flag Name</th><th>Nationality</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="b b-x">PAN</span></td><td>Panama</td><td>Panamanian</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">LBR</span></td><td>Liberia</td><td>Liberian</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">MHL</span></td><td>Marshall Islands</td><td>Marshallese</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">BHS</span></td><td>Bahamas</td><td>Bahamian</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">CYP</span></td><td>Cyprus</td><td>Cypriot</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">MLT</span></td><td>Malta</td><td>Maltese</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">SGP</span></td><td>Singapore</td><td>Singaporean</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">HKG</span></td><td>Hong Kong</td><td>Hong Konger</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Management Types -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+              <div class="card-hdr-inner"><div class="card-title">Management Types</div><span class="card-count">5 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <div class="card-body">
+              <table class="tbl">
+                <thead><tr><th>Code</th><th>Name</th><th>Active</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="b b-x">FMG</span></td><td>Full Management</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">TMG</span></td><td>Technical Management</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">CMG</span></td><td>Crew Management</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">CMT</span></td><td>Commercial Management</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                  <tr><td><span class="b b-x">OWN</span></td><td>Owner Managed</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /ref-grid -->
+
+        <!-- Vessel Departments -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+            <div class="card-hdr-inner"><div class="card-title">Vessel Departments</div><span class="card-count">5 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+          </div>
+          <div class="card-body">
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sub-Depts</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">ENG</span></td><td>Engineering Department</td><td><span class="b b-b">4</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">DEC</span></td><td>Deck Department</td><td><span class="b b-b">3</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">ELE</span></td><td>Electrical Department</td><td><span class="b b-b">2</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CGO</span></td><td>Cargo Department</td><td><span class="b b-b">2</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">MSS</span></td><td>Mess &amp; Catering</td><td><span class="b b-b">1</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Confirmed Vessels -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-hdr" style="cursor:default;border-bottom:1px solid var(--border-lt);">
+            <div class="card-hdr-inner">
+              <div class="card-title">Confirmed Vessels (Onboarding)</div>
+              <span class="card-count">3 vessels</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="tbl">
+              <thead><tr><th>Vessel Name</th><th>Fleet</th><th>Mgmt Type</th><th>Vessel Type</th><th>Crew Nationality</th><th>Crew Count</th><th>Takeover Date</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>MV Sarvesh</strong></td><td>Tanker Fleet A</td><td>Full Management</td><td>Aframax</td><td>Indian</td><td>25</td><td>2026-02-01</td><td><span class="b b-g">Active</span></td></tr>
+                <tr><td><strong>MV Neptune Star</strong></td><td>Gas Fleet C</td><td>Technical Management</td><td>LNG Carrier</td><td>Filipino</td><td>28</td><td>2026-05-15</td><td><span class="b b-a">Pending</span></td></tr>
+                <tr><td><strong>MV Pacific Voyager</strong></td><td>Bulk Fleet B</td><td>Full Management</td><td>Bulk Carrier</td><td>Indian</td><td>22</td><td>2026-08-01</td><td><span class="b b-x">Confirmed</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /tab-vessel -->
+
+      <!-- ═══ GEOGRAPHICAL DATA ═══ -->
+      <div class="tab-panel" id="tab-geo">
+        <div class="pg-hdr">
+          <div class="pg-title">Geographical &amp; General Data</div>
+          <div class="pg-sub">Countries, regions, currencies and ports reference data</div>
+        </div>
+
+        <div class="card">
+          <div class="itabs">
+            <div class="itab active" onclick="switchItab(this,'geo-countries')">Countries / Regions</div>
+            <div class="itab" onclick="switchItab(this,'geo-currencies')">Currencies</div>
+            <div class="itab" onclick="switchItab(this,'geo-ports')">Ports &amp; Airports</div>
+          </div>
+
+          <!-- Countries -->
+          <div class="itab-panel active" id="geo-countries">
+            <div class="tbl-toolbar">
+              <div class="tbl-search"><input type="text" placeholder="Search countries…" oninput="filterTable(this,'ctbl')"/></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Country</button>
+            </div>
+            <table class="tbl" id="ctbl">
+              <thead><tr><th>Code</th><th>Country Name</th><th>Region</th><th>Nationality</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">IN</span></td><td>India</td><td>Asia Pacific</td><td>Indian</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">SG</span></td><td>Singapore</td><td>Asia Pacific</td><td>Singaporean</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">PH</span></td><td>Philippines</td><td>Asia Pacific</td><td>Filipino</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">AE</span></td><td>United Arab Emirates</td><td>Middle East</td><td>Emirati</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">GB</span></td><td>United Kingdom</td><td>Europe</td><td>British</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">DE</span></td><td>Germany</td><td>Europe</td><td>German</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">NL</span></td><td>Netherlands</td><td>Europe</td><td>Dutch</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">GR</span></td><td>Greece</td><td>Europe</td><td>Greek</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">JP</span></td><td>Japan</td><td>Asia Pacific</td><td>Japanese</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CN</span></td><td>China</td><td>Asia Pacific</td><td>Chinese</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Currencies -->
+          <div class="itab-panel" id="geo-currencies">
+            <div class="tbl-toolbar">
+              <div class="tbl-search"><input type="text" placeholder="Search currencies…"/></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Currency</button>
+            </div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Currency Name</th><th>Symbol</th><th>Exchange Rate (to USD)</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">USD</span></td><td>US Dollar</td><td>$</td><td><strong>1.0000</strong> <span class="b b-b" style="font-size:10px;">Base</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">EUR</span></td><td>Euro</td><td>€</td><td>1.0850</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">GBP</span></td><td>British Pound</td><td>£</td><td>1.2700</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">SGD</span></td><td>Singapore Dollar</td><td>S$</td><td>0.7450</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">AED</span></td><td>UAE Dirham</td><td>د.إ</td><td>0.2723</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">INR</span></td><td>Indian Rupee</td><td>₹</td><td>0.0120</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">JPY</span></td><td>Japanese Yen</td><td>¥</td><td>0.0067</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">NOK</span></td><td>Norwegian Krone</td><td>kr</td><td>0.0920</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Ports -->
+          <div class="itab-panel" id="geo-ports">
+            <div class="tbl-toolbar">
+              <div class="tbl-search"><input type="text" placeholder="Search ports…"/></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Port</button>
+            </div>
+            <table class="tbl">
+              <thead><tr><th>Port Code</th><th>Port Name</th><th>Country</th><th>Type</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">SGSIN</span></td><td>Port of Singapore</td><td>Singapore</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">AEDXB</span></td><td>Port of Dubai (Jebel Ali)</td><td>UAE</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">NLRTM</span></td><td>Port of Rotterdam</td><td>Netherlands</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">INMAA</span></td><td>Chennai Port</td><td>India</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">JPYOK</span></td><td>Port of Yokohama</td><td>Japan</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">GRPIR</span></td><td>Port of Piraeus</td><td>Greece</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">SGSIN-A</span></td><td>Changi International Airport</td><td>Singapore</td><td><span class="b b-a">Air</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">INBOM</span></td><td>Mumbai Port</td><td>India</td><td><span class="b b-b">Sea</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /tab-geo -->
+
+    </div><!-- /main-scroll -->
+  </div><!-- /content-area -->
+</div><!-- /main -->
+
+<script src="../data/sample-data.js"></script>
+<script>
+// Sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('visible');
+  main.classList.toggle('with-sidebar');
+});
+
+// Sidebar accordion
+document.querySelectorAll('.sb-parent').forEach(p => {
+  p.addEventListener('click', () => {
+    const k = p.dataset.k;
+    const ch = document.getElementById('ch-' + k);
+    p.classList.toggle('open');
+    ch.classList.toggle('open');
+  });
+});
+
+// Left nav tabs
+function switchTab(tabId, el) {
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.lnav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  el.classList.add('active');
+}
+
+// Card collapse
+function toggleCard(hdr) {
+  hdr.classList.toggle('collapsed');
+  const body = hdr.nextElementSibling;
+  if (body) body.classList.toggle('hidden');
+}
+
+// Inner tabs
+function switchItab(el, panelId) {
+  const card = el.closest('.card');
+  card.querySelectorAll('.itab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.itab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// Add row
+function showAddRow(key) {
+  document.getElementById('add-row-' + key).style.display = 'table-row';
+}
+function cancelAddRow(key) {
+  document.getElementById('add-row-' + key).style.display = 'none';
+}
+
+// Filter table
+function filterTable(input, tblId) {
+  const q = input.value.toLowerCase();
+  const tbl = document.getElementById(tblId);
+  if (!tbl) return;
+  tbl.querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

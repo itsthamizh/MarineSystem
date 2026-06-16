@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · PMS Reference Data | MDM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="pms-reference-data.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --purple:#7c3aed;--purple-bg:#faf5ff;--purple-bd:#e9d5ff;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* SIDEBAR */
+
+/* MAIN */
+
+/* TOPBAR */
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-bc{font-size:13px;color:var(--muted);flex:1;}
+.tb-bc span{color:var(--text);font-weight:700;}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;}
+.tbtn:hover{background:#f6f8fa;}
+.tbtn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tbtn.primary:hover{background:var(--blue-lt);}
+.tbtn.icon-only{padding:7px 10px;font-size:16px;}
+
+/* CONTENT LAYOUT */
+#content-area{flex:1;display:flex;overflow:hidden;height:calc(100vh - var(--hdr));}
+
+/* LEFT NAV */
+.lnav{width:196px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);overflow-y:auto;}
+.lnav-head{padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-lt);margin-top:8px;}
+.lnav-item{display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:600;border-left:3px solid transparent;transition:all .12s;user-select:none;line-height:1.3;}
+.lnav-item:hover{background:#f6f8fa;color:var(--text);}
+.lnav-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:700;}
+.lnav-num{width:18px;height:18px;border-radius:4px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted-lt);flex-shrink:0;}
+.lnav-item.active .lnav-num{background:var(--blue);color:#fff;}
+
+/* MAIN SCROLL */
+.main-scroll{flex:1;overflow-y:auto;padding:20px;}
+.main-scroll::-webkit-scrollbar{width:5px;}
+.main-scroll::-webkit-scrollbar-thumb{background:#d1d5db;}
+
+/* PANELS */
+.sec-panel{display:none;}
+.sec-panel.active{display:block;}
+
+/* PAGE HEADER */
+.pg-hdr{margin-bottom:18px;}
+.pg-title{font-size:17px;font-weight:800;}
+.pg-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border-lt);}
+.card-title{font-size:14px;font-weight:700;}
+.card-count{font-size:12px;color:var(--muted);background:#f1f5f9;padding:2px 8px;border-radius:20px;font-weight:600;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border-lt);font-weight:600;color:var(--text2);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#fafbfc;}
+.tbl-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:10px;border-bottom:1px solid var(--border-lt);}
+.tbl-actions{display:flex;align-items:center;gap:8px;}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-g{background:var(--green-bg);color:var(--green);}
+.b-r{background:var(--red-bg);color:var(--red);}
+.b-b{background:var(--blue-bg);color:var(--blue);}
+.b-a{background:var(--amber-bg);color:var(--amber);}
+.b-x{background:#f1f5f9;color:var(--muted);}
+.b-p{background:var(--purple-bg);color:var(--purple);}
+.b-warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:11px;}
+.b-lock{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);font-size:11px;}
+
+/* TOGGLE */
+.toggle{position:relative;display:inline-block;width:34px;height:18px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#d1d5db;transition:.2s;border-radius:18px;}
+.toggle-sl:before{position:absolute;content:"";height:12px;width:12px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%;}
+.toggle input:checked+.toggle-sl{background:var(--green);}
+.toggle input:checked+.toggle-sl:before{transform:translateX(16px);}
+
+/* ACTION ICONS */
+.act-ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:#fff;font-size:13px;transition:all .12s;}
+.act-ico:hover{background:#f6f8fa;}
+.act-ico.edit:hover{border-color:var(--blue-bd);color:var(--blue);}
+.act-ico.del:hover{border-color:var(--red-bd);color:var(--red);background:var(--red-bg);}
+
+/* CHECKBOX */
+.chk{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;}
+
+/* COLOR DOT */
+.cdot{width:16px;height:16px;border-radius:50%;display:inline-block;border:1.5px solid rgba(0,0,0,.1);vertical-align:middle;}
+
+/* INNER TABS */
+.itabs{display:flex;gap:2px;padding:12px 16px 0;border-bottom:1px solid var(--border);background:#f9fafb;flex-wrap:wrap;}
+.itab{padding:8px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;white-space:nowrap;}
+.itab:hover{color:var(--text);}
+.itab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.itab-panel{display:none;}
+.itab-panel.active{display:block;}
+
+/* SPLIT GRID */
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* CAPTIONS GRID */
+.cap-grid{display:grid;gap:0;}
+.cap-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border-lt);padding:10px 18px;align-items:center;}
+.cap-row:last-child{border-bottom:none;}
+.cap-label{font-size:13px;font-weight:600;color:var(--muted);}
+.cap-input{background:#f6f8fa;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:13px;font-family:inherit;font-weight:500;outline:none;width:100%;}
+.cap-input:focus{border-color:var(--blue-bd);background:#fff;}
+
+/* INFO NOTE */
+.info-note{background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:8px;padding:12px 16px;font-size:12.5px;color:var(--blue);font-weight:600;margin-bottom:16px;}
+.warn-note{background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:8px;padding:10px 16px;font-size:12.5px;color:var(--amber);font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../MarineDashb.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint" data-title="Maintenance">
+      <a class="sb-child" href="../../maintenance/equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="../../maintenance/due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs</a>
+      <a class="sb-child" href="../../maintenance/job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order</a>
+      <a class="sb-child" href="../../maintenance/running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="../../maintenance/technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="../../maintenance/reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="../../maintenance/guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="../../maintenance/dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="../../maintenance/pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="../../mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="../../mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="../../mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="../../administration/users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="../../administration/access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <a class="sb-child" href="../../administration/system-config/system-config.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</a>
+      <a class="sb-child" href="../../administration/livefleet/livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</a>
+      <a class="sb-child" href="../../administration/monitoring-audit/monitoring-audit.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <button class="tbtn icon-only" id="sidebarToggle" title="Toggle sidebar">☰</button>
+    <div style="width:1px;height:20px;background:var(--border);"></div>
+    <div class="tb-bc">MDM &rsaquo; <span>PMS Reference Data</span></div>
+    <div class="tb-ava">RK</div>
+  </div>
+
+  <div id="content-area">
+    <!-- LEFT NAV -->
+    <div class="lnav">
+      <div class="lnav-head">Sections</div>
+      <div class="lnav-item active" onclick="switchSec('defect',this)"><span class="lnav-num">1</span>Defect Sections</div>
+      <div class="lnav-item" onclick="switchSec('eqloc',this)"><span class="lnav-num">2</span>Equipment Location</div>
+      <div class="lnav-item" onclick="switchSec('makers',this)"><span class="lnav-num">3</span>Makers</div>
+      <div class="lnav-item" onclick="switchSec('freq',this)"><span class="lnav-num">4</span>Frequency Master</div>
+      <div class="lnav-item" onclick="switchSec('jobcat',this)"><span class="lnav-num">5</span>Job Category</div>
+      <div class="lnav-item" onclick="switchSec('jobtype',this)"><span class="lnav-num">6</span>Job Type</div>
+      <div class="lnav-item" onclick="switchSec('jobmaster',this)"><span class="lnav-num">7</span>Job Master</div>
+      <div class="lnav-item" onclick="switchSec('mainttype',this)"><span class="lnav-num">8</span>Maintenance Type</div>
+      <div class="lnav-item" onclick="switchSec('status',this)"><span class="lnav-num">9</span>Status Lists</div>
+      <div class="lnav-item" onclick="switchSec('circgrp',this)"><span class="lnav-num">10</span>Circulating Equip. Groups</div>
+      <div class="lnav-item" onclick="switchSec('trigger',this)"><span class="lnav-num">11</span>Trigger Master</div>
+      <div class="lnav-item" onclick="switchSec('tagmaster',this)"><span class="lnav-num">12</span>Tag Master</div>
+      <div class="lnav-item" onclick="switchSec('eqtype',this)"><span class="lnav-num">13</span>Equipment Type</div>
+      <div class="lnav-item" onclick="switchSec('failmode',this)"><span class="lnav-num">14</span>Failure Cause &amp; Mode</div>
+      <div class="lnav-item" onclick="switchSec('captions',this)"><span class="lnav-num">15</span>Captions Config</div>
+      <div class="lnav-item" onclick="switchSec('export',this)"><span class="lnav-num">16</span>Export Control</div>
+    </div>
+
+    <!-- MAIN SCROLL -->
+    <div class="main-scroll">
+
+      <!-- 1. DEFECT SECTIONS -->
+      <div class="sec-panel active" id="sec-defect">
+        <div class="pg-hdr"><div class="pg-title">Defect Sections</div><div class="pg-sub">Classification sections for defect reporting and tracking</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Defect Sections</div><span class="card-count">6 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Section</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">ME</span></td><td>Main Engine</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">HUL</span></td><td>Hull</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">NAV</span></td><td>Navigation</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">ELI</span></td><td>Electrical Installations</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">BOI</span></td><td>Boiler</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">STR</span></td><td>Steering</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. EQUIPMENT LOCATION -->
+      <div class="sec-panel" id="sec-eqloc">
+        <div class="pg-hdr"><div class="pg-title">Equipment Location</div><div class="pg-sub">Physical locations onboard where equipment is installed</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Equipment Locations</div><span class="card-count">6 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Location</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Location Name</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">ER</span></td><td>Engine Room</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">BR</span></td><td>Bridge</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">PR</span></td><td>Pump Room</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CH</span></td><td>Cargo Hold</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">DK</span></td><td>Deck</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">SR</span></td><td>Store Room</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. MAKERS -->
+      <div class="sec-panel" id="sec-makers">
+        <div class="pg-hdr"><div class="pg-title">Makers</div><div class="pg-sub">Equipment manufacturers and original equipment manufacturers (OEM)</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Makers Register</div><span class="card-count">8 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Maker</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Country</th><th>Contact</th><th>Engine Maker</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">MAN</span></td><td><strong>MAN Energy Solutions</strong></td><td>Germany</td><td>info@man-es.com</td><td><input class="chk" type="checkbox" checked></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">WAR</span></td><td><strong>Wärtsilä Corporation</strong></td><td>Finland</td><td>contact@wartsila.com</td><td><input class="chk" type="checkbox" checked></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">ABB</span></td><td><strong>ABB Marine</strong></td><td>Switzerland</td><td>marine@abb.com</td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">SIE</span></td><td><strong>Siemens Marine</strong></td><td>Germany</td><td>marine@siemens.com</td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CAT</span></td><td><strong>Caterpillar Marine</strong></td><td>USA</td><td>marine@cat.com</td><td><input class="chk" type="checkbox" checked></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">WIN</span></td><td><strong>Winteb Marine</strong></td><td>Japan</td><td>info@winteb.jp</td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">HYU</span></td><td><strong>HHI Engineering</strong></td><td>South Korea</td><td>eng@hhi.co.kr</td><td><input class="chk" type="checkbox" checked></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">KME</span></td><td><strong>Kongsberg Maritime</strong></td><td>Norway</td><td>info@kongsberg.com</td><td><input class="chk" type="checkbox"></td><td><label class="toggle"><input type="checkbox"><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. FREQUENCY MASTER -->
+      <div class="sec-panel" id="sec-freq">
+        <div class="pg-hdr"><div class="pg-title">Frequency Master</div><div class="pg-sub">Define maintenance interval frequencies by type</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Frequencies</div><span class="card-count">10 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Frequency</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Frequency Type</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">W</span></td><td>Weekly</td><td><span class="b b-b">Calendar</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">M</span></td><td>Monthly</td><td><span class="b b-b">Calendar</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">Q</span></td><td>Quarterly</td><td><span class="b b-b">Calendar</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">H</span></td><td>Half-Yearly</td><td><span class="b b-b">Calendar</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">A</span></td><td>Annual</td><td><span class="b b-b">Calendar</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">2Y</span></td><td>2-Yearly</td><td><span class="b b-b">Calendar</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">RH500</span></td><td>500 Running Hours</td><td><span class="b b-a">Hourly</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">RH1K</span></td><td>1000 Running Hours</td><td><span class="b b-a">Hourly</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CB</span></td><td>Condition Based</td><td><span class="b b-p">Condition-Based</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">EVT</span></td><td>Event Triggered</td><td><span class="b b-g">Event</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 5. JOB CATEGORY -->
+      <div class="sec-panel" id="sec-jobcat">
+        <div class="pg-hdr"><div class="pg-title">Job Category</div><div class="pg-sub">High-level classification of maintenance jobs</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Job Categories</div><span class="card-count">5 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Category</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">PLN</span></td><td>Planned</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">DFT</span></td><td>Defect</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">OTJ</span></td><td>One-Time Job</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">UNP</span></td><td>Unplanned</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CLS</span></td><td>Class Survey</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 6. JOB TYPE -->
+      <div class="sec-panel" id="sec-jobtype">
+        <div class="pg-hdr"><div class="pg-title">Job Type</div><div class="pg-sub">Specific type of maintenance activity performed</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Job Types</div><span class="card-count">8 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Type</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">INS</span></td><td>Inspection</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CAL</span></td><td>Calibration</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CSV</span></td><td>Class Survey</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">OVH</span></td><td>Overhaul</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">GRS</span></td><td>Greasing</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CRT</span></td><td>Certificate Renewal</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">DRL</span></td><td>Drills</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">REP</span></td><td>Repair</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 7. JOB MASTER -->
+      <div class="sec-panel" id="sec-jobmaster">
+        <div class="pg-hdr"><div class="pg-title">Job Master</div><div class="pg-sub">Global job template library — reusable across vessels</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Job Templates</div><span class="card-count">8 templates</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Create Template</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Job Code</th><th>Title</th><th>Maintenance Type</th><th>Discipline</th><th>Priority</th><th>Steps</th><th>Spares</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">JT-ME-001</span></td><td><strong>Main Engine — Cylinder Head Overhaul</strong></td><td>Manufacturer</td><td>Engineering</td><td><span class="b b-r">Critical</span></td><td>12</td><td>8</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-ME-002</span></td><td><strong>Main Engine — Fuel Injector Calibration</strong></td><td>Manufacturer</td><td>Engineering</td><td><span class="b b-a">High</span></td><td>6</td><td>3</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-GE-001</span></td><td><strong>Generator — Annual Overhaul</strong></td><td>Class</td><td>Engineering</td><td><span class="b b-a">High</span></td><td>10</td><td>6</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-FP-001</span></td><td><strong>Fire Pump — Monthly Test</strong></td><td>Statutory</td><td>Deck</td><td><span class="b b-r">Critical</span></td><td>5</td><td>0</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-TC-001</span></td><td><strong>Turbocharger — Running Hours Check</strong></td><td>Manufacturer</td><td>Engineering</td><td><span class="b b-b">Normal</span></td><td>7</td><td>4</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-SG-001</span></td><td><strong>Steering Gear — Quarterly Test</strong></td><td>Class</td><td>Deck</td><td><span class="b b-r">Critical</span></td><td>8</td><td>2</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-LS-001</span></td><td><strong>Lifeboat — Launching Drill</strong></td><td>Statutory</td><td>Deck</td><td><span class="b b-r">Critical</span></td><td>9</td><td>1</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">JT-OWS-001</span></td><td><strong>OWS — Oily Water Separator Inspection</strong></td><td>Port State Control</td><td>Engineering</td><td><span class="b b-a">High</span></td><td>6</td><td>2</td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 8. MAINTENANCE TYPE -->
+      <div class="sec-panel" id="sec-mainttype">
+        <div class="pg-hdr"><div class="pg-title">Maintenance Type</div><div class="pg-sub">Classification of maintenance activities by governing authority</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Maintenance Types</div><span class="card-count">7 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Type</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">CLS</span></td><td>Class</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CMP</span></td><td>Company Policy</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">MFR</span></td><td>Manufacturer</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">OWP</span></td><td>Owner Policy</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">STA</span></td><td>Statutory</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">PSC</span></td><td>Port State Control</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">VET</span></td><td>Vetting</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 9. STATUS LISTS -->
+      <div class="sec-panel" id="sec-status">
+        <div class="pg-hdr"><div class="pg-title">Status Lists</div><div class="pg-sub">Configure status codes, labels, colors and sort order for all system objects</div></div>
+        <div class="card">
+          <div class="itabs">
+            <div class="itab active" onclick="switchItab(this,'st-eqst')">Equipment Status</div>
+            <div class="itab" onclick="switchItab(this,'st-jcon')">Job Condition</div>
+            <div class="itab" onclick="switchItab(this,'st-jpri')">Job Priority</div>
+            <div class="itab" onclick="switchItab(this,'st-safe')">Safety Level</div>
+            <div class="itab" onclick="switchItab(this,'st-jstat')">Job Status</div>
+            <div class="itab" onclick="switchItab(this,'st-cause')">Maintenance Cause</div>
+          </div>
+
+          <!-- Equipment Status -->
+          <div class="itab-panel active" id="st-eqst">
+            <div class="tbl-toolbar"><span style="font-size:12.5px;font-weight:600;color:var(--muted);">Equipment Status Codes</span><button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button></div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sort</th><th>Color</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">OPR</span></td><td>Operational</td><td>1</td><td><span class="cdot" style="background:#16a34a;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">DEF</span></td><td>Defective</td><td>2</td><td><span class="cdot" style="background:#dc2626;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">UND</span></td><td>Under Maintenance</td><td>3</td><td><span class="cdot" style="background:#d97706;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">SBY</span></td><td>Standby</td><td>4</td><td><span class="cdot" style="background:#1565c0;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">DIS</span></td><td>Decommissioned</td><td>5</td><td><span class="cdot" style="background:#94a3b8;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Job Condition -->
+          <div class="itab-panel" id="st-jcon">
+            <div class="tbl-toolbar"><span style="font-size:12.5px;font-weight:600;color:var(--muted);">Job Condition Codes</span><button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button></div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sort</th><th>Color</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">OVD</span></td><td>Overdue</td><td>1</td><td><span class="cdot" style="background:#dc2626;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">DUE</span></td><td>Due</td><td>2</td><td><span class="cdot" style="background:#d97706;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">UPC</span></td><td>Upcoming</td><td>3</td><td><span class="cdot" style="background:#1565c0;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">SCH</span></td><td>Scheduled</td><td>4</td><td><span class="cdot" style="background:#16a34a;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Job Priority -->
+          <div class="itab-panel" id="st-jpri">
+            <div class="tbl-toolbar"><span style="font-size:12.5px;font-weight:600;color:var(--muted);">Job Priority Codes</span><button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button></div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sort</th><th>Color</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">CRT</span></td><td>Critical</td><td>1</td><td><span class="cdot" style="background:#dc2626;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">HGH</span></td><td>High</td><td>2</td><td><span class="cdot" style="background:#ea580c;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">NRM</span></td><td>Non-Critical</td><td>3</td><td><span class="cdot" style="background:#16a34a;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">LOW</span></td><td>Low</td><td>4</td><td><span class="cdot" style="background:#94a3b8;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Safety Level -->
+          <div class="itab-panel" id="st-safe">
+            <div class="tbl-toolbar"><span style="font-size:12.5px;font-weight:600;color:var(--muted);">Safety Level Codes</span><button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button></div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sort</th><th>Color</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">SFE</span></td><td>Safe to Work</td><td>1</td><td><span class="cdot" style="background:#16a34a;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">CTP</span></td><td>Caution — PTW Required</td><td>2</td><td><span class="cdot" style="background:#d97706;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">HAZ</span></td><td>Hazardous — Special Permit</td><td>3</td><td><span class="cdot" style="background:#dc2626;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Job Status -->
+          <div class="itab-panel" id="st-jstat">
+            <div class="tbl-toolbar"><span style="font-size:12.5px;font-weight:600;color:var(--muted);">Job Status Codes</span><button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button></div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sort</th><th>Color</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">OPN</span></td><td>Open</td><td>1</td><td><span class="cdot" style="background:#1565c0;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">INP</span></td><td>In Progress</td><td>2</td><td><span class="cdot" style="background:#d97706;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">CLO</span></td><td>Closed</td><td>3</td><td><span class="cdot" style="background:#16a34a;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">DFR</span></td><td>Deferred</td><td>4</td><td><span class="cdot" style="background:#7c3aed;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">CAN</span></td><td>Cancelled</td><td>5</td><td><span class="cdot" style="background:#94a3b8;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Maintenance Cause -->
+          <div class="itab-panel" id="st-cause">
+            <div class="tbl-toolbar"><span style="font-size:12.5px;font-weight:600;color:var(--muted);">Maintenance Cause Codes</span><button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button></div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Sort</th><th>Color</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">SCH</span></td><td>Scheduled</td><td>1</td><td><span class="cdot" style="background:#16a34a;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">WER</span></td><td>Wear &amp; Tear</td><td>2</td><td><span class="cdot" style="background:#d97706;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">FAL</span></td><td>Failure</td><td>3</td><td><span class="cdot" style="background:#dc2626;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+                <tr><td><span class="b b-x">ACT</span></td><td>Accident / Damage</td><td>4</td><td><span class="cdot" style="background:#7c3aed;"></span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. CIRCULATING EQUIPMENT GROUPS -->
+      <div class="sec-panel" id="sec-circgrp">
+        <div class="pg-hdr"><div class="pg-title">Circulating Equipment Groups</div><div class="pg-sub">Groups of interchangeable spare equipment that rotate through maintenance cycles</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Circulating Groups</div><span class="card-count">5 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Group</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Description</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">PST</span></td><td>Pistons</td><td>Engine piston assemblies for cyclic overhaul rotation</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">FIN</span></td><td>Fuel Injectors</td><td>Fuel injection nozzles replaced on a rotating schedule</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">EXV</span></td><td>Exhaust Valves</td><td>Exhaust valve spindle &amp; seat assembly rotation group</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CLH</span></td><td>Cylinder Heads</td><td>Cylinder head units cycled through maintenance pool</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">TCR</span></td><td>Turbocharger Rotors</td><td>Turbocharger rotor assemblies for hot-swap maintenance</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 11. TRIGGER MASTER -->
+      <div class="sec-panel" id="sec-trigger">
+        <div class="pg-hdr"><div class="pg-title">Trigger Master</div><div class="pg-sub">Condition-based and event-based maintenance triggers</div></div>
+        <div class="warn-note">🔒 Access restricted to authorised administrators only. Trigger conditions affect system-wide maintenance scheduling.</div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Trigger Definitions</div><span class="card-count">5 rows</span><span class="b b-lock">🔒 Admin Only</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Trigger</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Trigger Name</th><th>Condition Type</th><th>Threshold</th><th>Unit</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">RH-1000</span></td><td>1000 Running Hours</td><td><span class="b b-a">Hourly</span></td><td>1000</td><td>hrs</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">OIL-TMP</span></td><td>Lube Oil Temp High</td><td><span class="b b-p">Condition</span></td><td>85</td><td>°C</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">EXH-TMP</span></td><td>Exhaust Temp Deviation</td><td><span class="b b-p">Condition</span></td><td>50</td><td>°C above avg</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">DRY-DOC</span></td><td>Drydock Arrival</td><td><span class="b b-g">Event</span></td><td>—</td><td>Event</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">VBR-ALM</span></td><td>Vibration Alarm</td><td><span class="b b-p">Condition</span></td><td>7.5</td><td>mm/s</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 12. TAG MASTER -->
+      <div class="sec-panel" id="sec-tagmaster">
+        <div class="pg-hdr"><div class="pg-title">Tag Master</div><div class="pg-sub">Tags for categorising equipment, spare parts and jobs</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Tags</div><span class="card-count">6 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Tag</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Tag Name</th><th>Description</th><th>Applicable To</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">OPR</span></td><td>Operational</td><td>Equipment required for day-to-day vessel operations</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">SFT</span></td><td>Safety</td><td>Safety-critical equipment and parts requiring priority</td><td><span class="b b-g">Both</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">ENV</span></td><td>Environmental</td><td>Equipment related to environmental compliance (MARPOL)</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">ESS</span></td><td>Essential</td><td>Minimum equipment required for safe navigation</td><td><span class="b b-b">Equipment</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">DDK</span></td><td>Drydock Items</td><td>Work items scheduled for next drydock period</td><td><span class="b b-g">Both</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">OEM</span></td><td>OEM Recommended</td><td>Spares and jobs recommended by original equipment maker</td><td><span class="b b-a">Spare Parts</span></td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 13. EQUIPMENT TYPE -->
+      <div class="sec-panel" id="sec-eqtype">
+        <div class="pg-hdr"><div class="pg-title">Equipment Type</div><div class="pg-sub">System classification of equipment installed on vessels</div></div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Equipment Types</div><span class="card-count">6 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Type</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>Description</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">PRO</span></td><td>Propulsion</td><td>Main engine, shafting, propeller systems</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">AUX</span></td><td>Auxiliary Machinery</td><td>Generators, pumps, compressors and auxiliary equipment</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">NAV</span></td><td>Navigation</td><td>Radar, GPS, ECDIS and navigation electronics</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">SFT</span></td><td>Safety Equipment</td><td>Fire detection, lifesaving appliances, safety systems</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">CGO</span></td><td>Cargo Equipment</td><td>Cargo pumps, valves, manifolds, pipeline systems</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">HVA</span></td><td>HVAC Systems</td><td>Heating, ventilation and air conditioning equipment</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 14. FAILURE CAUSE & MODE -->
+      <div class="sec-panel" id="sec-failmode">
+        <div class="pg-hdr"><div class="pg-title">Failure Cause &amp; Mode</div><div class="pg-sub">Root cause categories and failure mode definitions for defect analysis</div></div>
+        <div class="split2">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr">
+              <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Failure Cause</div><span class="card-count">5 rows</span><span class="b b-lock" style="font-size:10px;">🔒 Restricted</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">AGE</span></td><td>Age / Wear</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">OPE</span></td><td>Operational Error</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">MAT</span></td><td>Material Defect</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CON</span></td><td>Contamination</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">VIB</span></td><td>Vibration / Fatigue</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-hdr">
+              <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Failure Mode</div><span class="card-count">5 rows</span></div>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add</button>
+            </div>
+            <table class="tbl">
+              <thead><tr><th>Code</th><th>Name</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><span class="b b-x">LEK</span></td><td>Leakage</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">OVH</span></td><td>Overheating</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">NOI</span></td><td>Abnormal Noise</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">CRK</span></td><td>Cracking / Fracture</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+                <tr><td><span class="b b-x">STP</span></td><td>Seizure / Stoppage</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 15. CAPTIONS CONFIGURATION -->
+      <div class="sec-panel" id="sec-captions">
+        <div class="pg-hdr"><div class="pg-title">Captions Configuration</div><div class="pg-sub">Customise field labels shown in the UI for your organisation</div></div>
+        <div class="card">
+          <div class="itabs">
+            <div class="itab active" onclick="switchItab(this,'cap-eq')">Equipment</div>
+            <div class="itab" onclick="switchItab(this,'cap-jp')">Job Plan</div>
+            <div class="itab" onclick="switchItab(this,'cap-sp')">Spare Parts</div>
+          </div>
+
+          <div class="itab-panel active" id="cap-eq">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-lt);">
+              <span style="font-size:12.5px;font-weight:600;color:var(--muted);">Equipment field labels — enter custom labels or leave blank to use defaults</span>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">💾 Save Captions</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;padding:4px 0;">
+              <div style="padding:8px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);border-bottom:1px solid var(--border-lt);">System Default</div>
+              <div style="padding:8px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);border-bottom:1px solid var(--border-lt);">Custom Label</div>
+            </div>
+            <div class="cap-grid">
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Equipment Code</div><input class="cap-input" placeholder="Equipment Code" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Equipment Name</div><input class="cap-input" placeholder="Equipment Name" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Serial Number</div><input class="cap-input" placeholder="Serial Number" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Model</div><input class="cap-input" placeholder="Model" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Maker</div><input class="cap-input" placeholder="Maker" value="OEM / Manufacturer"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Location</div><input class="cap-input" placeholder="Location" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Department</div><input class="cap-input" placeholder="Department" value="Division"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Commissioning Date</div><input class="cap-input" placeholder="Commissioning Date" value="Installation Date"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Running Hours</div><input class="cap-input" placeholder="Running Hours" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Status</div><input class="cap-input" placeholder="Status" value=""/></div>
+            </div>
+          </div>
+
+          <div class="itab-panel" id="cap-jp">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-lt);">
+              <span style="font-size:12.5px;font-weight:600;color:var(--muted);">Job Plan field labels</span>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">💾 Save Captions</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;padding:4px 0;">
+              <div style="padding:8px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);border-bottom:1px solid var(--border-lt);">System Default</div>
+              <div style="padding:8px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);border-bottom:1px solid var(--border-lt);">Custom Label</div>
+            </div>
+            <div class="cap-grid">
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Job Code</div><input class="cap-input" placeholder="Job Code" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Job Title</div><input class="cap-input" placeholder="Job Title" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Frequency</div><input class="cap-input" placeholder="Frequency" value="Interval"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Priority</div><input class="cap-input" placeholder="Priority" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Estimated Hours</div><input class="cap-input" placeholder="Estimated Hours" value="Planned Man-Hours"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Responsible Rank</div><input class="cap-input" placeholder="Responsible Rank" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Maintenance Type</div><input class="cap-input" placeholder="Maintenance Type" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Job Category</div><input class="cap-input" placeholder="Job Category" value="Work Category"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Safety Level</div><input class="cap-input" placeholder="Safety Level" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Steps Count</div><input class="cap-input" placeholder="Steps Count" value=""/></div>
+            </div>
+          </div>
+
+          <div class="itab-panel" id="cap-sp">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-lt);">
+              <span style="font-size:12.5px;font-weight:600;color:var(--muted);">Spare Parts field labels</span>
+              <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">💾 Save Captions</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;padding:4px 0;">
+              <div style="padding:8px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);border-bottom:1px solid var(--border-lt);">System Default</div>
+              <div style="padding:8px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-lt);border-bottom:1px solid var(--border-lt);">Custom Label</div>
+            </div>
+            <div class="cap-grid">
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Part Number</div><input class="cap-input" placeholder="Part Number" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Part Name</div><input class="cap-input" placeholder="Part Name" value="Description"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Maker Part No.</div><input class="cap-input" placeholder="Maker Part No." value="OEM Reference"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Reorder Level</div><input class="cap-input" placeholder="Reorder Level" value="Min Stock Level"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Unit of Measurement</div><input class="cap-input" placeholder="Unit of Measurement" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Criticality</div><input class="cap-input" placeholder="Criticality" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Location (Store)</div><input class="cap-input" placeholder="Location (Store)" value="Storeroom Location"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Unit Cost</div><input class="cap-input" placeholder="Unit Cost" value=""/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Supplier</div><input class="cap-input" placeholder="Supplier" value="Preferred Vendor"/></div>
+              <div class="cap-row"><div class="cap-label" style="color:var(--muted-lt);">Lead Time</div><input class="cap-input" placeholder="Lead Time" value=""/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 16. EXPORT CONTROL -->
+      <div class="sec-panel" id="sec-export">
+        <div class="pg-hdr"><div class="pg-title">Export Control</div><div class="pg-sub">Manage dual-use items and Export Control Classification Numbers (ECCN) for compliance</div></div>
+        <div class="info-note">ℹ️ Export Control data governs items subject to export regulations. ECCN codes are assigned per US EAR. ECC codes refer to EU dual-use regulation classifications.</div>
+        <div class="card">
+          <div class="card-hdr">
+            <div style="display:flex;align-items:center;gap:10px;"><div class="card-title">Export Controlled Items</div><span class="card-count">4 rows</span></div>
+            <button class="tbtn primary" style="font-size:12px;padding:5px 11px;">+ Add Item</button>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Code</th><th>Name</th><th>ECC Code</th><th>ECCN Code</th><th>Description</th><th>Active</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="b b-x">GPS-NAV</span></td><td>GPS Navigation System</td><td>7A001</td><td>7A994</td><td>High-precision GPS receivers above COCOM limits</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">RAD-EQ</span></td><td>Radar Equipment (X-Band)</td><td>5A001</td><td>5A001.b</td><td>Marine radar systems with specific frequency ranges</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">ENC-SYS</span></td><td>Encryption Module</td><td>5E002</td><td>5E002</td><td>Communication encryption hardware for controlled routing</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+              <tr><td><span class="b b-x">THR-PMP</span></td><td>High-Pressure Fuel Pump</td><td>2B350</td><td>2B350.d</td><td>Precision pumps above 20 bar used in dual-use applications</td><td><label class="toggle"><input type="checkbox" checked><span class="toggle-sl"></span></label></td><td><span class="act-ico edit">✏️</span> <span class="act-ico del">🗑️</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /main-scroll -->
+  </div><!-- /content-area -->
+</div><!-- /main -->
+
+<script src="../../data/sample-data.js"></script>
+<script>
+// Sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('visible');
+  main.classList.toggle('with-sidebar');
+});
+
+// Sidebar accordion
+document.querySelectorAll('.sb-parent').forEach(p => {
+  p.addEventListener('click', () => {
+    const k = p.dataset.k;
+    const ch = document.getElementById('ch-' + k);
+    p.classList.toggle('open');
+    ch.classList.toggle('open');
+  });
+});
+
+// Left nav sections
+function switchSec(secId, el) {
+  document.querySelectorAll('.sec-panel').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.lnav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('sec-' + secId).classList.add('active');
+  el.classList.add('active');
+}
+
+// Inner tabs
+function switchItab(el, panelId) {
+  const card = el.closest('.card');
+  card.querySelectorAll('.itab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.itab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+</script>
+</body>
+</html>

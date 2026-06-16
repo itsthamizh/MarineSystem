@@ -1,0 +1,11 @@
+/* mdm/style.css — MDM module page styles */
+@import url('../shared/sidebar.css');
+
+.page-tb{background:#fff;border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.page-title{font-size:15px;font-weight:800;}
+.lv-table{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.lv-table table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.lv-table th{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);}
+.lv-table td{padding:12px 14px;border-bottom:1px solid var(--border-lt);font-weight:600;color:var(--text2);vertical-align:middle;}
+.lv-table tr:last-child td{border-bottom:none;}
+.lv-table tr:hover td{background:#f6f8fa;cursor:pointer;}

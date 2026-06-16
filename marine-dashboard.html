@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marine Solutions — Project Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --navy:      #f0f4f8;
+      --navy-2:    #ffffff;
+      --navy-3:    #f8fafc;
+      --ocean:     #1565c0;
+      --ocean-lt:  #1e88e5;
+      --teal:      #00acc1;
+      --teal-lt:   #26c6da;
+      --green:     #00a843;
+      --amber:     #d97706;
+      --red:       #dc2626;
+      --white:     #1a2332;
+      --off-white: #f0f4f8;
+      --muted:     #64748b;
+      --card-bg:   #ffffff;
+      --border:    rgba(0,0,0,0.09);
+      --sidebar-w: 240px;
+      --header-h:  64px;
+      --radius:    12px;
+      --shadow:    0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      transition: transform .3s;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 12px;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--ocean), var(--teal));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .logo-text { font-size: 15px; font-weight: 700; line-height: 1.2; }
+    .logo-sub  { font-size: 11px; color: var(--muted); }
+
+    .nav-group { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .nav-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 0 20px; margin-bottom: 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px; cursor: pointer;
+      font-size: 13.5px; font-weight: 500; color: var(--muted);
+      border-left: 3px solid transparent;
+      transition: all .18s; user-select: none;
+    }
+    .nav-item:hover  { background: rgba(0,0,0,.04); color: var(--white); }
+    .nav-item.active { background: rgba(21,101,192,.10); color: var(--ocean); border-left-color: var(--ocean); }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: var(--red);
+      font-size: 10px; font-weight: 700; padding: 1px 6px;
+      border-radius: 20px; color: #fff;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto; padding: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 8px;
+      background: rgba(0,0,0,.04); cursor: pointer;
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--ocean), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .user-name  { font-size: 12.5px; font-weight: 600; }
+    .user-role  { font-size: 11px; color: var(--muted); }
+
+    /* ── MAIN ── */
+    #main {
+      margin-left: var(--sidebar-w);
+      flex: 1; min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    #header {
+      height: var(--header-h);
+      background: var(--navy-2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 28px; gap: 16px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .page-title { font-size: 17px; font-weight: 700; flex: 1; }
+    .page-sub   { font-size: 12px; color: var(--muted); }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .hbtn {
+      padding: 7px 16px; border-radius: 8px; border: none;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; transition: all .18s;
+    }
+    .hbtn-primary { background: var(--ocean); color: #fff; }
+    .hbtn-primary:hover { background: var(--ocean-lt); }
+    .hbtn-ghost  {
+      background: rgba(0,0,0,.05); color: var(--white);
+      border: 1px solid var(--border);
+    }
+    .hbtn-ghost:hover { background: rgba(0,0,0,.09); }
+    .notif-btn {
+      position: relative; width: 36px; height: 36px;
+      background: rgba(0,0,0,.05); border: 1px solid var(--border);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px;
+    }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 8px; height: 8px; background: var(--red);
+      border-radius: 50%; border: 2px solid #ffffff;
+    }
+
+    /* ── CONTENT ── */
+    #content { padding: 28px; flex: 1; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    .kpi-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+    }
+    .kpi-card.blue::before   { background: linear-gradient(90deg, var(--ocean), var(--teal)); }
+    .kpi-card.green::before  { background: linear-gradient(90deg, #00c853, #69f0ae); }
+    .kpi-card.amber::before  { background: linear-gradient(90deg, var(--amber), #ffd740); }
+    .kpi-card.red::before    { background: linear-gradient(90deg, var(--red), #ff8a80); }
+    .kpi-card.teal::before   { background: linear-gradient(90deg, var(--teal), #80deea); }
+    .kpi-card.purple::before { background: linear-gradient(90deg, #7c4dff, #b388ff); }
+
+    .kpi-label { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+    .kpi-value { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+    .kpi-change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+    .kpi-change.up   { color: #059669; }
+    .kpi-change.down { color: #dc2626; }
+    .kpi-icon {
+      position: absolute; right: 16px; top: 16px;
+      font-size: 28px; opacity: .18;
+    }
+
+    /* ── GRID LAYOUTS ── */
+    .grid-2   { display: grid; grid-template-columns: 1fr 1fr;       gap: 20px; margin-bottom: 24px; }
+    .grid-3   { display: grid; grid-template-columns: 1fr 1fr 1fr;   gap: 20px; margin-bottom: 24px; }
+    .grid-3-1 { display: grid; grid-template-columns: 3fr 1.2fr;      gap: 20px; margin-bottom: 24px; }
+    .grid-1-2 { display: grid; grid-template-columns: 1.2fr 2fr;      gap: 20px; margin-bottom: 24px; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px;
+    }
+    .card-title { font-size: 14.5px; font-weight: 700; }
+    .card-action {
+      font-size: 12px; color: var(--ocean-lt); cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ── TABLE ── */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tbl th {
+      text-align: left; padding: 10px 12px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .tbl td {
+      padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,.06);
+      vertical-align: middle;
+    }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:hover td { background: rgba(0,0,0,.02); }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+    .badge-green  { background: rgba(0,168,67,.12);   color: #00843a; }
+    .badge-amber  { background: rgba(217,119,6,.12);  color: #b45309; }
+    .badge-red    { background: rgba(220,38,38,.12);  color: #b91c1c; }
+    .badge-blue   { background: rgba(21,101,192,.12); color: #1565c0; }
+    .badge-teal   { background: rgba(0,172,193,.12);  color: #0e7490; }
+    .badge-gray   { background: rgba(0,0,0,.06);      color: var(--muted); }
+    .badge-purple { background: rgba(124,77,255,.12); color: #6d28d9; }
+
+    /* ── PROGRESS ── */
+    .progress-bar {
+      height: 6px; border-radius: 3px;
+      background: rgba(0,0,0,.08); overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px;
+      transition: width .6s ease;
+    }
+    .fill-blue   { background: linear-gradient(90deg, var(--ocean), var(--teal)); }
+    .fill-green  { background: var(--green); }
+    .fill-amber  { background: var(--amber); }
+    .fill-red    { background: var(--red); }
+
+    /* ── TIMELINE ── */
+    .timeline { list-style: none; position: relative; padding-left: 20px; }
+    .timeline::before {
+      content: ''; position: absolute;
+      left: 7px; top: 0; bottom: 0;
+      width: 2px; background: var(--border);
+    }
+    .timeline li {
+      position: relative; margin-bottom: 16px;
+      padding-left: 20px; font-size: 13px;
+    }
+    .timeline li::before {
+      content: ''; position: absolute;
+      left: -14px; top: 5px;
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid var(--ocean);
+      background: #ffffff;
+    }
+    .tl-title  { font-weight: 600; margin-bottom: 2px; }
+    .tl-meta   { font-size: 11.5px; color: var(--muted); }
+
+    /* ── VESSEL LIST ── */
+    .vessel-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .vessel-row:last-child { border-bottom: none; }
+    .vessel-icon {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: rgba(21,101,192,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .vessel-name  { font-size: 13.5px; font-weight: 600; }
+    .vessel-type  { font-size: 11.5px; color: var(--muted); }
+    .vessel-right { margin-left: auto; text-align: right; }
+
+    /* ── GAUGES ── */
+    .gauge-wrap { text-align: center; }
+    .gauge-val  { font-size: 26px; font-weight: 800; }
+    .gauge-lbl  { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+    /* ── MDM STATS ── */
+    .mdm-stat {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+    }
+    .mdm-stat:last-child { border-bottom: none; }
+    .mdm-bar { flex: 1; margin: 0 14px; }
+
+    /* ── ACTIVITY ── */
+    .activity-item {
+      display: flex; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .act-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      margin-top: 4px; flex-shrink: 0;
+    }
+    .act-text  { font-weight: 500; margin-bottom: 2px; }
+    .act-time  { font-size: 11.5px; color: var(--muted); }
+
+    /* ── ADD PROJECT MODAL ── */
+    #modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    #modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--navy-3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px; width: 520px; max-width: 95vw;
+      box-shadow: var(--shadow);
+    }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+    .form-row    { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group  { margin-bottom: 14px; }
+    .form-label  { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; background: rgba(0,0,0,.04);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--white); font-size: 13px; padding: 9px 12px;
+      outline: none; transition: border .18s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--ocean);
+    }
+    .form-select option { background: #ffffff; color: #1a2332; }
+    .form-textarea { min-height: 72px; resize: vertical; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+
+    /* ── MAP PLACEHOLDER ── */
+    .map-canvas {
+      width: 100%; height: 240px;
+      background: linear-gradient(160deg, #dbeafe 0%, #e0f2fe 100%);
+      border-radius: 8px; position: relative; overflow: hidden;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .map-dot {
+      position: absolute; width: 12px; height: 12px;
+      border-radius: 50%; transform: translate(-50%,-50%);
+      cursor: pointer;
+    }
+    .map-dot::after {
+      content: ''; position: absolute; inset: -4px;
+      border-radius: 50%; border: 2px solid currentColor;
+      opacity: .4; animation: ping 2s infinite;
+    }
+    @keyframes ping {
+      0%   { transform: scale(1); opacity:.4; }
+      100% { transform: scale(2.2); opacity:0; }
+    }
+    .map-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .map-label {
+      position: absolute; font-size: 10px; color: #374151; font-weight: 600;
+      transform: translate(-50%, -200%); white-space: nowrap;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-heading {
+      font-size: 20px; font-weight: 800; margin-bottom: 4px;
+    }
+    .section-sub {
+      font-size: 13px; color: var(--muted); margin-bottom: 24px;
+    }
+
+    /* ── SEARCH BAR ── */
+    .search-bar {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.06); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 14px; margin-bottom: 18px;
+    }
+    .search-bar input {
+      background: none; border: none; color: var(--white);
+      font-size: 13.5px; outline: none; flex: 1;
+    }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+    .tab {
+      padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; color: var(--muted); border: 1px solid transparent;
+      transition: all .18s;
+    }
+    .tab:hover  { background: rgba(255,255,255,.05); color: var(--white); }
+    .tab.active { background: rgba(21,101,192,.2); color: var(--ocean-lt); border-color: rgba(21,101,192,.3); }
+
+    /* ── RESPONSIVENESS ── */
+    @media (max-width: 1100px) {
+      .grid-2, .grid-3, .grid-3-1, .grid-1-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); }
+      #main    { margin-left: 0; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">⚓</div>
+    <div>
+      <div class="logo-text">Marine Solutions</div>
+      <div class="logo-sub">Operations Hub</div>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Overview</div>
+    <div class="nav-item active" data-section="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Projects</div>
+    <div class="nav-item" data-section="projects">
+      <span class="nav-icon">📁</span> All Projects
+      <span class="nav-badge">7</span>
+    </div>
+    <div class="nav-item" data-section="fleet">
+      <span class="nav-icon">🚢</span> Fleet Management
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Operations</div>
+    <div class="nav-item" data-section="maintenance">
+      <span class="nav-icon">🔧</span> Maintenance
+      <span class="nav-badge">4</span>
+    </div>
+    <div class="nav-item" data-section="mdm">
+      <span class="nav-icon">🗄️</span> MDM
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">System</div>
+    <div class="nav-item" data-section="administration">
+      <span class="nav-icon">⚙️</span> Administration
+    </div>
+    <div class="nav-item" data-section="reports">
+      <span class="nav-icon">📈</span> Reports
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar">T</div>
+      <div>
+        <div class="user-name">Thamizh</div>
+        <div class="user-role">Admin</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div id="main">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div>
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-sub" id="page-sub">Marine Solutions — Overview</div>
+    </div>
+    <div class="header-actions">
+      <div class="notif-btn" title="Notifications">🔔<div class="notif-dot"></div></div>
+      <button class="hbtn hbtn-ghost" onclick="openModal()">＋ New Project</button>
+      <button class="hbtn hbtn-primary">↻ Sync Data</button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <section class="section active" id="sec-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">📁</div>
+          <div class="kpi-label">Total Projects</div>
+          <div class="kpi-value">7</div>
+          <div class="kpi-change up">▲ 2 new this month</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">🚢</div>
+          <div class="kpi-label">Active Vessels</div>
+          <div class="kpi-value">24</div>
+          <div class="kpi-change up">▲ 3 deployed</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-icon">🔧</div>
+          <div class="kpi-label">Pending Maintenance</div>
+          <div class="kpi-value">4</div>
+          <div class="kpi-change down">▼ 2 overdue</div>
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-icon">🗄️</div>
+          <div class="kpi-label">MDM Records</div>
+          <div class="kpi-value">1,284</div>
+          <div class="kpi-change up">▲ 94.2% quality</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon">⚠️</div>
+          <div class="kpi-label">Critical Alerts</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-change down">▼ Needs attention</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-label">Active Crew</div>
+          <div class="kpi-value">312</div>
+          <div class="kpi-change up">▲ 18 on-boarded</div>
+        </div>
+      </div>
+
+      <div class="grid-3-1">
+        <!-- Project Progress Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 Project Completion Overview</div>
+            <div class="card-action">View All →</div>
+          </div>
+          <canvas id="chartBar" height="190"></canvas>
+        </div>
+        <!-- Fleet Status Donut -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🚢 Fleet Status</div>
+          </div>
+          <canvas id="chartDonut" height="180"></canvas>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>🟢 Operational</span><strong>16</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>🟡 Maintenance</span><strong>5</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>🔴 Offline</span><strong>3</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Live Fleet Map -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🌐 Live Fleet Map</div>
+            <span class="badge badge-green">● Live</span>
+          </div>
+          <div class="map-canvas" id="liveMap">
+            <div class="map-grid"></div>
+          </div>
+        </div>
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚡ Recent Activity</div>
+            <div class="card-action">All logs →</div>
+          </div>
+          <div id="activity-feed"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Maintenance Timeline -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🔧 Upcoming Maintenance</div>
+            <div class="card-action">Schedule →</div>
+          </div>
+          <ul class="timeline" id="maint-timeline"></ul>
+        </div>
+        <!-- Monthly Ops Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📈 Monthly Operations</div>
+          </div>
+          <canvas id="chartLine" height="200"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ PROJECTS ══════════ -->
+    <section class="section" id="sec-projects">
+      <div class="section-heading">Projects</div>
+      <div class="section-sub">Manage and track all marine project sources</div>
+
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="proj-search" placeholder="Search projects…" oninput="filterProjects()" />
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="filterTab(this,'all')">All (7)</div>
+        <div class="tab" onclick="filterTab(this,'active')">Active</div>
+        <div class="tab" onclick="filterTab(this,'planning')">Planning</div>
+        <div class="tab" onclick="filterTab(this,'completed')">Completed</div>
+      </div>
+
+      <div class="card">
+        <table class="tbl" id="proj-table">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Progress</th>
+              <th>Due Date</th>
+              <th>Lead</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="proj-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════ FLEET ══════════ -->
+    <section class="section" id="sec-fleet">
+      <div class="section-heading">Fleet Management</div>
+      <div class="section-sub">Real-time vessel tracking and management</div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi-card green">
+          <div class="kpi-label">Operational</div>
+          <div class="kpi-value">16</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">In Maintenance</div>
+          <div class="kpi-value">5</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Offline</div>
+          <div class="kpi-value">3</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Fleet</div>
+          <div class="kpi-value">24</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🚢 Vessel Registry</div>
+          </div>
+          <div id="vessel-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📍 Fleet Positioning</div>
+            <span class="badge badge-green">● Live</span>
+          </div>
+          <div class="map-canvas" id="fleetMap">
+            <div class="map-grid"></div>
+          </div>
+          <div style="margin-top:16px">
+            <canvas id="chartFleetBar" height="140"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ MAINTENANCE ══════════ -->
+    <section class="section" id="sec-maintenance">
+      <div class="section-heading">Maintenance</div>
+      <div class="section-sub">Preventive & corrective maintenance tracking</div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi-card amber">
+          <div class="kpi-label">Open Work Orders</div>
+          <div class="kpi-value">18</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Overdue</div>
+          <div class="kpi-value">4</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Completed This Month</div>
+          <div class="kpi-value">37</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Avg Resolution (hrs)</div>
+          <div class="kpi-value">6.4</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 Work Orders</div>
+            <button class="hbtn hbtn-primary" style="font-size:12px;padding:5px 12px">+ New Order</button>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Vessel</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Due</th>
+              </tr>
+            </thead>
+            <tbody id="wo-tbody"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 Maintenance by Category</div>
+          </div>
+          <canvas id="chartMaint" height="260"></canvas>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔩 Spare Parts Inventory</div></div>
+          <div id="parts-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📅 Maintenance Schedule</div></div>
+          <canvas id="chartMaintLine" height="200"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ MDM ══════════ -->
+    <section class="section" id="sec-mdm">
+      <div class="section-heading">Master Data Management</div>
+      <div class="section-sub">Data quality, governance, and entity management</div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Entities</div>
+          <div class="kpi-value">1,284</div>
+          <div class="kpi-change up">▲ 4.1%</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Data Quality Score</div>
+          <div class="kpi-value">94.2%</div>
+          <div class="kpi-change up">▲ +1.3%</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Duplicates Found</div>
+          <div class="kpi-value">23</div>
+          <div class="kpi-change down">▼ Pending review</div>
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-label">Active Domains</div>
+          <div class="kpi-value">8</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🗄️ Domain Statistics</div>
+          </div>
+          <div id="mdm-domains"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 Data Quality Radar</div>
+          </div>
+          <canvas id="chartRadar" height="260"></canvas>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🔄 Recent MDM Changes</div>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Entity</th><th>Domain</th><th>Change</th><th>By</th><th>Time</th></tr>
+            </thead>
+            <tbody id="mdm-changes"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚠️ Data Issues</div>
+          </div>
+          <div id="mdm-issues"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ ADMINISTRATION ══════════ -->
+    <section class="section" id="sec-administration">
+      <div class="section-heading">Administration</div>
+      <div class="section-sub">System settings, users, and roles</div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">👥 User Management</div>
+            <button class="hbtn hbtn-primary" style="font-size:12px;padding:5px 12px">+ Invite User</button>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last Active</th></tr>
+            </thead>
+            <tbody id="user-tbody"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🔐 Role Permissions</div>
+          </div>
+          <div id="roles-list"></div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header"><div class="card-title">⚙️ System Health</div></div>
+          <div id="sys-health"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔌 Integrations</div></div>
+          <div id="integrations"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📋 Audit Log</div></div>
+          <div id="audit-log"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ REPORTS ══════════ -->
+    <section class="section" id="sec-reports">
+      <div class="section-heading">Reports</div>
+      <div class="section-sub">Analytics, exports, and business intelligence</div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi-card blue"><div class="kpi-label">Reports Generated</div><div class="kpi-value">142</div></div>
+        <div class="kpi-card green"><div class="kpi-label">Scheduled Reports</div><div class="kpi-value">18</div></div>
+        <div class="kpi-card teal"><div class="kpi-label">Data Exports</div><div class="kpi-value">57</div></div>
+        <div class="kpi-card amber"><div class="kpi-label">Pending Approvals</div><div class="kpi-value">6</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 Revenue vs. Cost (6M)</div></div>
+          <canvas id="chartRevenue" height="220"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">📋 Available Reports</div></div>
+          <div id="report-list"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ═══════════════════ MODAL ═══════════════════ -->
+<div id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">➕ Create New Project</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Project Name</label>
+        <input class="form-input" id="f-name" placeholder="e.g. Port Upgrade Phase 3" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Project Type</label>
+        <select class="form-select" id="f-type">
+          <option>Construction</option>
+          <option>Maintenance</option>
+          <option>Survey</option>
+          <option>Logistics</option>
+          <option>Research</option>
+          <option>Environmental</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-select" id="f-priority">
+          <option>High</option><option>Medium</option><option>Low</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input class="form-input" id="f-due" type="date" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Project Lead</label>
+        <input class="form-input" id="f-lead" placeholder="Lead name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Budget (USD)</label>
+        <input class="form-input" id="f-budget" type="number" placeholder="e.g. 250000" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="f-desc" placeholder="Project scope and objectives…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="hbtn hbtn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="hbtn hbtn-primary" onclick="addProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════ DATA ═══════════════════ */
+const PROJECTS = [
+  { id:'PRJ-001', name:'Harbor Deep Dredging',       type:'Construction',  priority:'High',   status:'active',    progress:72, due:'2026-08-15', lead:'Capt. Arjun' },
+  { id:'PRJ-002', name:'Fleet Retrofit Program',     type:'Maintenance',   priority:'High',   status:'active',    progress:45, due:'2026-09-30', lead:'Eng. Priya' },
+  { id:'PRJ-003', name:'Offshore Survey Alpha',      type:'Survey',        priority:'Medium', status:'active',    progress:88, due:'2026-07-01', lead:'Dr. Kiran' },
+  { id:'PRJ-004', name:'Port Logistics Upgrade',     type:'Logistics',     priority:'Medium', status:'planning',  progress:12, due:'2026-12-01', lead:'Mgr. Ravi' },
+  { id:'PRJ-005', name:'Environmental Impact Study', type:'Environmental', priority:'Low',    status:'active',    progress:60, due:'2026-10-20', lead:'Ms. Deepa' },
+  { id:'PRJ-006', name:'Crane Modernization',        type:'Construction',  priority:'High',   status:'planning',  progress:5,  due:'2027-02-28', lead:'Eng. Suresh' },
+  { id:'PRJ-007', name:'Navigation Sys Upgrade',     type:'Research',      priority:'Medium', status:'completed', progress:100,due:'2026-05-31', lead:'Capt. Mani' },
+];
+
+const VESSELS = [
+  { name:'MV Saraswati',    type:'Cargo Carrier',    flag:'🇮🇳', status:'operational', location:'Mumbai Port' },
+  { name:'MV Neptune Star', type:'Tanker',            flag:'🇮🇳', status:'operational', location:'Arabian Sea' },
+  { name:'TS Bay Explorer', type:'Survey Vessel',     flag:'🇮🇳', status:'maintenance', location:'Kochi Yard' },
+  { name:'MV Trident',      type:'Container Ship',    flag:'🇮🇳', status:'operational', location:'Chennai Port' },
+  { name:'MV Bay Spirit',   type:'Offshore Support',  flag:'🇮🇳', status:'offline',     location:'Visakhapatnam' },
+  { name:'TS Deep Scan',    type:'Research Vessel',   flag:'🇮🇳', status:'operational', location:'Bay of Bengal' },
+];
+
+const WORK_ORDERS = [
+  { id:'WO-2841', vessel:'MV Saraswati',    type:'Engine Overhaul',   priority:'High',   status:'overdue',     due:'2026-06-08' },
+  { id:'WO-2842', vessel:'TS Bay Explorer', type:'Hull Inspection',   priority:'Medium', status:'in-progress', due:'2026-06-15' },
+  { id:'WO-2843', vessel:'MV Neptune Star', type:'Fuel System Check', priority:'High',   status:'open',        due:'2026-06-20' },
+  { id:'WO-2844', vessel:'MV Trident',      type:'Nav System Update', priority:'Low',    status:'scheduled',   due:'2026-07-01' },
+  { id:'WO-2845', vessel:'MV Bay Spirit',   type:'Generator Repair',  priority:'High',   status:'overdue',     due:'2026-06-05' },
+];
+
+const ACTIVITIES = [
+  { color:'#00c853', text:'PRJ-001 milestone achieved — Dredging Phase 2 complete', time:'2 min ago' },
+  { color:'#ef5350', text:'WO-2841 Engine Overhaul is now OVERDUE', time:'18 min ago' },
+  { color:'#1e88e5', text:'MV Neptune Star departed Mumbai Port', time:'45 min ago' },
+  { color:'#ffab00', text:'MDM duplicate records detected — 23 entities', time:'1 hr ago' },
+  { color:'#00acc1', text:'New user Eng. Priya added to Fleet Retrofit team', time:'2 hrs ago' },
+  { color:'#7c4dff', text:'Monthly report generated and dispatched', time:'3 hrs ago' },
+];
+
+const MDM_DOMAINS = [
+  { name:'Vessel Registry',    records:312, quality:97 },
+  { name:'Personnel',          records:428, quality:91 },
+  { name:'Port & Terminals',   records:156, quality:99 },
+  { name:'Equipment & Parts',  records:203, quality:88 },
+  { name:'Contracts',          records:89,  quality:95 },
+  { name:'Environmental Data', records:64,  quality:92 },
+  { name:'Regulatory Docs',    records:32,  quality:98 },
+];
+
+const USERS = [
+  { name:'Thamizh',       email:'muthamizhselvan.mv@zohocorp.com', role:'Admin',      status:'active', last:'Just now' },
+  { name:'Capt. Arjun',   email:'arjun@marine.co',                 role:'Manager',    status:'active', last:'5 min ago' },
+  { name:'Eng. Priya',    email:'priya@marine.co',                  role:'Engineer',   status:'active', last:'1 hr ago' },
+  { name:'Dr. Kiran',     email:'kiran@marine.co',                  role:'Analyst',    status:'active', last:'2 hrs ago' },
+  { name:'Mgr. Ravi',     email:'ravi@marine.co',                   role:'Manager',    status:'inactive','last':'Yesterday' },
+];
+
+/* ═══════════════════ NAVIGATION ═══════════════════ */
+const pageTitles = {
+  dashboard: ['Dashboard',     'Marine Solutions — Overview'],
+  projects:  ['Projects',      'Manage all project sources'],
+  fleet:     ['Fleet Management','Real-time vessel tracking'],
+  maintenance:['Maintenance',  'Work orders & service schedule'],
+  mdm:       ['MDM',           'Master Data Management'],
+  administration:['Administration','Users, roles & system config'],
+  reports:   ['Reports',       'Analytics & business intelligence'],
+};
+
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => {
+    const sec = el.dataset.section;
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + sec).classList.add('active');
+    const [title, sub] = pageTitles[sec];
+    document.getElementById('page-title').textContent = title;
+    document.getElementById('page-sub').textContent   = sub;
+  });
+});
+
+/* ═══════════════════ POPULATE DATA ═══════════════════ */
+function statusBadge(s) {
+  const map = {
+    active:'badge-green', planning:'badge-blue', completed:'badge-teal',
+    operational:'badge-green', maintenance:'badge-amber', offline:'badge-red',
+    overdue:'badge-red', 'in-progress':'badge-amber', open:'badge-blue',
+    scheduled:'badge-teal', inactive:'badge-gray',
+  };
+  return `<span class="badge ${map[s]||'badge-gray'}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;
+}
+
+function priorityBadge(p) {
+  const map = { High:'badge-red', Medium:'badge-amber', Low:'badge-gray' };
+  return `<span class="badge ${map[p]||'badge-gray'}">${p}</span>`;
+}
+
+function renderProjects(list) {
+  const tbody = document.getElementById('proj-tbody');
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td><strong>${p.id}</strong><br><span style="color:var(--muted);font-size:12px">${p.name}</span></td>
+      <td><span class="badge badge-blue">${p.type}</span></td>
+      <td>${priorityBadge(p.priority)}</td>
+      <td>${statusBadge(p.status)}</td>
+      <td style="min-width:120px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1">
+            <div class="progress-fill ${p.progress===100?'fill-green':p.progress>60?'fill-blue':'fill-amber'}" style="width:${p.progress}%"></div>
+          </div>
+          <span style="font-size:11px;color:var(--muted)">${p.progress}%</span>
+        </div>
+      </td>
+      <td style="font-size:12px;color:var(--muted)">${p.due}</td>
+      <td style="font-size:12.5px">${p.lead}</td>
+      <td>
+        <button class="hbtn hbtn-ghost" style="font-size:11px;padding:4px 10px">Edit</button>
+      </td>
+    </tr>`).join('');
+}
+
+renderProjects(PROJECTS);
+
+/* Project filter */
+let activeTab = 'all';
+function filterProjects() {
+  const q = document.getElementById('proj-search').value.toLowerCase();
+  const list = PROJECTS.filter(p =>
+    (activeTab === 'all' || p.status === activeTab) &&
+    (p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q))
+  );
+  renderProjects(list);
+}
+function filterTab(el, tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  filterProjects();
+}
+
+/* Vessels */
+document.getElementById('vessel-list').innerHTML = VESSELS.map(v => `
+  <div class="vessel-row">
+    <div class="vessel-icon">🚢</div>
+    <div>
+      <div class="vessel-name">${v.flag} ${v.name}</div>
+      <div class="vessel-type">${v.type}</div>
+    </div>
+    <div class="vessel-right">
+      ${statusBadge(v.status)}
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">${v.location}</div>
+    </div>
+  </div>`).join('');
+
+/* Work Orders */
+document.getElementById('wo-tbody').innerHTML = WORK_ORDERS.map(o => `
+  <tr>
+    <td><strong>${o.id}</strong></td>
+    <td>${o.vessel}</td>
+    <td style="font-size:12.5px">${o.type}</td>
+    <td>${priorityBadge(o.priority)}</td>
+    <td>${statusBadge(o.status)}</td>
+    <td style="font-size:12px;color:var(--muted)">${o.due}</td>
+  </tr>`).join('');
+
+/* Activity */
+document.getElementById('activity-feed').innerHTML = ACTIVITIES.map(a => `
+  <div class="activity-item">
+    <div class="act-dot" style="background:${a.color}"></div>
+    <div>
+      <div class="act-text">${a.text}</div>
+      <div class="act-time">${a.time}</div>
+    </div>
+  </div>`).join('');
+
+/* Timeline */
+const maintItems = [
+  { title:'MV Saraswati — Engine Overhaul',   meta:'Due Jun 15 · High Priority · Eng. Suresh',  urgent:true  },
+  { title:'MV Bay Spirit — Generator Repair',  meta:'Due Jun 18 · High Priority · Eng. Priya',   urgent:true  },
+  { title:'TS Bay Explorer — Hull Inspection', meta:'Due Jun 22 · Medium Priority',               urgent:false },
+  { title:'MV Neptune Star — Fuel Check',      meta:'Due Jun 28 · Routine Maintenance',           urgent:false },
+];
+document.getElementById('maint-timeline').innerHTML = maintItems.map(m => `
+  <li>
+    <div class="tl-title" style="${m.urgent?'color:var(--red)':''}">${m.title}${m.urgent?' ⚠️':''}</div>
+    <div class="tl-meta">${m.meta}</div>
+  </li>`).join('');
+
+/* MDM Domains */
+document.getElementById('mdm-domains').innerHTML = MDM_DOMAINS.map(d => `
+  <div class="mdm-stat">
+    <span style="font-size:13px;min-width:140px">${d.name}</span>
+    <div class="mdm-bar progress-bar">
+      <div class="progress-fill ${d.quality>95?'fill-green':d.quality>90?'fill-blue':'fill-amber'}" style="width:${d.quality}%"></div>
+    </div>
+    <span style="font-size:12px;color:var(--muted);min-width:36px">${d.quality}%</span>
+    <span style="font-size:12px;color:var(--muted);min-width:60px;text-align:right">${d.records} recs</span>
+  </div>`).join('');
+
+/* MDM Changes */
+const mdmChanges = [
+  ['VS-1042','Vessel Registry','Updated IMO Number','T. Selvan','2 min ago'],
+  ['PE-0221','Personnel','New crew record added','Eng. Priya','15 min ago'],
+  ['CT-0087','Contracts','Contract status → Active','Mgr. Ravi','1 hr ago'],
+  ['EQ-0334','Equipment','Part specification revised','Eng. Suresh','2 hrs ago'],
+];
+document.getElementById('mdm-changes').innerHTML = mdmChanges.map(r => `
+  <tr><td><strong>${r[0]}</strong></td><td><span class="badge badge-blue" style="font-size:10px">${r[1]}</span></td><td style="font-size:12.5px">${r[2]}</td><td style="font-size:12px">${r[3]}</td><td style="font-size:11.5px;color:var(--muted)">${r[4]}</td></tr>`).join('');
+
+/* MDM Issues */
+const mdmIssues = [
+  { text:'23 duplicate vessel entries pending merge', type:'amber' },
+  { text:'12 personnel records missing IMO cert',     type:'red'   },
+  { text:'4 contract records with expired dates',     type:'amber' },
+  { text:'7 equipment parts with no supplier link',   type:'gray'  },
+];
+document.getElementById('mdm-issues').innerHTML = mdmIssues.map(i => `
+  <div class="activity-item">
+    <div class="act-dot" style="background:var(--${i.type==='amber'?'amber':i.type==='red'?'red':'muted'})"></div>
+    <div><div class="act-text">${i.text}</div></div>
+  </div>`).join('');
+
+/* Users */
+document.getElementById('user-tbody').innerHTML = USERS.map(u => `
+  <tr>
+    <td><strong>${u.name}</strong></td>
+    <td style="font-size:12px;color:var(--muted)">${u.email}</td>
+    <td><span class="badge badge-blue">${u.role}</span></td>
+    <td>${statusBadge(u.status)}</td>
+    <td style="font-size:12px;color:var(--muted)">${u.last}</td>
+  </tr>`).join('');
+
+/* Roles */
+const roles = [
+  { name:'Admin',    perms:['All Modules', 'User Management', 'System Config'], color:'red'   },
+  { name:'Manager',  perms:['Projects', 'Fleet', 'Maintenance', 'Reports'],      color:'blue'  },
+  { name:'Engineer', perms:['Maintenance', 'Fleet', 'MDM (read)'],               color:'teal'  },
+  { name:'Analyst',  perms:['Reports', 'MDM (read)', 'Fleet (read)'],            color:'green' },
+];
+document.getElementById('roles-list').innerHTML = roles.map(r => `
+  <div class="vessel-row">
+    <div class="vessel-icon" style="background:rgba(255,255,255,.06);font-size:14px">🔐</div>
+    <div>
+      <div class="vessel-name"><span class="badge badge-${r.color}">${r.name}</span></div>
+      <div class="vessel-type" style="margin-top:4px">${r.perms.join(' · ')}</div>
+    </div>
+  </div>`).join('');
+
+/* System Health */
+const health = [
+  { label:'API Gateway',     val:'Healthy',    color:'green' },
+  { label:'Database',        val:'Healthy',    color:'green' },
+  { label:'MDM Engine',      val:'Healthy',    color:'green' },
+  { label:'Sync Service',    val:'Degraded',   color:'amber' },
+  { label:'Report Generator',val:'Healthy',    color:'green' },
+];
+document.getElementById('sys-health').innerHTML = health.map(h => `
+  <div class="mdm-stat">
+    <span style="font-size:13px">${h.label}</span>
+    <span class="badge badge-${h.color}">${h.val}</span>
+  </div>`).join('');
+
+/* Integrations */
+const intgs = [
+  { name:'ECDIS Charts',  status:'Connected' },
+  { name:'AIS Transponder',status:'Connected' },
+  { name:'Port Authority API',status:'Connected' },
+  { name:'ERP System',    status:'Pending' },
+  { name:'Weather API',   status:'Connected' },
+];
+document.getElementById('integrations').innerHTML = intgs.map(i => `
+  <div class="mdm-stat">
+    <span style="font-size:13px">🔌 ${i.name}</span>
+    <span class="badge ${i.status==='Connected'?'badge-green':'badge-amber'}">${i.status}</span>
+  </div>`).join('');
+
+/* Audit Log */
+const audit = [
+  { text:'Config changed by Thamizh', time:'5 min ago' },
+  { text:'User Eng. Priya invited',   time:'1 hr ago'  },
+  { text:'MDM export triggered',      time:'2 hrs ago' },
+  { text:'Role updated: Analyst',     time:'Yesterday' },
+];
+document.getElementById('audit-log').innerHTML = audit.map(a => `
+  <div class="activity-item">
+    <div class="act-dot" style="background:var(--ocean-lt)"></div>
+    <div><div class="act-text">${a.text}</div><div class="act-time">${a.time}</div></div>
+  </div>`).join('');
+
+/* Parts Inventory */
+const parts = [
+  { name:'Main Engine Gasket', stock:12, min:5,  status:'ok'  },
+  { name:'Navigation Antenna', stock:3,  min:4,  status:'low' },
+  { name:'Fuel Filter Set',    stock:28, min:10, status:'ok'  },
+  { name:'Hydraulic Pump',     stock:1,  min:2,  status:'low' },
+];
+document.getElementById('parts-list').innerHTML = parts.map(p => `
+  <div class="mdm-stat">
+    <span style="font-size:13px">🔩 ${p.name}</span>
+    <div style="font-size:12px;color:var(--muted)">Stock: ${p.stock} / Min: ${p.min}</div>
+    <span class="badge badge-${p.status==='ok'?'green':'amber'}">${p.status==='ok'?'OK':'Low'}</span>
+  </div>`).join('');
+
+/* Report List */
+const reports = [
+  { name:'Monthly Fleet Performance', freq:'Monthly', type:'PDF' },
+  { name:'Maintenance Cost Analysis', freq:'Weekly',  type:'Excel' },
+  { name:'MDM Data Quality Report',   freq:'Daily',   type:'PDF' },
+  { name:'Crew Hours & Compliance',   freq:'Monthly', type:'PDF' },
+  { name:'Port Operations Summary',   freq:'Weekly',  type:'Excel' },
+];
+document.getElementById('report-list').innerHTML = reports.map(r => `
+  <div class="mdm-stat">
+    <span style="font-size:13px">📄 ${r.name}</span>
+    <span class="badge badge-gray">${r.freq}</span>
+    <span class="badge badge-blue">${r.type}</span>
+    <button class="hbtn hbtn-ghost" style="font-size:11px;padding:3px 10px">↓ Run</button>
+  </div>`).join('');
+
+/* ═══════════════════ MAPS ═══════════════════ */
+function renderMap(containerId, dots) {
+  const container = document.getElementById(containerId);
+  dots.forEach(d => {
+    const dot = document.createElement('div');
+    dot.className = 'map-dot';
+    dot.style.cssText = `left:${d.x}%;top:${d.y}%;background:${d.color};color:${d.color}`;
+    dot.title = d.label;
+    container.appendChild(dot);
+    const lbl = document.createElement('div');
+    lbl.className = 'map-label';
+    lbl.style.cssText = `left:${d.x}%;top:${d.y}%`;
+    lbl.textContent = d.label;
+    container.appendChild(lbl);
+  });
+}
+
+const mapDots = [
+  { x:55, y:45, color:'#00c853', label:'MV Saraswati' },
+  { x:40, y:55, color:'#00c853', label:'MV Neptune Star' },
+  { x:62, y:65, color:'#ffab00', label:'TS Bay Explorer' },
+  { x:70, y:40, color:'#00c853', label:'MV Trident' },
+  { x:75, y:60, color:'#ef5350', label:'MV Bay Spirit' },
+  { x:80, y:48, color:'#00c853', label:'TS Deep Scan' },
+];
+renderMap('liveMap', mapDots);
+renderMap('fleetMap', mapDots);
+
+/* ═══════════════════ CHARTS ═══════════════════ */
+Chart.defaults.color = '#64748b';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+
+const gridColor = 'rgba(0,0,0,0.07)';
+
+/* Bar — Project Progress */
+new Chart(document.getElementById('chartBar'), {
+  type: 'bar',
+  data: {
+    labels: PROJECTS.map(p => p.id),
+    datasets: [{
+      label: 'Progress %',
+      data: PROJECTS.map(p => p.progress),
+      backgroundColor: PROJECTS.map(p =>
+        p.progress === 100 ? '#00c853aa' : p.progress > 60 ? '#1e88e5aa' : '#ffab00aa'),
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: { grid: { color: gridColor }, max: 100, ticks: { callback: v => v + '%' } },
+    }
+  }
+});
+
+/* Donut — Fleet Status */
+new Chart(document.getElementById('chartDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Operational','Maintenance','Offline'],
+    datasets: [{ data: [16, 5, 3],
+      backgroundColor: ['#00c853','#ffab00','#ef5350'],
+      borderWidth: 2, borderColor: '#0e2040'
+    }]
+  },
+  options: {
+    cutout: '68%',
+    plugins: { legend: { display: false } }
+  }
+});
+
+/* Line — Monthly Ops */
+const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+new Chart(document.getElementById('chartLine'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      { label:'Voyages',  data:[22,26,24,29,31,28], borderColor:'#1e88e5', backgroundColor:'rgba(30,136,229,.12)', tension:.4, fill:true },
+      { label:'Incidents',data:[3,2,4,1,2,1],        borderColor:'#ef5350', backgroundColor:'rgba(239,83,80,.08)',  tension:.4, fill:true },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { boxWidth: 10 } } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: { grid: { color: gridColor } },
+    }
+  }
+});
+
+/* Fleet Bar */
+new Chart(document.getElementById('chartFleetBar'), {
+  type: 'bar',
+  data: {
+    labels: VESSELS.map(v => v.name.split(' ').slice(-1)[0]),
+    datasets: [{
+      label: 'Days Active (MTD)',
+      data: [18, 22, 6, 20, 0, 15],
+      backgroundColor: '#1e88e5aa', borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: { grid: { color: gridColor } },
+    }
+  }
+});
+
+/* Maintenance Polar */
+new Chart(document.getElementById('chartMaint'), {
+  type: 'polarArea',
+  data: {
+    labels: ['Engine','Hull','Navigation','Electrical','Hydraulics','Safety'],
+    datasets: [{ data: [12, 8, 6, 9, 5, 4],
+      backgroundColor: ['#1e88e5aa','#00acc1aa','#00c853aa','#ffab00aa','#ef5350aa','#7c4dffaa']
+    }]
+  },
+  options: { plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
+});
+
+/* Maintenance Line */
+new Chart(document.getElementById('chartMaintLine'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      { label:'Planned',   data:[8,9,10,8,11,9],  borderColor:'#1e88e5', tension:.4 },
+      { label:'Completed', data:[7,9,9,10,10,8],  borderColor:'#00c853', tension:.4 },
+      { label:'Overdue',   data:[1,0,1,0,1,2],    borderColor:'#ef5350', tension:.4 },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { boxWidth: 10 } } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: { grid: { color: gridColor } },
+    }
+  }
+});
+
+/* MDM Radar */
+new Chart(document.getElementById('chartRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Completeness','Accuracy','Consistency','Timeliness','Uniqueness','Validity'],
+    datasets: [
+      { label:'Current',  data:[96,92,89,94,91,97], borderColor:'#1e88e5', backgroundColor:'rgba(30,136,229,.15)' },
+      { label:'Target',   data:[98,98,95,97,98,99],  borderColor:'#00c853', backgroundColor:'rgba(0,200,83,.08)',  borderDash:[4,2] },
+    ]
+  },
+  options: {
+    scales: {
+      r: {
+        grid: { color: gridColor },
+        pointLabels: { font: { size: 11 } },
+        ticks: { display: false },
+        min: 80, max: 100,
+      }
+    },
+    plugins: { legend: { labels: { boxWidth: 10 } } }
+  }
+});
+
+/* Revenue Chart */
+new Chart(document.getElementById('chartRevenue'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [
+      { label:'Revenue ($K)', data:[420,480,390,510,550,490], backgroundColor:'#1e88e5aa', borderRadius:5 },
+      { label:'Cost ($K)',    data:[310,340,290,380,410,360],  backgroundColor:'#ef535066', borderRadius:5 },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { boxWidth: 10 } } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: { grid: { color: gridColor } },
+    }
+  }
+});
+
+/* ═══════════════════ MODAL ═══════════════════ */
+function openModal()  { document.getElementById('modal-overlay').classList.add('open'); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+function addProject() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Please enter a project name.'); return; }
+  const id = 'PRJ-' + String(PROJECTS.length + 1).padStart(3,'0');
+  PROJECTS.push({
+    id, name,
+    type:     document.getElementById('f-type').value,
+    priority: document.getElementById('f-priority').value,
+    status:   'planning',
+    progress: 0,
+    due:      document.getElementById('f-due').value || '—',
+    lead:     document.getElementById('f-lead').value || '—',
+  });
+  renderProjects(PROJECTS);
+  closeModal();
+  // clear form
+  ['f-name','f-lead','f-budget','f-desc','f-due'].forEach(id => document.getElementById(id).value = '');
+  // show toast
+  const toast = Object.assign(document.createElement('div'), {
+    textContent: `✅ Project "${name}" created!`,
+    style: `position:fixed;bottom:28px;right:28px;background:#1e88e5;color:#fff;
+            padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;
+            z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:fadeIn .3s`
+  });
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+</script>
+</body>
+</html>

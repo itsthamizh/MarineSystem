@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · PMS Administration | Maintenance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="pms-administration.css"/>
+<style>
+:root{
+  --blue:#1565c0;--blue-lt:#1e88e5;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --bg:#f0f2f5;--border:#d8dce4;--border-lt:#e8edf2;
+  --text:#0f172a;--text2:#1e293b;--muted:#475569;--muted-lt:#94a3b8;
+  --sb:240px;--hdr:54px;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
+.tb-menu{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;font-size:18px;color:var(--muted);}
+.tb-menu:hover{background:#f6f8fa;}
+.tb-back{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:7px;transition:all .12s;text-decoration:none;}
+.tb-back:hover{background:#f6f8fa;color:var(--blue);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-title{font-size:15px;font-weight:800;color:var(--text);flex:1;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.vessel-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f6f8fa;font-size:13px;font-weight:700;color:var(--text2);}
+.vdot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.tb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0891b2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+/* LAYOUT */
+.body-wrap{flex:1;display:flex;overflow:hidden;height:calc(100vh - var(--hdr));}
+/* LEFT NAV */
+.pms-nav{width:210px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);overflow-y:auto;}
+.pms-nav-hdr{padding:12px 14px;background:var(--blue);color:#fff;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+.pms-nav-item{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border-lt);font-size:13px;font-weight:600;color:var(--text2);transition:all .11s;border-left:3px solid transparent;}
+.pms-nav-item:hover{background:#f6f8fa;color:var(--blue);}
+.pms-nav-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:700;}
+.pms-nav-ico{font-size:14px;width:18px;text-align:center;}
+/* CONTENT AREA */
+.pms-content{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;}
+/* PANELS */
+.panel{display:none;}
+.panel.active{display:flex;flex-direction:column;gap:16px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.card-hdr h2{font-size:14px;font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);font-family:inherit;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:#f6f8fa;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{background:var(--blue-lt);}
+.btn.sm{padding:5px 10px;font-size:12px;}
+.btn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+.filter-bar{padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fb-select{background:#fff;border:1.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12.5px;font-weight:600;color:var(--text2);outline:none;font-family:inherit;cursor:pointer;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f6f8fa;}
+.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.b-active{background:var(--green-bg);color:var(--green);}
+.b-inactive{background:#f3f4f6;color:#6b7280;}
+.b-yes{background:var(--green-bg);color:var(--green);}
+.b-no{background:var(--red-bg);color:var(--red);}
+.b-flag{background:var(--amber-bg);color:var(--amber);}
+/* TOGGLE */
+.toggle{position:relative;width:36px;height:20px;cursor:pointer;display:inline-block;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:#d1d5db;border-radius:10px;transition:.2s;}
+.toggle input:checked ~ .toggle-track{background:var(--green);}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked ~ .toggle-thumb{left:18px;}
+/* TREE */
+.tree-node{padding:8px 12px;border-bottom:1px solid var(--border-lt);display:flex;align-items:center;gap:8px;cursor:pointer;}
+.tree-node:hover{background:#f6f8fa;}
+.tree-node.level-1{padding-left:12px;font-weight:700;}
+.tree-node.level-2{padding-left:32px;font-size:13px;}
+.tree-node.level-3{padding-left:52px;font-size:12.5px;color:var(--muted);}
+.tree-ico{font-size:12px;}
+/* SETTINGS CARD */
+.settings-section{border:1.5px solid var(--border);border-radius:10px;padding:16px;background:#f9fafb;}
+.settings-section h3{font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-lt);}
+.settings-row:last-child{border-bottom:none;padding-bottom:0;}
+.settings-lbl{font-size:13px;font-weight:600;color:var(--text2);}
+.settings-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.settings-val{display:flex;align-items:center;gap:8px;}
+.settings-input{width:80px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#fff;outline:none;text-align:right;}
+/* FORM GRID */
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;}
+.form-group input{padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-weight:600;background:#f6f8fa;outline:none;font-family:inherit;}
+.form-group input:focus{border-color:var(--blue-bd);background:#fff;}
+/* ROUND JOB EXPAND */
+.rj-row{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px;}
+.rj-header{padding:10px 14px;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.rj-header:hover{background:#eff6ff;}
+.rj-header h4{font-size:13px;font-weight:700;}
+.rj-body{display:none;padding:10px 14px;border-top:1px solid var(--border);}
+.rj-body.open{display:block;}
+.rj-item{font-size:12.5px;padding:4px 8px;border-bottom:1px solid var(--border-lt);}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../MarineDashb.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint" data-title="Maintenance">
+      <a class="sb-child" href="../equipments/equipments.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Equipments</a>
+      <a class="sb-child" href="../due-jobs/due-jobs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>Due Jobs</a>
+      <a class="sb-child" href="../job-order/job-order.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>Job Order</a>
+      <a class="sb-child" href="../running-hours/running-hours.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>Running Hours</a>
+      <a class="sb-child" href="../technical-forms/technical-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Technical Forms</a>
+      <a class="sb-child" href="../reports/reports.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</a>
+      <a class="sb-child" href="../guarantee-claims/guarantee-claims.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Guarantee Claims</a>
+      <a class="sb-child" href="../dynamic-forms/dynamic-forms.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>Dynamic Forms</a>
+      <a class="sb-child" href="../pms-administration/pms-administration.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>PMS Administration</a>
+    </div>
+    <div class="sb-parent open" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm" data-title="MDM">
+      <a class="sb-child" href="../../mdm/vessel-register/vessel-register.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Register</a>
+      <a class="sb-child" href="../../mdm/common/common.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Common</a>
+      <a class="sb-child" href="../../mdm/pms-reference-data/pms-reference-data.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>PMS Reference Data</a>
+    </div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin" data-title="Administration">
+      <a class="sb-child" href="../../administration/users-roles/users-roles.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users &amp; Roles</a>
+      <a class="sb-child" href="../../administration/access-rights/access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Access Rights</a>
+      <a class="sb-child" href="../../administration/system-config/system-config.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>System Config</a>
+      <a class="sb-child" href="../../administration/livefleet/livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet</a>
+      <a class="sb-child" href="../../administration/monitoring-audit/monitoring-audit.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring &amp; Audit</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tb-menu" onclick="toggleSidebar()">☰</button>
+    <a class="tb-back" href="../../MarineDashb.html">← Dashboard</a>
+    <div class="tb-sep"></div>
+    <div class="tb-title">PMS Administration</div>
+    <div class="tb-right">
+      <div class="vessel-chip"><div class="vdot"></div>MV Pacific Star</div>
+      <div class="tb-ava">RK</div>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <!-- LEFT NAV -->
+    <div class="pms-nav">
+      <div class="pms-nav-hdr">PMS Admin</div>
+      <div class="pms-nav-item active" onclick="switchPanel('trigger-events',this)"><span class="pms-nav-ico">⚡</span>Trigger Events</div>
+      <div class="pms-nav-item" onclick="switchPanel('trigger-jo',this)"><span class="pms-nav-ico">📅</span>Trigger Job Order</div>
+      <div class="pms-nav-item" onclick="switchPanel('class-ref',this)"><span class="pms-nav-ico">🎓</span>Class Reference</div>
+      <div class="pms-nav-item" onclick="switchPanel('round-jobs',this)"><span class="pms-nav-ico">🔄</span>Round Jobs</div>
+      <div class="pms-nav-item" onclick="switchPanel('storage',this)"><span class="pms-nav-ico">📦</span>Storage Location</div>
+      <div class="pms-nav-item" onclick="switchPanel('rh-setup',this)"><span class="pms-nav-ico">⏱️</span>Running Hr Initial Setup</div>
+      <div class="pms-nav-item" onclick="switchPanel('postpone-settings',this)"><span class="pms-nav-ico">⏳</span>Postpone Settings</div>
+    </div>
+    <!-- CONTENT -->
+    <div class="pms-content">
+
+      <!-- TRIGGER EVENTS -->
+      <div class="panel active" id="panel-trigger-events">
+        <div class="card">
+          <div class="card-hdr"><h2>Trigger Events</h2><button class="btn primary" onclick="showToast('New trigger form opened')">+ New Trigger</button></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Event Code</th><th>Event Name</th><th>Condition</th><th>Linked Job Plans</th><th>Status</th><th>Toggle</th></tr></thead>
+            <tbody>
+              <tr><td><span style="font-family:monospace;font-weight:800;color:var(--blue)">EVT-001</span></td><td>Running Hours Threshold</td><td>Counter &gt;= Next Due Hrs</td><td style="text-align:center">24</td><td><span class="b b-active">Active</span></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td><span style="font-family:monospace;font-weight:800;color:var(--blue)">EVT-002</span></td><td>Calendar Overdue</td><td>Date &gt; Due Date</td><td style="text-align:center">18</td><td><span class="b b-active">Active</span></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td><span style="font-family:monospace;font-weight:800;color:var(--blue)">EVT-003</span></td><td>Due Within 7 Days</td><td>Due Date - Today &lt;= 7</td><td style="text-align:center">31</td><td><span class="b b-active">Active</span></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td><span style="font-family:monospace;font-weight:800;color:var(--blue)">EVT-004</span></td><td>Counter 20% Warning</td><td>Remaining Hrs &lt;= 20% of Interval</td><td style="text-align:center">12</td><td><span class="b b-active">Active</span></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td><span style="font-family:monospace;font-weight:800;color:var(--blue)">EVT-005</span></td><td>Class Survey Approaching</td><td>Survey Due &lt;= 30 days</td><td style="text-align:center">6</td><td><span class="b b-inactive">Inactive</span></td><td><label class="toggle"><input type="checkbox"/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- TRIGGER JOB ORDER -->
+      <div class="panel" id="panel-trigger-jo">
+        <div class="card">
+          <div class="card-hdr"><h2>Trigger Job Order</h2>
+            <div style="display:flex;gap:8px;">
+              <select class="fb-select"><option>All Equipment</option><option>Main Engine</option><option>Generator #1</option></select>
+              <select class="fb-select"><option>All Frequencies</option><option>250 hrs</option><option>500 hrs</option><option>1000 hrs</option><option>Monthly</option></select>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Equipment</th><th>Job Plan</th><th>Primary Freq</th><th>Secondary Freq</th><th>Last Done</th><th>Last Done Hrs</th><th>Next Due</th><th>Next Due Hrs</th><th>Has JO</th><th>Flag</th></tr></thead>
+            <tbody>
+              <tr><td>Main Engine</td><td>250hr Inspection</td><td>250 hrs</td><td>—</td><td>28 May 2026</td><td>14,680</td><td>25 Jun 2026</td><td>14,930</td><td><span class="b b-yes">Yes</span></td><td></td></tr>
+              <tr><td>Main Engine</td><td>500hr Service</td><td>500 hrs</td><td>3 months</td><td>15 Apr 2026</td><td>14,320</td><td>15 Jul 2026</td><td>14,820</td><td><span class="b b-no">No</span></td><td>⚠️</td></tr>
+              <tr><td>Generator #1</td><td>12,000hr Overhaul</td><td>12000 hrs</td><td>36 months</td><td>10 Dec 2024</td><td>6,000</td><td>10 Dec 2026</td><td>18,000</td><td><span class="b b-yes">Yes</span></td><td></td></tr>
+              <tr><td>Generator #2</td><td>500hr Service</td><td>500 hrs</td><td>3 months</td><td>05 May 2026</td><td>5,800</td><td>05 Aug 2026</td><td>6,300</td><td><span class="b b-no">No</span></td><td></td></tr>
+              <tr><td>FO Purifier</td><td>250hr Bowl Clean</td><td>250 hrs</td><td>—</td><td>02 Jun 2026</td><td>3,170</td><td>18 Jun 2026</td><td>3,420</td><td><span class="b b-yes">Yes</span></td><td></td></tr>
+              <tr><td>Air Compressor</td><td>250hr Valve Check</td><td>250 hrs</td><td>—</td><td>20 May 2026</td><td>4,270</td><td>15 Jun 2026</td><td>4,520</td><td><span class="b b-no">No</span></td><td>🚩</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);font-weight:600;">⚠️ = No running hour counter available &nbsp;|&nbsp; 🚩 = Overdue, no JO raised</div>
+      </div>
+
+      <!-- CLASS REFERENCE -->
+      <div class="panel" id="panel-class-ref">
+        <div class="card">
+          <div class="card-hdr">
+            <h2>Class Reference</h2>
+            <div style="display:flex;gap:8px;">
+              <button class="btn sm" onclick="showToast('Import dialog opened')">📥 Import</button>
+              <button class="btn sm" onclick="showToast('Exported to Excel')">📤 Export</button>
+              <button class="btn primary sm" onclick="showToast('Copy to vessel dialog opened')">📋 Copy to Vessel</button>
+            </div>
+          </div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Equipment</th><th>Class Society</th><th>Reference Code</th><th>Required Job</th></tr></thead>
+            <tbody>
+              <tr><td>Main Engine</td><td>DNV</td><td>DNV-ME-ANNUAL-01</td><td>Annual combustion inspection</td></tr>
+              <tr><td>Main Engine</td><td>DNV</td><td>DNV-ME-SPECIAL-01</td><td>Special survey (5yr) — full overhaul</td></tr>
+              <tr><td>Generator #1</td><td>DNV</td><td>DNV-GEN-ANNUAL-01</td><td>Annual survey — running test</td></tr>
+              <tr><td>Generator #2</td><td>DNV</td><td>DNV-GEN-ANNUAL-02</td><td>Annual survey — running test</td></tr>
+              <tr><td>Lifeboat Release</td><td>LR</td><td>LR-LIFEB-ANNUAL-01</td><td>Annual release mechanism test</td></tr>
+              <tr><td>Fire Pumps</td><td>LR</td><td>LR-FIRE-ANNUAL-01</td><td>Annual pressure and flow test</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ROUND JOBS -->
+      <div class="panel" id="panel-round-jobs">
+        <div class="card">
+          <div class="card-hdr"><h2>Round Jobs</h2><button class="btn primary" onclick="showToast('New round job form opened')">+ New Round Job</button></div>
+          <div style="padding:14px;">
+            <div class="rj-row">
+              <div class="rj-header" onclick="toggleRJ(this)"><h4>🔄 Engine Room Daily Rounds</h4><div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)"><span>Interval: Daily</span><span>Safety: Standard</span><span>Assigned: 2nd Engineer</span><span>Items: 8</span><span>▼</span></div></div>
+              <div class="rj-body">
+                <div class="rj-item">1. Check main engine oil levels</div>
+                <div class="rj-item">2. Verify generator gauges</div>
+                <div class="rj-item">3. Inspect bilge levels</div>
+                <div class="rj-item">4. Check purifier operation</div>
+                <div class="rj-item">5. Verify compressed air pressure</div>
+                <div class="rj-item">6. Inspect fuel oil system</div>
+                <div class="rj-item">7. Check cooling water temperatures</div>
+                <div class="rj-item">8. Log all readings in TOM form</div>
+              </div>
+            </div>
+            <div class="rj-row">
+              <div class="rj-header" onclick="toggleRJ(this)"><h4>🔄 Deck Rounds — Morning</h4><div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)"><span>Interval: Daily</span><span>Safety: Safety</span><span>Assigned: Chief Officer</span><span>Items: 5</span><span>▼</span></div></div>
+              <div class="rj-body">
+                <div class="rj-item">1. Inspect anchor chain and windlass</div>
+                <div class="rj-item">2. Check mooring equipment</div>
+                <div class="rj-item">3. Verify navigation lights</div>
+                <div class="rj-item">4. Inspect fire detection system</div>
+                <div class="rj-item">5. Review GMDSS equipment</div>
+              </div>
+            </div>
+            <div class="rj-row">
+              <div class="rj-header" onclick="toggleRJ(this)"><h4>🔄 Weekly Safety Equipment Check</h4><div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)"><span>Interval: Weekly</span><span>Safety: Critical</span><span>Assigned: Safety Officer</span><span>Items: 6</span><span>▼</span></div></div>
+              <div class="rj-body">
+                <div class="rj-item">1. Test emergency alarms</div>
+                <div class="rj-item">2. Inspect lifeboat davits</div>
+                <div class="rj-item">3. Check EPIRB status</div>
+                <div class="rj-item">4. Test fire suppression system</div>
+                <div class="rj-item">5. Verify immersion suits</div>
+                <div class="rj-item">6. Check emergency generator</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STORAGE LOCATION -->
+      <div class="panel" id="panel-storage">
+        <div class="card">
+          <div class="card-hdr">
+            <h2>Storage Locations</h2>
+            <div style="display:flex;gap:8px;">
+              <button class="btn primary sm" onclick="showToast('Add location dialog opened')">+ Add Location</button>
+            </div>
+          </div>
+          <div>
+            <div class="tree-node level-1"><span class="tree-ico">📁</span><span style="flex:1">Engine Room Store</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-2"><span class="tree-ico">📂</span><span style="flex:1">Shelf A — Lubricants</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row A1 — Engine Oils</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row A2 — Hydraulic Oils</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-2"><span class="tree-ico">📂</span><span style="flex:1">Shelf B — Spare Parts</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row B1 — ME Spares</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row B2 — Generator Spares</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row B3 — Purifier Spares</span><span class="b b-inactive" style="font-size:11px">Inactive</span></div>
+            <div class="tree-node level-1"><span class="tree-ico">📁</span><span style="flex:1">Deck Store</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-2"><span class="tree-ico">📂</span><span style="flex:1">Shelf C — Safety Equipment</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row C1 — Fire Fighting</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-3"><span class="tree-ico">📄</span><span style="flex:1">Row C2 — Life Saving</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-1"><span class="tree-ico">📁</span><span style="flex:1">Paint Room</span><span class="b b-active" style="font-size:11px">Active</span></div>
+            <div class="tree-node level-2"><span class="tree-ico">📂</span><span style="flex:1">Shelf D — Anti-corrosion</span><span class="b b-active" style="font-size:11px">Active</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUNNING HOUR INITIAL SETUP -->
+      <div class="panel" id="panel-rh-setup">
+        <div class="card">
+          <div class="card-hdr"><h2>Running Hour Initial Setup</h2></div>
+          <div style="padding:14px;background:var(--amber-bg);border-bottom:1px solid var(--amber-bd);font-size:13px;font-weight:600;color:var(--amber);display:flex;gap:8px;align-items:flex-start;">
+            ⚠️ <div>Setting initial running hours affects all linked job plan due calculations. Confirm only when values are verified from vessel records.</div>
+          </div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Equipment</th><th>Sub-component</th><th>Initial Hours</th><th>Inherit from Parent</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:800">Main Engine</td><td>—</td>
+                <td><input type="number" value="14820" style="width:100px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#f9fafb;outline:none;text-align:right;"/></td>
+                <td>—</td>
+              </tr>
+              <tr><td style="color:var(--muted)">Main Engine</td><td>Fuel Injection Pump #1</td><td><input type="number" value="14820" style="width:100px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#f9fafb;outline:none;text-align:right;"/></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td style="color:var(--muted)">Main Engine</td><td>Fuel Injection Pump #2</td><td><input type="number" value="14820" style="width:100px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#f9fafb;outline:none;text-align:right;"/></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td style="font-weight:800">Generator #1</td><td>—</td><td><input type="number" value="8340" style="width:100px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#f9fafb;outline:none;text-align:right;"/></td><td>—</td></tr>
+              <tr><td style="color:var(--muted)">Generator #1</td><td>Injector Set</td><td><input type="number" value="8340" style="width:100px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#f9fafb;outline:none;text-align:right;"/></td><td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></td></tr>
+              <tr><td style="font-weight:800">FO Purifier</td><td>—</td><td><input type="number" value="3200" style="width:100px;padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:#f9fafb;outline:none;text-align:right;"/></td><td>—</td></tr>
+            </tbody>
+          </table></div>
+          <div style="padding:14px;display:flex;justify-content:flex-end;">
+            <button class="btn danger" onclick="confirmSetup()">⚠️ Confirm Setup</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTPONE SETTINGS -->
+      <div class="panel" id="panel-postpone-settings">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="settings-section">
+            <h3>🔴 Critical Equipment Safety Jobs</h3>
+            <div class="settings-row">
+              <div><div class="settings-lbl">Block Postponement Entirely</div><div class="settings-sub">Critical safety jobs cannot be postponed under any circumstances</div></div>
+              <div class="settings-val"><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3>🟡 Non-Critical Jobs — Within 30 Days of Due Date</h3>
+            <div class="settings-row"><div><div class="settings-lbl">Maximum Extension (Days)</div><div class="settings-sub">How many days the job can be postponed from original due date</div></div><div class="settings-val"><input class="settings-input" type="number" value="14"/></div></div>
+            <div class="settings-row"><div><div class="settings-lbl">Approval Routing</div><div class="settings-sub">Who must approve the postponement request</div></div><div class="settings-val"><select style="padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:600;font-family:inherit;background:#fff;outline:none;"><option>Chief Engineer</option><option>Superintendent</option><option>CE + Superintendent</option></select></div></div>
+            <div class="settings-row"><div><div class="settings-lbl">Risk Assessment Required</div><div class="settings-sub">Mandatory RA before postponement can be approved</div></div><div class="settings-val"><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div></div>
+            <div class="settings-row"><div><div class="settings-lbl">Max Postpone Count</div><div class="settings-sub">Maximum number of times a single job can be postponed</div></div><div class="settings-val"><input class="settings-input" type="number" value="2"/></div></div>
+          </div>
+          <div class="settings-section">
+            <h3>⚪ Non-Critical Jobs — Beyond 30 Days of Due Date</h3>
+            <div class="settings-row"><div><div class="settings-lbl">Maximum Extension (Days)</div></div><div class="settings-val"><input class="settings-input" type="number" value="30"/></div></div>
+            <div class="settings-row"><div><div class="settings-lbl">Approval Routing</div></div><div class="settings-val"><select style="padding:5px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-weight:600;font-family:inherit;background:#fff;outline:none;"><option>CE + Superintendent</option><option>Chief Engineer</option><option>Superintendent</option></select></div></div>
+            <div class="settings-row"><div><div class="settings-lbl">Risk Assessment Required</div></div><div class="settings-val"><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div></div>
+            <div class="settings-row"><div><div class="settings-lbl">Max Postpone Count</div></div><div class="settings-val"><input class="settings-input" type="number" value="1"/></div></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;">
+            <button class="btn primary" onclick="showToast('Postpone settings saved')">💾 Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../../data/sample-data.js"></script>
+<script>
+function toggleSidebar(){const sb=document.getElementById('sidebar');const m=document.getElementById('main');sb.classList.toggle('visible');m.classList.toggle('with-sidebar');}
+document.querySelectorAll('.sb-parent').forEach(p=>{p.addEventListener('click',()=>{const k=p.dataset.k;const ch=document.getElementById('ch-'+k);p.classList.toggle('open');ch.classList.toggle('open');});});
+function switchPanel(name,el){
+  document.querySelectorAll('.pms-nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+}
+function toggleRJ(header){header.nextElementSibling.classList.toggle('open');}
+function confirmSetup(){if(confirm('Are you sure you want to confirm the initial running hour setup? This will recalculate all linked job plan due dates.')){showToast('Initial running hours confirmed');}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+</script>
+</body>
+</html>
