@@ -420,13 +420,14 @@ body{
 @media(max-width:1300px){.kpi-row{grid-template-columns:repeat(3,1fr);} .g64,.g73{grid-template-columns:1fr;}}
 @media(max-width:960px){.kpi-row{grid-template-columns:repeat(2,1fr);} .g2,.g3,.g55{grid-template-columns:1fr;} #sidebar{display:none;} #main{margin-left:0;}}
 </style>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module"></script>
 </head>
 <body>
 
 <!-- ══════════ SIDEBAR ══════════ -->
 <nav id="sidebar">
   <div class="sb-logo">
-    <div class="sb-mark">⚓</div>
+    <div class="sb-mark"><ph-anchor weight="bold" size="20"></ph-anchor></div>
     <div><div class="sb-name">Mariapps</div></div>
   </div>
   <div class="sb-nav">
@@ -498,7 +499,7 @@ body{
     <div class="tb-gap"></div>
     <div class="vessel-wrap">
       <div class="vessel-sel" id="vesselBtn">
-        <span class="vs-ico">🌐</span>
+        <span class="vs-ico"><ph-globe weight="regular" size="16"></ph-globe></span>
         <div class="vs-inner">
           <div class="vs-label">Vessel</div>
           <div class="vs-name" id="vsName">MV Saraswati</div>
@@ -507,7 +508,7 @@ body{
         <span class="vs-arr">▾</span>
       </div>
       <div class="vessel-drop" id="vesselDrop">
-        <div class="vd-hdr"><span class="vd-hdr-title">🚢 Select Vessel</span><span class="vd-hdr-count" id="vd-count">5 vessels</span></div>
+        <div class="vd-hdr"><span class="vd-hdr-title"><ph-boat weight="regular" size="16"></ph-boat> Select Vessel</span><span class="vd-hdr-count" id="vd-count">5 vessels</span></div>
         <div id="vesselList"></div>
       </div>
     </div>
@@ -515,15 +516,15 @@ body{
 
     <!-- Notifications -->
     <div class="notif-wrap">
-      <div class="notif-btn" id="notifBtn">🔔<div class="notif-count">5</div></div>
+      <div class="notif-btn" id="notifBtn"><ph-bell weight="regular" size="20"></ph-bell><div class="notif-count">5</div></div>
       <div class="notif-panel" id="notifPanel">
         <div class="np-hdr"><div class="np-title">Notifications <span style="font-size:11px;color:var(--muted);font-weight:400">(5 unread)</span></div><div class="np-mark">Mark all read</div></div>
-        <div class="np-item unread"><div class="np-icon ni-r">🚨</div><div style="flex:1"><div class="np-txt">V-2841 Main Engine Piston Overhaul is <strong>4 days OVERDUE</strong></div><div class="np-meta">Due Jobs · 8 min ago</div></div><div class="np-dot"></div></div>
-        <div class="np-item unread"><div class="np-icon ni-a">⚡</div><div style="flex:1"><div class="np-txt">Generator #2 — <strong>110 hrs</strong> remaining to next service</div><div class="np-meta">Running Hours · 25 min ago</div></div><div class="np-dot"></div></div>
-        <div class="np-item unread"><div class="np-icon ni-r">🔴</div><div style="flex:1"><div class="np-txt">V-2845 Generator Repair <strong>OVERDUE</strong> — 6 days past due</div><div class="np-meta">Due Jobs · 1 hr ago</div></div><div class="np-dot"></div></div>
-        <div class="np-item unread"><div class="np-icon ni-a">📋</div><div style="flex:1"><div class="np-txt"><strong>3 job orders</strong> from crew pending your approval</div><div class="np-meta">Job Order · 2 hrs ago</div></div><div class="np-dot"></div></div>
-        <div class="np-item unread"><div class="np-icon ni-r">🔩</div><div style="flex:1"><div class="np-txt">Nav Antenna ROB (1) below minimum (3)</div><div class="np-meta">Spare Parts · 3 hrs ago</div></div><div class="np-dot"></div></div>
-        <div class="np-item"><div class="np-icon ni-g">✅</div><div style="flex:1"><div class="np-txt">V-2838 Oil Change completed by Motorman Singh</div><div class="np-meta">Due Jobs · 4 hrs ago</div></div></div>
+        <div class="np-item unread"><div class="np-icon ni-r"><ph-warning weight="fill" size="18"></ph-warning></div><div style="flex:1"><div class="np-txt">V-2841 Main Engine Piston Overhaul is <strong>4 days OVERDUE</strong></div><div class="np-meta">Due Jobs · 8 min ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-a"><ph-lightning weight="fill" size="18"></ph-lightning></div><div style="flex:1"><div class="np-txt">Generator #2 — <strong>110 hrs</strong> remaining to next service</div><div class="np-meta">Running Hours · 25 min ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-r"><ph-warning-circle weight="fill" size="18"></ph-warning-circle></div><div style="flex:1"><div class="np-txt">V-2845 Generator Repair <strong>OVERDUE</strong> — 6 days past due</div><div class="np-meta">Due Jobs · 1 hr ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-a"><ph-clipboard-text weight="regular" size="18"></ph-clipboard-text></div><div style="flex:1"><div class="np-txt"><strong>3 job orders</strong> from crew pending your approval</div><div class="np-meta">Job Order · 2 hrs ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item unread"><div class="np-icon ni-r"><ph-wrench weight="regular" size="18"></ph-wrench></div><div style="flex:1"><div class="np-txt">Nav Antenna ROB (1) below minimum (3)</div><div class="np-meta">Spare Parts · 3 hrs ago</div></div><div class="np-dot"></div></div>
+        <div class="np-item"><div class="np-icon ni-g"><ph-check-circle weight="fill" size="18"></ph-check-circle></div><div style="flex:1"><div class="np-txt">V-2838 Oil Change completed by Motorman Singh</div><div class="np-meta">Due Jobs · 4 hrs ago</div></div></div>
         <div class="np-footer">View All Notifications →</div>
       </div>
     </div>
@@ -539,23 +540,23 @@ body{
         <div class="up-head">
           <div class="up-ava">RK</div>
           <div class="up-name">Rajan Kumar</div>
-          <div style="margin-top:5px;"><span class="up-role">🔧 Chief Engineer · Engine Dept.</span></div>
+          <div style="margin-top:5px;"><span class="up-role"><ph-wrench weight="regular" size="14"></ph-wrench> Chief Engineer · Engine Dept.</span></div>
         </div>
         <div style="padding:12px 14px 4px;">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px;">Current Vessel</div>
           <div class="up-vessel-card">
-            <div class="up-vrow"><span style="font-size:17px;">🚢</span><div class="up-vname" id="up-vname">MV Saraswati</div><div class="up-live">● LIVE</div></div>
+            <div class="up-vrow"><ph-boat weight="regular" size="18"></ph-boat><div class="up-vname" id="up-vname">MV Saraswati</div><div class="up-live">● LIVE</div></div>
             <div class="up-vmeta" id="up-vimo">IMO 9234567 · Cargo Carrier · 🇮🇳</div>
-            <div class="up-vmeta" id="up-vpos" style="margin-top:3px;">📍 Bay of Bengal · At Sea · 14.2 kn</div>
+            <div class="up-vmeta" id="up-vpos" style="margin-top:3px;"><ph-map-pin weight="regular" size="13"></ph-map-pin> Bay of Bengal · At Sea · 14.2 kn</div>
           </div>
         </div>
         <div class="up-body">
-          <div class="up-row"><div class="up-ico">🏷️</div><div><div class="up-lbl">Active Role</div><div class="up-val">Chief Engineer</div></div></div>
-          <div class="up-row"><div class="up-ico">🏢</div><div><div class="up-lbl">Department</div><div class="up-val">Engine Department · Vessel Head</div></div></div>
-          <div class="up-row"><div class="up-ico">🕐</div><div><div class="up-lbl">Watch</div><div class="up-val">08:00 – 12:00 · Day 4 at Sea</div></div></div>
+          <div class="up-row"><div class="up-ico"><ph-tag weight="regular" size="15"></ph-tag></div><div><div class="up-lbl">Active Role</div><div class="up-val">Chief Engineer</div></div></div>
+          <div class="up-row"><div class="up-ico"><ph-buildings weight="regular" size="15"></ph-buildings></div><div><div class="up-lbl">Department</div><div class="up-val">Engine Department · Vessel Head</div></div></div>
+          <div class="up-row"><div class="up-ico"><ph-clock weight="regular" size="15"></ph-clock></div><div><div class="up-lbl">Watch</div><div class="up-val">08:00 – 12:00 · Day 4 at Sea</div></div></div>
         </div>
         <div class="up-footer">
-          <button class="up-btn up-sec">⚙️ Settings</button>
+          <button class="up-btn up-sec"><ph-gear weight="regular" size="14"></ph-gear> Settings</button>
           <button class="up-btn up-out">Sign Out</button>
         </div>
       </div>
@@ -677,7 +678,7 @@ body{
               <button class="jp-tab" onclick="filterJP('counter',this)">Counter</button>
               <button class="jp-tab" onclick="filterJP('not-started',this)">Not Started</button>
             </div>
-            <button class="jp-modal-close" onclick="closeJobPlansModal()">✕</button>
+            <button class="jp-modal-close" onclick="closeJobPlansModal()"><ph-x weight="regular" size="14"></ph-x></button>
           </div>
         </div>
         <div class="jp-modal-body">
@@ -720,7 +721,7 @@ body{
               <button class="jp-tab" onclick="filterJO('pending',this)">Pending</button>
               <button class="jp-tab" onclick="filterJO('postponed',this)">Postponed</button>
             </div>
-            <button class="jp-modal-close" onclick="closeJOModal()">✕</button>
+            <button class="jp-modal-close" onclick="closeJOModal()"><ph-x weight="regular" size="14"></ph-x></button>
           </div>
         </div>
         <div class="jp-modal-body">
@@ -815,10 +816,21 @@ body{
           </div>
         </div>
         <canvas id="maChart" height="140"></canvas>
-        <div style="display:flex;gap:20px;margin-top:12px;">
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:11px;height:11px;border-radius:3px;background:rgba(239,68,68,.2);border:1.5px solid #ef4444;"></div>Jobs Due</div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:11px;height:11px;border-radius:3px;background:rgba(22,163,74,.75);"></div>Completed</div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><div style="width:11px;height:11px;border-radius:3px;background:#dc2626;"></div>Overdue (line)</div>
+        <div style="display:flex;gap:22px;margin-top:12px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#475569;font-weight:500;">
+            <div style="width:12px;height:12px;border-radius:3px;background:rgba(99,102,241,0.75);"></div>
+            Jobs Due
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#475569;font-weight:500;">
+            <div style="width:12px;height:12px;border-radius:3px;background:rgba(20,184,166,0.85);"></div>
+            Completed
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#475569;font-weight:500;">
+            <div style="width:24px;height:2.5px;border-radius:2px;background:#f43f5e;position:relative;flex-shrink:0;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#fff;border:2.5px solid #f43f5e;position:absolute;top:-2.75px;left:50%;transform:translateX(-50%);"></div>
+            </div>
+            Overdue
+          </div>
         </div>
       </div>
       <div class="card">
@@ -839,12 +851,12 @@ body{
         <div class="rh-item">
           <div class="rh-left"><div class="rh-name">Main Engine</div><div class="rh-code">ME-001</div></div>
           <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:99%;background:var(--red)"></div></div><div class="rh-nums"><span>18,420 hrs</span><span>/ 18,500 next due</span></div></div>
-          <div class="rh-tag" style="background:var(--red-bg);color:var(--red)">⚠ 80 hrs</div>
+          <div class="rh-tag" style="background:var(--red-bg);color:var(--red)"><ph-warning weight="regular" size="14"></ph-warning> 80 hrs</div>
         </div>
         <div class="rh-item">
           <div class="rh-left"><div class="rh-name">Generator #2</div><div class="rh-code">GEN-002</div></div>
           <div class="rh-mid"><div class="rh-bar"><div class="rh-fill" style="width:89%;background:var(--amber)"></div></div><div class="rh-nums"><span>4,890 hrs</span><span>/ 5,000 next due</span></div></div>
-          <div class="rh-tag" style="background:var(--amber-bg);color:var(--amber)">⚡ 110 hrs</div>
+          <div class="rh-tag" style="background:var(--amber-bg);color:var(--amber)"><ph-lightning weight="regular" size="14"></ph-lightning> 110 hrs</div>
         </div>
         <div class="rh-item">
           <div class="rh-left"><div class="rh-name">Aux Engine #1</div><div class="rh-code">AE-001</div></div>
@@ -981,7 +993,7 @@ function selectVessel(key) {
   // User panel
   document.getElementById('up-vname').textContent        = d.info.name;
   document.getElementById('up-vimo').textContent         = d.info.imo + ' · ' + d.info.type + ' · ' + d.info.flag;
-  document.getElementById('up-vpos').textContent         = '📍 ' + d.info.location + ' · ' + d.info.position + ' · ' + d.info.speed;
+  document.getElementById('up-vpos').textContent         = d.info.location + ' · ' + d.info.position + ' · ' + d.info.speed;
   // KPI cards
   document.getElementById('kpi-overdue').textContent     = k.overdue;
   document.getElementById('kpi-soon').textContent        = k.dueSoon;
@@ -1002,9 +1014,10 @@ function selectVessel(key) {
   document.getElementById('eq-op').textContent = eq.operational;
   document.getElementById('eq-ds').textContent = eq.dueSoon;
   document.getElementById('eq-ov').textContent = eq.defect;
-  // Health score
-  document.getElementById('health-val').textContent = d.health;
-  updateHealthGauge(d.health);
+  // Health score (element optional)
+  const _hv = document.getElementById('health-val');
+  if (_hv) _hv.textContent = d.health;
+  if (typeof updateHealthGauge === 'function') updateHealthGauge(d.health);
   // Activity feed — from PAL4 data
   renderActivity(d.activity);
   // Job Order donut + list — from PAL4 data
@@ -1144,8 +1157,8 @@ const _jpStatusBadge = {
   'not-started': '<span class="b b-x">Not Started</span>',
 };
 const _jpTypeBadge = {
-  'calendar': '<span class="b b-t">📅 Calendar</span>',
-  'counter':  '<span class="b b-p">⏱ Counter</span>',
+  'calendar': '<span class="b b-t"><ph-calendar weight="regular" size="12"></ph-calendar> Calendar</span>',
+  'counter':  '<span class="b b-p"><ph-timer weight="regular" size="12"></ph-timer> Counter</span>',
 };
 const _jpRowCls = { overdue:'jp-r-ovd', 'due-soon':'jp-r-ns', 'not-started':'jp-r-ns', upcoming:'', default:'' };
 
@@ -1264,25 +1277,86 @@ const gc = 'rgba(0,0,0,0.05)';
 const allLabels = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
 
 
-/* MA chart */
-const skyBg = {
-  id:'skyBg',
-  beforeDraw(c){ const {ctx,chartArea}=c; if(!chartArea)return; ctx.save(); ctx.fillStyle='#f0f9ff'; ctx.fillRect(chartArea.left,chartArea.top,chartArea.right-chartArea.left,chartArea.bottom-chartArea.top); ctx.restore(); }
-};
+/* MA chart — clean grouped bars, no dual-axis */
 const maCtx = document.getElementById('maChart').getContext('2d');
 maChartObj = new Chart(maCtx,{
-  type:'bar', plugins:[skyBg],
+  type:'bar',
   data:{ labels:[], datasets:[
-    {label:'Jobs Due',  data:[], backgroundColor:'rgba(239,68,68,0.15)', borderColor:'#ef4444', borderWidth:1.5, borderRadius:5},
-    {label:'Completed', data:[], backgroundColor:'rgba(22,163,74,0.75)', borderRadius:5},
-    {label:'Overdue',   data:[], type:'line', tension:.4, fill:false, borderColor:'#dc2626', pointBackgroundColor:'#dc2626', pointRadius:4, yAxisID:'y1'}
+    {
+      label:'Jobs Due',
+      data:[],
+      backgroundColor:'rgba(99,102,241,0.75)',
+      borderRadius:5,
+      borderSkipped:false,
+      barPercentage:0.72,
+      categoryPercentage:0.85,
+    },
+    {
+      label:'Completed',
+      data:[],
+      backgroundColor:'rgba(20,184,166,0.85)',
+      borderRadius:5,
+      borderSkipped:false,
+      barPercentage:0.72,
+      categoryPercentage:0.85,
+    },
+    {
+      label:'Overdue',
+      data:[],
+      type:'line',
+      tension:0.4,
+      fill:false,
+      borderColor:'#f43f5e',
+      borderWidth:2.5,
+      pointBackgroundColor:'#fff',
+      pointBorderColor:'#f43f5e',
+      pointBorderWidth:2.5,
+      pointRadius:5,
+      pointHoverRadius:7,
+      yAxisID:'y1',
+    }
   ]},
   options:{
-    responsive:true, plugins:{legend:{display:false}},
+    responsive:true,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'#0f172a',
+        titleColor:'#94a3b8',
+        titleFont:{size:12,weight:'700'},
+        bodyColor:'#e2e8f0',
+        bodyFont:{size:12},
+        padding:12,
+        cornerRadius:8,
+        boxPadding:5,
+        callbacks:{
+          labelColor: ctx => ({
+            backgroundColor: ctx.datasetIndex===0?'#6366f1':ctx.datasetIndex===1?'#14b8a6':'#f43f5e',
+            borderColor:'transparent',borderRadius:3
+          })
+        }
+      }
+    },
     scales:{
-      x: {grid:{color:gc},ticks:{font:{size:11}}},
-      y: {grid:{color:gc},ticks:{font:{size:11}},beginAtZero:true},
-      y1:{position:'right',grid:{display:false},max:10,ticks:{font:{size:11},color:'#dc2626'}}
+      x:{
+        grid:{display:false},
+        border:{display:false},
+        ticks:{font:{size:11},color:'#94a3b8'}
+      },
+      y:{
+        grid:{color:'rgba(0,0,0,0.04)'},
+        border:{display:false},
+        ticks:{font:{size:11},color:'#94a3b8'},
+        beginAtZero:true
+      },
+      y1:{
+        position:'right',
+        grid:{display:false},
+        border:{display:false},
+        max:8,
+        ticks:{font:{size:11},color:'#f43f5e',stepSize:2}
+      }
     }
   }
 });
@@ -1304,13 +1378,15 @@ eqDonutChart = new Chart(document.getElementById('eqDonut'),{
 });
 
 /* ── FLEET HEALTH LIST — from PAL4.getFleetHealth() ── */
-document.getElementById('vessel-health-list').innerHTML =
-  PAL4.getFleetHealth().map(v => `
+const _vhList = document.getElementById('vessel-health-list');
+if (_vhList) {
+  _vhList.innerHTML = PAL4.getFleetHealth().map(v => `
     <div class="hv-row">
       <div class="hv-name">${v.name}</div>
       <div class="hv-bar-wrap"><div class="hv-bar"><div class="hv-fill" style="width:${v.score}%;background:${v.color}"></div></div></div>
       <div class="hv-score" style="color:${v.color}">${v.score}</div>
     </div>`).join('');
+}
 
 /* ── INIT ── */
 selectVessel('saraswati');

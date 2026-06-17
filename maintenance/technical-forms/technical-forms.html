@@ -63,9 +63,11 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .tom-grid td{padding:8px 10px;border-bottom:1px solid var(--border-lt);text-align:center;vertical-align:middle;}
 .tom-grid td:first-child{text-align:left;font-weight:700;color:var(--text);}
 .tom-grid tr:hover td{background:#f6f8fa;cursor:pointer;}
-.cell-done{color:var(--green);font-size:16px;cursor:pointer;}
-.cell-pending{color:var(--amber);font-size:16px;}
-.cell-none{color:var(--muted-lt);font-size:16px;}
+.cell-cb{text-align:center !important;padding:6px 8px !important;}
+.cell-cb input[type="checkbox"]{width:15px;height:15px;cursor:pointer;border-radius:3px;}
+.cell-cb input[type="checkbox"]:disabled{cursor:default;opacity:.35;}
+.cell-cb input.cb-done{accent-color:var(--green);}
+.cell-cb input.cb-pending{accent-color:var(--amber);}
 .pct-bar{height:6px;background:var(--border);border-radius:3px;margin-top:4px;min-width:60px;}
 .pct-fill{height:100%;background:var(--green);border-radius:3px;}
 /* MODAL */
@@ -126,54 +128,10 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
     </div>
   </div>
   <div id="content">
-    <!-- SECTION 1: FORM SELECTOR -->
-    <div class="card">
-      <div class="card-hdr"><h2>Load Technical Form</h2></div>
-      <div class="card-body">
-        <div class="selector-row">
-          <div class="form-group">
-            <label>Month</label>
-            <select id="sel-month">
-              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-              <option value="4">April</option><option value="5">May</option><option value="6" selected>June</option>
-              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Year</label>
-            <select id="sel-year"><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option></select>
-          </div>
-          <div class="form-group" style="flex:1;min-width:220px;">
-            <label>Form Type</label>
-            <select id="sel-form">
-              <option value="me-perf">ME Performance Check</option>
-              <option value="fw-analysis">FW Analysis</option>
-              <option value="sounding">Sounding Report</option>
-              <option value="bilge">Bilge Water Log</option>
-              <option value="fo-analysis">Fuel Oil Analysis</option>
-              <option value="lo-analysis">LO Analysis</option>
-              <option value="cyl-oil">Cylinder Oil Check</option>
-              <option value="air-cooler">Air Cooler Inspection</option>
-            </select>
-          </div>
-          <button class="btn primary" onclick="loadForm()">Load Form</button>
-        </div>
-        <div id="form-container" style="display:none;" class="inline-form">
-          <!-- form injected by JS -->
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 2: TOM FORMS OVERVIEW -->
+    <!-- TOM FORMS OVERVIEW -->
     <div class="card">
       <div class="card-hdr">
         <h2>TOM Forms Overview — 2026</h2>
-        <div style="display:flex;gap:12px;font-size:12.5px;font-weight:600;color:var(--muted);align-items:center;">
-          <span style="color:var(--green)">✓ Completed</span>
-          <span style="color:var(--amber)">! Due / Pending</span>
-          <span style="color:var(--muted-lt)">○ Not Yet</span>
-        </div>
       </div>
       <div class="tom-grid-wrap">
         <table class="tom-grid" id="tom-table">
@@ -223,9 +181,9 @@ function renderTomGrid(){
     const pct=Math.round(done/12*100);
     html+=`<tr><td>${f.name}</td>`;
     row.forEach((v,mi)=>{
-      if(v===1) html+=`<td class="cell-done" onclick="showFormData('${f.name}','${months[mi]} 2026')">✓</td>`;
-      else if(v===2) html+=`<td class="cell-pending">!</td>`;
-      else html+=`<td class="cell-none">○</td>`;
+      if(v===1)      html+=`<td class="cell-cb"><input type="checkbox" class="cb-done"    checked onclick="showFormData('${f.name}','${months[mi]} 2026')"/></td>`;
+      else if(v===2) html+=`<td class="cell-cb"><input type="checkbox" class="cb-pending"         onclick="showToast('Marked as completed')"/></td>`;
+      else           html+=`<td class="cell-cb"><input type="checkbox" disabled/></td>`;
     });
     html+=`<td><div style="font-size:12px;font-weight:700;color:var(--muted)">${pct}%</div><div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div></td></tr>`;
   });

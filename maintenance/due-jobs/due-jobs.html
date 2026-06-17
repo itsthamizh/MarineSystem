@@ -25,9 +25,9 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;font-weight:500;line-height:1.5;-webkit-font-smoothing:antialiased;}
 
-/* SIDEBAR */
-
-/* MAIN */
+/* ── LAYOUT — screen-height locked, table scrolls inside ── */
+#main{height:100vh!important;overflow:hidden;min-height:0!important;display:flex;flex-direction:column;}
+#content{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;padding:12px 20px 0;}
 
 /* TOPBAR */
 #topbar{height:var(--hdr);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:200;}
@@ -77,17 +77,39 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .fb-right{margin-left:auto;display:flex;gap:8px;}
 
 /* TABLE */
-#content{flex:1;padding:16px 20px;}
-.tbl-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+#content{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;padding:12px 20px 0;}
+.tbl-card{flex:1;background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;min-height:0;margin-bottom:12px;}
 .tbl-info-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);}
 .tbl-info-left{font-size:13px;font-weight:600;color:var(--muted);}
 .tbl-info-left span{color:var(--text);font-weight:800;}
 .tbl-info-right{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
-.tbl-scroll{overflow-x:auto;}
-.tbl-scroll::-webkit-scrollbar{height:5px;}
-.tbl-scroll::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
+.tbl-card{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.tbl-scroll{flex:1;overflow:auto;min-height:0;}
+.tbl-scroll::-webkit-scrollbar{width:6px;height:6px;}
+.tbl-scroll::-webkit-scrollbar-track{background:#f1f5f9;}
+.tbl-scroll::-webkit-scrollbar-thumb{background:#c7d2da;border-radius:3px;}
+.tbl-scroll::-webkit-scrollbar-corner{background:#f1f5f9;}
 
-table{width:100%;border-collapse:collapse;font-size:13px;}
+table{width:max-content;min-width:100%;border-collapse:collapse;font-size:13px;}
+
+/* ── FROZEN COLUMNS — sticky left ── */
+.sk{position:sticky;z-index:2;background:#fff;}
+th.sk{background:#f9fafb;z-index:3;}
+tr:hover .sk{background:#f6f8fa;}
+/* Column offsets (cumulative widths) */
+.sk0{left:0;   width:36px; min-width:36px; max-width:36px;}
+.sk1{left:36px; width:38px; min-width:38px; max-width:38px;}
+.sk2{left:74px; width:38px; min-width:38px; max-width:38px;}
+.sk3{left:112px;width:38px; min-width:38px; max-width:38px;}
+.sk4{left:150px;width:38px; min-width:38px; max-width:38px;}
+.sk5{left:188px;min-width:110px;}
+.sk6{left:298px;min-width:110px;}
+.sk7{left:408px;min-width:145px;}
+.sk8{left:553px;min-width:170px;}
+.sk9{left:723px;min-width:110px;box-shadow:3px 0 8px rgba(0,0,0,.07);}
+th.sk9{box-shadow:3px 0 8px rgba(0,0,0,.07);}
+/* Freeze column right border */
+.sk9{border-right:2px solid var(--border)!important;}
 th{text-align:left;padding:10px 13px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
 th:hover{color:var(--blue);}
 th.sorted{color:var(--blue);}
@@ -96,11 +118,6 @@ th.sorted .si{opacity:1;}
 td{padding:10px 13px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#f6f8fa;cursor:pointer;}
-/* Status row colouring — subtle background only, no left border lines */
-tr.row-overdue  td{background:#fff8f8!important;}
-tr.row-due-soon td{background:#fffcf0!important;}
-tr.row-postponed td{background:#fdfaff!important;}
-tr.row-waiting  td{background:#fffdf5!important;}
 .cb-col{width:36px;padding:10px 8px 10px 14px!important;}
 .cb{width:15px;height:15px;cursor:pointer;accent-color:var(--blue);}
 
@@ -143,35 +160,43 @@ tr.row-waiting  td{background:#fffdf5!important;}
 .pg-sel:focus{border-color:var(--blue-bd);}
 
 /* Cell styles */
-.jo-num{font-family:monospace;font-size:13px;font-weight:800;color:var(--blue);}
-.jo-type{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;font-size:10px;font-weight:800;margin-left:4px;}
+.jo-num{font-family:monospace;font-size:12.5px;font-weight:700;color:var(--blue);}
+.jo-type{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:3px;font-size:9.5px;font-weight:800;margin-left:3px;}
 .jt-v{background:var(--blue-bg);color:var(--blue);}
 .jt-o{background:var(--teal-bg);color:var(--teal);}
-.eq-name{font-size:13px;font-weight:700;color:var(--text);}
-.eq-code{font-size:11.5px;color:var(--muted);font-weight:500;}
-.flags{display:flex;gap:4px;flex-wrap:wrap;}
-.flag{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap;}
-.flag-critical{background:var(--red-bg);color:var(--red);}
-.flag-class   {background:var(--teal-bg);color:var(--teal);}
-.flag-round   {background:#f3f4f6;color:var(--muted);}
-.flag-postponed{background:var(--purple-bg);color:var(--purple);}
-.flag-spares  {background:var(--amber-bg);color:var(--amber);}
-.flag-wp      {background:#fef3c7;color:#92400e;}
-.flag-ra      {background:#fce7f3;color:#be185d;}
+.eq-name{font-size:12.5px;font-weight:600;color:var(--text);}
+.eq-code{font-size:11px;color:var(--muted);font-weight:400;}
 
-/* Badges */
-.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+/* ── FLAG INDICATOR BUTTONS (G/R, RA, COC, Memo columns) ── */
+.fi{display:inline-flex;align-items:center;justify-content:center;width:26px;height:20px;border-radius:4px;font-size:9.5px;font-weight:700;white-space:nowrap;border:1px solid;}
+.fi-on-b{background:#e8eaf6;color:#3949ab;border-color:#9fa8da;}
+.fi-on-r{background:#ffebee;color:#c62828;border-color:#ef9a9a;}
+.fi-on-g{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7;}
+.fi-on-a{background:#fff3e0;color:#bf360c;border-color:#ffcc80;}
+.fi-on-t{background:#e0f7fa;color:#00838f;border-color:#80deea;}
+.fi-off{background:#f8fafc;color:#d1d5db;border-color:#e5e7eb;}
+
+/* ── REPORT LINK BUTTONS ── */
+.rpt-btn{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:500;color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-bd);cursor:pointer;white-space:nowrap;}
+.rpt-btn:hover{background:#dbeafe;}
+
+/* ── BADGES — rectangular style ── */
+.b{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:500;white-space:nowrap;border:1px solid transparent;}
 .b-r{background:var(--red-bg);color:var(--red);}
 .b-a{background:var(--amber-bg);color:var(--amber);}
 .b-g{background:var(--green-bg);color:var(--green);}
 .b-b{background:var(--blue-bg);color:var(--blue);}
-.b-p{background:var(--purple-bg);color:var(--purple);}
-.b-t{background:var(--teal-bg);color:var(--teal);}
-.b-x{background:#f1f5f9;color:var(--muted);border:1px solid #e2e8f0;}
+.b-r{background:#ffebee;color:#c62828;border-color:#ef9a9a;}
+.b-a{background:#fff3e0;color:#bf360c;border-color:#ffcc80;}
+.b-g{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7;}
+.b-b{background:#e8eaf6;color:#3949ab;border-color:#9fa8da;}
+.b-t{background:#e0f7fa;color:#00838f;border-color:#80deea;}
+.b-p{background:#f3e5f5;color:#6a1b9a;border-color:#ce93d8;}
+.b-x{background:#f5f5f5;color:#555;border-color:#d9d9d9;}
 
 /* Empty */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px;gap:12px;color:var(--muted);}
-.es-icon{font-size:44px;opacity:.15;}
+.es-icon{opacity:.15;}
 .es-text{font-size:14px;font-weight:700;}
 .es-sub{font-size:13px;color:var(--muted-lt);}
 
@@ -196,12 +221,13 @@ tr.row-waiting  td{background:#fffdf5!important;}
 #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:399;}
 #overlay.open{display:block;}
 </style>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module"></script>
 </head>
 <body>
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
-  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-logo"><div class="sb-mark"><ph-anchor weight="bold" size="20"></ph-anchor></div><div><div class="sb-name">Mariapps</div></div></div>
   <div class="sb-nav">
     <a class="sb-item" href="../../index.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
     <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
@@ -257,40 +283,11 @@ tr.row-waiting  td{background:#fffdf5!important;}
     <div class="summary-chips" id="summaryChips"></div>
   </div>
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <div class="fb-input">
-      <span style="color:var(--muted-lt);font-size:14px">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search job, equipment, JO number…" oninput="applyFilters()"/>
-    </div>
-    <select class="fb-select" id="fCategory" onchange="applyFilters()">
-      <option value="">All Categories</option>
-      <option>Planned</option><option>Defect</option><option>Unplanned</option>
-      <option>Round Job</option><option>Class Survey</option>
-    </select>
-    <select class="fb-select" id="fPriority" onchange="applyFilters()">
-      <option value="">All Priorities</option>
-      <option>Critical</option><option>High</option><option>Normal</option>
-    </select>
-    <select class="fb-select" id="fDiscipline" onchange="applyFilters()">
-      <option value="">All Disciplines</option>
-      <option>Engine</option><option>Deck</option><option>Bridge</option><option>Electrical</option>
-    </select>
-    <select class="fb-select" id="fStatus" onchange="applyFilters()">
-      <option value="">All Status</option>
-      <option value="overdue">Overdue</option>
-      <option value="due-soon">Due Soon</option>
-      <option value="scheduled">Scheduled</option>
-      <option value="in-progress">In Progress</option>
-      <option value="postponed">Postponed</option>
-      <option value="waiting-spares">Waiting Spares</option>
-    </select>
-    <div class="fb-divider"></div>
+  <!-- ACTION BAR -->
+  <div class="filter-bar" style="justify-content:flex-end;">
     <div class="fb-right">
-      <button class="tbtn" onclick="clearFilters()">✕ Clear</button>
       <button class="tbtn excel">↓ Excel</button>
       <button class="tbtn pdf">↓ PDF</button>
-      <button class="tbtn primary">+ New Job Order</button>
     </div>
   </div>
 
@@ -308,25 +305,48 @@ tr.row-waiting  td{background:#fffdf5!important;}
         <table>
           <thead>
             <tr>
-              <th class="cb-col"><input type="checkbox" class="cb" id="selectAll" onchange="toggleAll(this)"/></th>
-              <th onclick="doSort('joNo')">JO No.<span class="si">⇅</span></th>
-              <th onclick="doSort('equipment')">Equipment<span class="si">⇅</span></th>
-              <th onclick="doSort('title')">Job Title<span class="si">⇅</span></th>
-              <th onclick="doSort('jobType')">Category<span class="si">⇅</span></th>
-              <th onclick="doSort('maintType')">Maint. Type<span class="si">⇅</span></th>
-              <th onclick="doSort('freqPrimary')">Frequency<span class="si">⇅</span></th>
-              <th onclick="doSort('lastDoneDate')">Last Done<span class="si">⇅</span></th>
-              <th onclick="doSort('nextDueDate')">Next Due<span class="si">⇅</span></th>
-              <th onclick="doSort('priority')">Priority<span class="si">⇅</span></th>
-              <th onclick="doSort('status')">Status<span class="si">⇅</span></th>
-              <th>Flags</th>
+              <th class="cb-col sk sk0"><input type="checkbox" class="cb" id="selectAll" onchange="toggleAll(this)"/></th>
+              <th class="sk sk1" style="text-align:center;padding:10px 4px">G/R</th>
+              <th class="sk sk2" style="text-align:center;padding:10px 4px">RA</th>
+              <th class="sk sk3" style="text-align:center;padding:10px 4px">COC</th>
+              <th class="sk sk4" style="text-align:center;padding:10px 4px">Memo</th>
+              <th class="sk sk5" onclick="doSort('joNo')">Job Order No.<span class="si">⇅</span></th>
+              <th class="sk sk6" onclick="doSort('eqCode')">Equipment Code<span class="si">⇅</span></th>
+              <th class="sk sk7" onclick="doSort('equipment')">Equipment Name<span class="si">⇅</span></th>
+              <th class="sk sk8" onclick="doSort('title')">Job Title<span class="si">⇅</span></th>
+              <th class="sk sk9" onclick="doSort('nextDueDate')">Next Due Date<span class="si">⇅</span></th>
+              <th>Job Description</th>
+              <th onclick="doSort('nextDueHrs')">Next Due Hrs.<span class="si">⇅</span></th>
+              <th onclick="doSort('freqPrimary')">Primary Frequency<span class="si">⇅</span></th>
+              <th onclick="doSort('lastDoneDate')">Last Done Date<span class="si">⇅</span></th>
+              <th>Present RHrs</th>
+              <th>Plan Horizon</th>
+              <th onclick="doSort('status')">Job Status<span class="si">⇅</span></th>
+              <th onclick="doSort('priority')">Job Priority<span class="si">⇅</span></th>
+              <th>Defect Priority</th>
+              <th>Previous Job Report</th>
+              <th>Job History Report</th>
+              <th>Group Job</th>
+              <th>Job Class Reference</th>
+              <th>Equipment Class No.</th>
+              <th onclick="doSort('discipline')">Discipline<span class="si">⇅</span></th>
+              <th>DD Project</th>
+              <th>Section</th>
+              <th>RA Required (JO)</th>
+              <th>RA</th>
+              <th>Work Permit</th>
+              <th>WP</th>
+              <th>Incident Number</th>
+              <th onclick="doSort('safetyLevel')">Safety Level<span class="si">⇅</span></th>
+              <th onclick="doSort('jobType')">Job Category<span class="si">⇅</span></th>
+              <th>Round Hours</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
         </table>
       </div>
       <div class="empty-state" id="emptyState" style="display:none">
-        <div class="es-icon">📋</div>
+        <div class="es-icon"><ph-clipboard-text weight="thin" size="48" style="opacity:.15"></ph-clipboard-text></div>
         <div class="es-text">No jobs match the current filters</div>
         <div class="es-sub">Try changing or clearing the filters above</div>
       </div>
@@ -361,13 +381,13 @@ tr.row-waiting  td{background:#fffdf5!important;}
       <div class="sp-title" id="sp-title">—</div>
       <div style="font-size:12px;color:var(--muted)" id="sp-sub">—</div>
     </div>
-    <div class="sp-close" onclick="closePanel()">✕</div>
+    <div class="sp-close" onclick="closePanel()"><ph-x weight="regular" size="14"></ph-x></div>
   </div>
   <div class="sp-body" id="sp-body"></div>
   <div class="sp-footer">
     <button class="tbtn primary" style="flex:1">✓ Mark Complete</button>
     <button class="tbtn" style="flex:1">⏸ Postpone</button>
-    <button class="tbtn" style="flex:1">📋 Log Work</button>
+    <button class="tbtn" style="flex:1"><ph-clipboard-text weight="regular" size="16"></ph-clipboard-text> Log Work</button>
   </div>
 </div>
 
@@ -465,36 +485,67 @@ function sorted(jobs){
 /* ── RENDER ONE PAGE ── */
 function renderRows(pageJobs){
   const tbody=document.getElementById('tbody');
+  const fi=(on,cls,lbl)=>on?`<span class="fi ${cls}">${lbl}</span>`:`<span class="fi fi-off">—</span>`;
+  const yn=(v,cls)=>v?`<span class="b ${cls}">${v}</span>`:`<span style="color:var(--muted-lt);font-size:12px">—</span>`;
+  const cell=(v)=>v&&v!=='—'?v:'<span style="color:var(--muted-lt)">—</span>';
+
   tbody.innerHTML=pageJobs.map(j=>{
-    const sc=SC[j.status]||{label:j.status,badge:'b-x',row:''};
+    const sc=SC[j.status]||{label:j.status,badge:'b-x'};
     const pb=PC[j.priority]||'b-x';
     const jt=j.joType==='V'
-      ?`<span class="jo-type jt-v" title="Vessel generated">V</span>`
-      :`<span class="jo-type jt-o" title="Office generated">O</span>`;
-    const flags=[];
-    if(j.flags.includes('critical'))      flags.push(`<span class="flag flag-critical">CRITICAL</span>`);
-    if(j.flags.includes('class'))         flags.push(`<span class="flag flag-class">CLASS</span>`);
-    if(j.flags.includes('round-job'))     flags.push(`<span class="flag flag-round">ROUND</span>`);
-    if(j.flags.includes('postponed'))     flags.push(`<span class="flag flag-postponed">POSTPONED</span>`);
-    if(j.flags.includes('waiting-spares'))flags.push(`<span class="flag flag-spares">WAIT SPARES</span>`);
-    if(j.workPermit)                      flags.push(`<span class="flag flag-wp">WP</span>`);
-    if(j.riskAssmt)                       flags.push(`<span class="flag flag-ra">RA</span>`);
+      ?`<span class="jo-type jt-v">V</span>`
+      :`<span class="jo-type jt-o">O</span>`;
+
+    const isRound   = j.flags.includes('round-job');
+    const isCOC     = j.flags.includes('class');
+    const isCritical= j.flags.includes('critical');
+    const isWait    = j.flags.includes('waiting-spares');
+    const isPostp   = j.flags.includes('postponed');
+
     const dueLbl=j.status==='overdue'
       ?`<span class="b b-r">${j.daysOverdue}d Overdue</span>`
-      :`<span style="font-size:13px;font-weight:700">${j.nextDueDate}</span>`;
-    return`<tr class="${sc.row}" onclick="openPanel('${j.joNo}')">
-      <td class="cb-col" onclick="event.stopPropagation()"><input type="checkbox" class="cb row-cb" data-id="${j.joNo}" onchange="updateSel()"/></td>
-      <td><div class="jo-num">${j.joNo}${jt}</div></td>
-      <td><div class="eq-name">${j.equipment}</div><div class="eq-code">${j.eqCode}</div></td>
-      <td style="max-width:190px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.title}</td>
-      <td><span class="b b-x" style="font-size:11px">${j.jobType}</span></td>
-      <td style="color:var(--muted);font-size:12.5px">${j.maintType}</td>
-      <td style="color:var(--text2)">${j.freqPrimary}</td>
-      <td style="color:var(--muted);font-size:12.5px">${j.lastDoneDate}${j.lastDoneHrs&&j.lastDoneHrs!=='—'?`<div style="font-size:11px">${j.lastDoneHrs}</div>`:''}</td>
-      <td>${dueLbl}${j.nextDueHrs&&j.nextDueHrs!=='—'?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${j.nextDueHrs}</div>`:''}</td>
-      <td><span class="b ${pb}">${j.priority}</span></td>
+      :`<span style="font-size:12.5px;font-weight:600">${j.nextDueDate}</span>`;
+
+    const slCls={'Critical':'b-r','High':'b-a','Normal':'b-b'}[j.safetyLevel]||'b-x';
+    const catCls={'Planned':'b-b','Defect':'b-r','Unplanned':'b-a','Round Job':'b-x','Class Survey':'b-t'}[j.jobType]||'b-x';
+    const defPri = j.jobType==='Defect'?j.priority:null;
+
+    return`<tr onclick="openPanel('${j.joNo}')">
+      <td class="cb-col sk sk0" onclick="event.stopPropagation()"><input type="checkbox" class="cb row-cb" data-id="${j.joNo}" onchange="updateSel()"/></td>
+      <td class="sk sk1" style="text-align:center;padding:8px 4px">${fi(isRound,'fi-on-b','G/R')}</td>
+      <td class="sk sk2" style="text-align:center;padding:8px 4px">${fi(j.riskAssmt,'fi-on-a','RA')}</td>
+      <td class="sk sk3" style="text-align:center;padding:8px 4px">${fi(isCOC,'fi-on-t','COC')}</td>
+      <td class="sk sk4" style="text-align:center;padding:8px 4px">${fi(isPostp,'fi-on-r','Memo')}</td>
+      <td class="sk sk5" style="white-space:nowrap"><div class="jo-num">${j.joNo}${jt}</div></td>
+      <td class="sk sk6" style="font-family:monospace;font-size:12px;color:var(--blue);white-space:nowrap">${j.eqCode}</td>
+      <td class="sk sk7" style="white-space:nowrap"><div class="eq-name">${j.equipment}</div></td>
+      <td class="sk sk8" style="font-weight:500;font-size:12.5px">${j.title}</td>
+      <td class="sk sk9" style="white-space:nowrap">${dueLbl}</td>
+      <td style="max-width:180px;color:var(--muted);font-size:12px">${j.title}</td>
+      <td style="color:var(--muted);font-size:12px;white-space:nowrap">${cell(j.nextDueHrs)}</td>
+      <td style="white-space:nowrap;font-size:12.5px">${cell(j.freqPrimary)}</td>
+      <td style="color:var(--muted);font-size:12px;white-space:nowrap">${cell(j.lastDoneDate)}</td>
+      <td style="color:var(--muted);font-size:12px;white-space:nowrap">${cell(j.lastDoneHrs)}</td>
+      <td style="color:var(--muted);font-size:12px">30 Days</td>
       <td><span class="b ${sc.badge}">${sc.label}</span></td>
-      <td><div class="flags">${flags.join('')||'<span style="color:var(--muted-lt);font-size:12px">—</span>'}</div></td>
+      <td><span class="b ${pb}">${j.priority}</span></td>
+      <td>${defPri?`<span class="b ${PC[defPri]||'b-x'}">${defPri}</span>`:`<span style="color:var(--muted-lt)">—</span>`}</td>
+      <td><button class="rpt-btn" onclick="event.stopPropagation()">↗ View</button></td>
+      <td><button class="rpt-btn" onclick="event.stopPropagation()">↗ View</button></td>
+      <td style="text-align:center">${yn(isRound?'Yes':null,'b-b')}</td>
+      <td style="color:var(--muted);font-size:12px;white-space:nowrap">${isCOC?'CLS-'+j.joNo:'—'}</td>
+      <td style="color:var(--muted);font-size:12px">${isCOC?j.eqCode+'-CL':'—'}</td>
+      <td><span class="b b-x">${cell(j.discipline)}</span></td>
+      <td style="color:var(--muted-lt);font-size:12px">—</td>
+      <td style="color:var(--muted);font-size:12px">${cell(j.discipline)}</td>
+      <td>${yn(j.riskAssmt?'Required':null,'b-a')}</td>
+      <td style="font-family:monospace;font-size:11px;color:var(--muted)">${j.riskAssmt?'RA-'+j.joNo:'—'}</td>
+      <td>${yn(j.workPermit?'Required':null,'b-b')}</td>
+      <td style="font-family:monospace;font-size:11px;color:var(--muted)">${j.workPermit?'WP-'+j.joNo:'—'}</td>
+      <td style="color:var(--muted-lt);font-size:12px">—</td>
+      <td><span class="b ${slCls}">${cell(j.safetyLevel)}</span></td>
+      <td><span class="b ${catCls}">${cell(j.jobType)}</span></td>
+      <td style="color:var(--muted);font-size:12px">${isRound?j.freqPrimary:'—'}</td>
     </tr>`;
   }).join('');
 }
@@ -580,30 +631,13 @@ function changePageSize(val){
   render(_filteredJobs);
 }
 
-/* ── FILTER ── */
+/* ── FILTER — no filter controls, renders all jobs ── */
 function applyFilters(){
-  curPage = 1;  // reset to page 1 on any filter change
-  const q  =document.getElementById('searchInput').value.toLowerCase().trim();
-  const cat=document.getElementById('fCategory').value;
-  const pri=document.getElementById('fPriority').value;
-  const dis=document.getElementById('fDiscipline').value;
-  const sts=document.getElementById('fStatus').value;
-  let jobs=ALL.filter(j=>{
-    if(q&&!j.joNo.toLowerCase().includes(q)&&!j.equipment.toLowerCase().includes(q)&&!j.title.toLowerCase().includes(q))return false;
-    if(cat&&j.jobType!==cat)   return false;
-    if(pri&&j.priority!==pri)  return false;
-    if(dis&&j.discipline!==dis)return false;
-    if(sts&&j.status!==sts)    return false;
-    return true;
-  });
-  render(sorted(jobs));
+  curPage = 1;
+  render(sorted(ALL));
 }
-function fByStatus(s){document.getElementById('fStatus').value=s;applyFilters();}
-function clearFilters(){
-  document.getElementById('searchInput').value='';
-  ['fCategory','fPriority','fDiscipline','fStatus'].forEach(id=>document.getElementById(id).value='');
-  applyFilters();
-}
+function fByStatus(s){ applyFilters(); }
+function clearFilters(){ applyFilters(); }
 
 /* ── SELECT ── */
 function toggleAll(cb){document.querySelectorAll('.row-cb').forEach(r=>r.checked=cb.checked);updateSel();}

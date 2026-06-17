@@ -49,21 +49,43 @@ table{width:100%;border-collapse:collapse;font-size:13px;}
 th{text-align:left;padding:9px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
 td{padding:9px 12px;border-bottom:1px solid var(--border-lt);vertical-align:middle;color:var(--text2);font-weight:600;}
 tr:last-child td{border-bottom:none;}
-tr.row-warn td{background:#fffbeb;}
-tr.row-danger td{background:#fef2f2;}
 .reading-input{width:110px;padding:6px 10px;border:1.5px solid var(--blue-bd);border-radius:7px;font-size:13px;font-weight:700;color:var(--blue);background:var(--blue-bg);outline:none;font-family:inherit;text-align:right;}
 .reading-input:focus{border-color:var(--blue);background:#fff;}
 .add-hrs{font-weight:800;font-size:13px;}
 .add-hrs.pos{color:var(--green);}
 .add-hrs.warn{color:var(--amber);}
 .add-hrs.danger{color:var(--red);}
-.b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
-.b-ok{background:var(--green-bg);color:var(--green);}
-.b-warn{background:var(--amber-bg);color:var(--amber);}
-.b-danger{background:var(--red-bg);color:var(--red);}
-.b-na{background:#f3f4f6;color:#6b7280;}
+.b{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:500;border:1px solid transparent;}
+.b-ok{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7;}
+.b-warn{background:#fff3e0;color:#bf360c;border-color:#ffcc80;}
+.b-danger{background:#ffebee;color:#c62828;border-color:#ef9a9a;}
+.b-na{background:#f5f5f5;color:#555;border-color:#d9d9d9;}
 .tbl-footer{padding:10px 14px;background:#f9fafb;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:var(--muted);}
 .tbl-footer span{color:var(--text);font-weight:800;}
+/* Inherited lookup button */
+.lookup-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-bd);cursor:pointer;white-space:nowrap;font-family:inherit;}
+.lookup-btn:hover{background:#dbeafe;}
+.lookup-btn svg{width:12px;height:12px;flex-shrink:0;}
+
+/* Inherited modal — centered dialog */
+.inh-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;}
+.inh-overlay.open{display:flex;}
+.inh-modal{background:#fff;border-radius:10px;width:860px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.inh-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0;}
+.inh-hdr h3{font-size:14px;font-weight:700;color:var(--text);}
+.inh-close{background:none;border:none;cursor:pointer;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;}
+.inh-close:hover{background:#f1f5f9;color:var(--text);}
+.inh-info{padding:10px 18px;background:#f8fafc;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--muted);flex-shrink:0;}
+.inh-info strong{color:var(--text);font-weight:600;}
+.inh-body{flex:1;overflow:auto;}
+.inh-body table{width:100%;border-collapse:collapse;font-size:13px;}
+.inh-body th{text-align:left;padding:9px 13px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#f9fafb;border-bottom:2px solid var(--border);white-space:nowrap;}
+.inh-body td{padding:9px 13px;border-bottom:1px solid var(--border-lt);color:var(--text2);font-weight:500;vertical-align:middle;}
+.inh-body tr:last-child td{border-bottom:none;}
+.inh-body tr:hover td{background:#f6f8fa;}
+.inh-code{font-family:monospace;font-size:12px;font-weight:600;color:var(--blue);}
+.inh-hrs{font-weight:700;color:var(--text);}
+
 /* SLIDE PANEL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;display:none;}
 .overlay.open{display:block;}
@@ -77,10 +99,11 @@ tr.row-danger td{background:#fef2f2;}
 .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:9px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 </style>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module"></script>
 </head>
 <body>
 <nav id="sidebar">
-  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-logo"><div class="sb-mark"><ph-anchor weight="bold" size="20"></ph-anchor></div><div><div class="sb-name">Mariapps</div></div></div>
   <div class="sb-nav">
     <a class="sb-item" href="../../index.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
     <div class="sb-parent open" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
@@ -124,28 +147,25 @@ tr.row-danger td{background:#fef2f2;}
     </div>
   </div>
   <div id="content">
-    <div class="note-bar">ℹ️ New entries auto-recalculate next due hours for all linked job plans.</div>
     <div class="card">
       <div class="card-hdr">
         <h2>Equipment Running Hours</h2>
-        <div style="display:flex;gap:8px;">
-          <select class="fb-select" style="border-color:var(--border)"><option>All Equipment</option><option>Main Engine</option><option>Generators</option><option>Purifiers</option></select>
-          <button class="btn primary" onclick="saveAllReadings()">💾 Save All Readings</button>
-        </div>
+        <button class="btn primary" onclick="saveAllReadings()"><ph-floppy-disk weight="regular" size="16"></ph-floppy-disk> Save All Readings</button>
       </div>
       <div class="tbl-wrap">
         <table>
           <thead>
             <tr>
+              <th>Equipment Code</th>
               <th>Equipment Name</th>
-              <th>Code</th>
-              <th>Current Counter (hrs)</th>
-              <th style="background:var(--blue-bg);color:var(--blue)">Present Reading ✎</th>
+              <th>Counter Reading</th>
               <th>Previous Reading</th>
-              <th>Additional Hours</th>
-              <th>Reading Date</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th style="background:var(--blue-bg);color:var(--blue)">Present Reading</th>
+              <th>Additional</th>
+              <th>Reading Data</th>
+              <th>Inherited</th>
+              <th>History</th>
+              <th>Reset History</th>
             </tr>
           </thead>
           <tbody id="rh-tbody">
@@ -155,12 +175,33 @@ tr.row-danger td{background:#fef2f2;}
       </div>
       <div class="tbl-footer">
         <div>Total Running Hours (Main Engine): <span id="me-total">—</span> hrs</div>
-        <div style="display:flex;gap:16px;font-size:12px;">
-          <span style="color:var(--red)">■ Approaching threshold</span>
-          <span style="color:var(--amber)">■ Within 20% of threshold</span>
-          <span style="color:var(--green)">■ Normal</span>
-        </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- INHERITED LOOKUP MODAL -->
+<div class="inh-overlay" id="inh-overlay" onclick="if(event.target===this)closeInherited()">
+  <div class="inh-modal">
+    <div class="inh-hdr">
+      <h3>Inherited Running Hours — Lookup</h3>
+      <button class="inh-close" onclick="closeInherited()"><ph-x weight="regular" size="16"></ph-x></button>
+    </div>
+    <div class="inh-info" id="inh-info">Equipment: —</div>
+    <div class="inh-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Equipment Code</th>
+            <th>Equipment Name</th>
+            <th>Component</th>
+            <th>Component RHrs</th>
+            <th>Mount History</th>
+            <th>Reset History</th>
+          </tr>
+        </thead>
+        <tbody id="inh-tbody"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -168,7 +209,7 @@ tr.row-danger td{background:#fef2f2;}
 <!-- HISTORY PANEL -->
 <div class="overlay" id="overlay" onclick="closeHistory()"></div>
 <div class="slide-panel" id="hist-panel">
-  <div class="sp-hdr"><h3>Reading History</h3><button class="sp-close" onclick="closeHistory()">✕</button></div>
+  <div class="sp-hdr"><h3>Reading History</h3><button class="sp-close" onclick="closeHistory()"><ph-x weight="regular" size="16"></ph-x></button></div>
   <div class="sp-body">
     <div class="sp-equip" id="hist-equip">—</div>
     <table>
@@ -200,19 +241,19 @@ function renderTable(){
   const tbody=document.getElementById('rh-tbody');
   tbody.innerHTML=equipment.map((e,i)=>{
     const add=e.current-e.prev;
-    const rowCls=e.status==='danger'?'row-danger':e.status==='warn'?'row-warn':'';
     const statusBadge=e.status==='danger'?'<span class="b b-danger">Near Threshold</span>':e.status==='warn'?'<span class="b b-warn">Within 20%</span>':'<span class="b b-ok">Normal</span>';
     const addCls=e.status==='danger'?'danger':e.status==='warn'?'warn':'pos';
-    return `<tr class="${rowCls}">
-      <td style="font-weight:700">${e.name}</td>
-      <td style="font-family:monospace;font-size:12px;color:var(--muted)">${e.code}</td>
-      <td style="font-weight:800">${e.current.toLocaleString()} hrs</td>
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--blue);font-weight:600">${e.code}</td>
+      <td style="font-weight:600">${e.name}</td>
+      <td style="font-weight:700">${e.current.toLocaleString()} hrs</td>
+      <td style="color:var(--muted)">${e.prev.toLocaleString()} hrs</td>
       <td><input class="reading-input" type="number" value="${e.current}" id="inp-${i}" oninput="calcAdd(${i})" step="1"/></td>
-      <td>${e.prev.toLocaleString()} hrs</td>
-      <td><span class="add-hrs ${addCls}" id="add-${i}">+${add} hrs</span></td>
-      <td><input type="date" value="${e.date}" style="border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12.5px;font-family:inherit;font-weight:600;background:#f9fafb;outline:none;"/></td>
-      <td>${statusBadge}</td>
-      <td><button class="btn sm" onclick="openHistory('${e.code}','${e.name}')">📋 History</button></td>
+      <td><span class="add-hrs ${addCls}" id="add-${i}">${add>=0?'+':''}${add} hrs</span></td>
+      <td><input type="date" value="${e.date}" style="border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12.5px;font-family:inherit;font-weight:500;background:#f9fafb;outline:none;color:var(--text2);"/></td>
+      <td><button class="lookup-btn" onclick="openInherited('${e.code}','${e.name}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${statusBadge}</button></td>
+      <td><button class="btn sm" onclick="openHistory('${e.code}','${e.name}')">History</button></td>
+      <td><button class="btn sm" onclick="showToast('History reset for ${e.name}')">Reset History</button></td>
     </tr>`;
   }).join('');
   document.getElementById('me-total').textContent=equipment[0].current.toLocaleString();
@@ -226,6 +267,36 @@ function calcAdd(i){
   span.className='add-hrs '+(add<0?'danger':add>50?'warn':'pos');
 }
 function saveAllReadings(){showToast('All running hour readings saved successfully');}
+
+/* ── INHERITED LOOKUP ── */
+const inheritedData={
+  'ME-001':[
+    {code:'233.01',    name:'ASBESTOS INTERVENTION TASKS', component:'233.01 - ASBESTOS INTERVENTION TASKS', rhrs:8655},
+    {code:'233.01.01', name:'IHM',                         component:'233.01.01 - IHM',                      rhrs:8655},
+    {code:'233.01.02', name:'AIR MEASURING',               component:'233.01.02 - AIR MEASURING',             rhrs:8655},
+    {code:'233.01.03', name:'SAMPLES ANALYSIS',            component:'233.01.03 - SAMPLES ANALYSIS',          rhrs:8655},
+    {code:'233.01.04', name:'ASBESTOS REMOVAL',            component:'233.01.04 - ASBESTOS REMOVAL',          rhrs:555},
+    {code:'233.02',    name:'TANK CLEANING',               component:'233.02 - TANK CLEANING',                rhrs:8655},
+    {code:'233.02.01', name:'CARGO TANK CLEANING',         component:'233.02.01 - CARGO TANK CLEANING',       rhrs:8655},
+    {code:'233.02.02', name:'BALLAST TANK CLEANING',       component:'233.02.02 - BALLAST TANK CLEANING',     rhrs:8655},
+    {code:'233.03',    name:'HULL TREATMENT',              component:'233.03 - HULL TREATMENT',               rhrs:8655},
+    {code:'233.03.01', name:'ANTI-FOULING APPLICATION',    component:'233.03.01 - ANTI-FOULING APPLICATION',  rhrs:8655},
+  ],
+};
+function openInherited(code, name){
+  document.getElementById('inh-info').innerHTML=`Equipment: <strong>${name} (${code})</strong> &nbsp;·&nbsp; Showing inherited component running hours`;
+  const rows=inheritedData[code]||inheritedData['ME-001'];
+  document.getElementById('inh-tbody').innerHTML=rows.map(r=>`<tr>
+    <td class="inh-code">${r.code}</td>
+    <td style="font-weight:500">${r.name}</td>
+    <td style="color:var(--muted);font-size:12.5px">${r.component}</td>
+    <td class="inh-hrs">${r.rhrs.toLocaleString()}</td>
+    <td><button class="btn sm" onclick="showToast('Mount history for ${r.code}')">View</button></td>
+    <td><button class="btn sm" onclick="showToast('Reset for ${r.code}')">Reset</button></td>
+  </tr>`).join('');
+  document.getElementById('inh-overlay').classList.add('open');
+}
+function closeInherited(){document.getElementById('inh-overlay').classList.remove('open');}
 function openHistory(code,name){
   document.getElementById('hist-equip').textContent=name+' ('+code+')';
   const rows=history[code]||[];
