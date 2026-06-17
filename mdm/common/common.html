@@ -48,7 +48,9 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
 .lnav-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:700;}
 .lnav-ico{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .lnav-ico svg{width:15px;height:15px;display:block;stroke:currentColor;}
-.lnav-head{padding:6px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-lt);margin-top:8px;}
+.lnav-head{padding:8px 16px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-lt);margin-top:6px;border-top:1px solid var(--border-lt);}
+.lnav-head:first-child{border-top:none;margin-top:0;}
+.lnav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:400;border-left:3px solid transparent;transition:all .12s;user-select:none;}
 
 /* MAIN SCROLL AREA */
 .main-scroll{flex:1;overflow-y:auto;padding:20px;}
@@ -182,16 +184,70 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <div id="content-area">
     <!-- LEFT NAV -->
     <div class="lnav">
-      <div class="lnav-head">Sections</div>
-      <div class="lnav-item active" onclick="switchTab('company',this)">
-        <span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span>Company Reference Data
-      </div>
-      <div class="lnav-item" onclick="switchTab('vessel',this)">
-        <span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>Vessel Reference Data
-      </div>
-      <div class="lnav-item" onclick="switchTab('geo',this)">
-        <span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>Geographical Data
-      </div>
+      <!-- COMPANIES -->
+      <div class="lnav-head">Companies</div>
+      <a class="lnav-item active" href="companies/company-types.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span>Company Types</a>
+      <a class="lnav-item" href="companies/company-type-groups.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>Company Type Groups</a>
+      <a class="lnav-item" href="companies/departments.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Departments</a>
+      <a class="lnav-item" href="companies/ship-management-centre.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2c1.3 0 1.9.5 2.5 1"/><path d="M19 11V7l-7-5-7 5v4"/><path d="M12 2v8"/><path d="M4.93 14a8 8 0 0 0 14.14 0"/></svg></span>Ship Management Centre</a>
+      <a class="lnav-item" href="companies/crew-service-center.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Crew Service Center</a>
+      <a class="lnav-item" href="companies/value-added-services.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Value Added Services</a>
+      <a class="lnav-item" href="companies/all-companies.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>All Companies</a>
+      <a class="lnav-item" href="companies/external-manager.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>External Manager</a>
+
+      <!-- VESSELS -->
+      <div class="lnav-head">Vessels</div>
+      <a class="lnav-item" href="vessels/sub-types.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>Sub Types</a>
+      <a class="lnav-item" href="vessels/types.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>Types</a>
+      <a class="lnav-item" href="vessels/fleet.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2c1.3 0 1.9.5 2.5 1"/><path d="M19 11V7l-7-5-7 5v4"/><path d="M12 2v8"/></svg></span>Fleet</a>
+      <a class="lnav-item" href="vessels/class.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Class</a>
+      <a class="lnav-item" href="vessels/flags.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>Flags</a>
+      <a class="lnav-item" href="vessels/management-types.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Management Types</a>
+      <a class="lnav-item" href="vessels/special-feature.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Special Feature</a>
+      <a class="lnav-item" href="vessels/vessel-departments.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>Vessel Departments</a>
+      <a class="lnav-item" href="vessels/registered-owners.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Registered Owners</a>
+      <a class="lnav-item" href="vessels/ultimate-owners.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="3" x2="12" y2="7"/></svg></span>Ultimate Owners</a>
+      <a class="lnav-item" href="vessels/beneficial-owner.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg></span>Beneficial Owner</a>
+      <a class="lnav-item" href="vessels/doc.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>DOC</a>
+      <a class="lnav-item" href="vessels/company-owner.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span>Company Owner</a>
+      <a class="lnav-item" href="vessels/contracting-company.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Contracting Company</a>
+      <a class="lnav-item" href="vessels/bsm-contracting.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>BSM Contracting Company</a>
+      <a class="lnav-item" href="vessels/residential-manager.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Residential Manager</a>
+      <a class="lnav-item" href="vessels/yards.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Yards</a>
+      <a class="lnav-item" href="vessels/pi-club.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>P&amp;I Club</a>
+      <a class="lnav-item" href="vessels/reason-owner-change.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>Reasons: Owner Change</a>
+      <a class="lnav-item" href="vessels/reason-manager-change.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>Reasons: Manager Change</a>
+      <a class="lnav-item" href="vessels/reason-mgmt-type-change.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>Reasons: Mgmt Type Change</a>
+      <a class="lnav-item" href="vessels/reason-handover.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 12 18 15 15"/><line x1="12" y1="12" x2="12" y2="18"/></svg></span>Reasons: Handover</a>
+      <a class="lnav-item" href="vessels/reason-vessel-cancel.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>Reasons: Vessel Cancellation</a>
+      <a class="lnav-item" href="vessels/vessel-user-settings.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Vessel User Settings</a>
+      <a class="lnav-item" href="vessels/confirmed-vessels.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Confirmed Vessels</a>
+      <a class="lnav-item" href="vessels/vessel-register.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Vessel Register</a>
+      <a class="lnav-item" href="vessels/vessel-management-group.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Vessel Management Group</a>
+      <a class="lnav-item" href="vessels/cargo-register.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>Cargo Register</a>
+      <a class="lnav-item" href="vessels/cargo-product.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>Cargo Product</a>
+      <a class="lnav-item" href="vessels/coating-system.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>Coating System</a>
+
+      <!-- GEOGRAPHICAL INFO -->
+      <div class="lnav-head">Geographical Info</div>
+      <a class="lnav-item" href="geographical/countries.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>Countries</a>
+      <a class="lnav-item" href="geographical/regions.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>Regions</a>
+      <a class="lnav-item" href="geographical/citizenships.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>Citizenships</a>
+      <a class="lnav-item" href="geographical/nationalities.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>Nationalities</a>
+      <a class="lnav-item" href="geographical/currencies.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Currencies</a>
+      <a class="lnav-item" href="geographical/airports.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></span>Airports</a>
+      <a class="lnav-item" href="geographical/ports.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></span>Ports</a>
+
+      <!-- GENERAL -->
+      <div class="lnav-head">General</div>
+      <a class="lnav-item" href="general/relations.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Relations</a>
+      <a class="lnav-item" href="general/civil-status.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>Civil Status</a>
+      <a class="lnav-item" href="general/religions.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Religions</a>
+      <a class="lnav-item" href="general/languages.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0 1 6.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg></span>Languages</a>
+      <a class="lnav-item" href="general/titles.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>Titles</a>
+      <a class="lnav-item" href="general/bank-branch.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span>Bank/Branch Master</a>
+      <a class="lnav-item" href="general/common-parameters.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>Common Parameters</a>
+      <a class="lnav-item" href="general/vessel-groups.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Vessel Groups</a>
     </div>
 
     <!-- SCROLL AREA -->
@@ -601,6 +657,29 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
         </div>
       </div><!-- /tab-geo -->
 
+      <!-- ═══ GENERIC PANEL (used for all specific sub-modules) ═══ -->
+      <div class="tab-panel" id="tab-generic">
+        <div class="pg-hdr">
+          <div class="pg-title" id="generic-title">—</div>
+          <div class="pg-sub" id="generic-sub">Manage reference data</div>
+        </div>
+        <div class="card">
+          <div class="tbl-toolbar">
+            <div class="tbl-search"><input placeholder="Search…"/></div>
+            <div class="tbl-actions">
+              <button class="tbtn">Export</button>
+              <button class="tbtn primary">+ Add New</button>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead id="generic-thead"><tr><th>Code</th><th>Name</th><th>Status</th><th></th></tr></thead>
+              <tbody id="generic-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /tab-generic -->
+
     </div><!-- /main-scroll -->
   </div><!-- /content-area -->
 </div><!-- /main -->
@@ -625,12 +704,59 @@ document.querySelectorAll('.sb-parent').forEach(p => {
   });
 });
 
-// Left nav tabs
+/* ── Sample data seeds per section ── */
+const GENERIC_SAMPLES={
+  'company-types':[['CT-001','Shipowner','Active'],['CT-002','Ship Manager','Active'],['CT-003','Charterer','Active'],['CT-004','Broker','Active'],['CT-005','Insurer','Inactive']],
+  'company-type-groups':[['CTG-001','Ownership Group','Active'],['CTG-002','Management Group','Active'],['CTG-003','Service Group','Active']],
+  'departments':[['DEPT-001','Engineering','Active'],['DEPT-002','Deck','Active'],['DEPT-003','Catering','Active'],['DEPT-004','Administration','Active']],
+  'flags':[['FLAG-001','Panama','PA','Active'],['FLAG-002','Liberia','LR','Active'],['FLAG-003','Marshall Islands','MH','Active'],['FLAG-004','Bahamas','BS','Active'],['FLAG-005','Malta','MT','Active']],
+  'countries':[['IND','India','IN','Active'],['SGP','Singapore','SG','Active'],['GBR','United Kingdom','GB','Active'],['DEU','Germany','DE','Active'],['NOR','Norway','NO','Active'],['JPN','Japan','JP','Active']],
+  'currencies':[['USD','US Dollar','$','Active'],['EUR','Euro','€','Active'],['GBP','British Pound','£','Active'],['SGD','Singapore Dollar','S$','Active'],['INR','Indian Rupee','₹','Active']],
+  'ports':[['SGSIN','Singapore','Singapore','Active'],['INBOM','Mumbai','India','Active'],['NLRTM','Rotterdam','Netherlands','Active'],['CNSHA','Shanghai','China','Active'],['AEDXB','Dubai','UAE','Active']],
+};
+
+/* ── Left nav switch ── */
 function switchTab(tabId, el) {
-  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.lnav-item').forEach(i => i.classList.remove('active'));
-  document.getElementById('tab-' + tabId).classList.add('active');
+  document.querySelectorAll('.lnav-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
+
+  /* Check if a specific panel exists */
+  const specific = document.getElementById('tab-'+tabId);
+  if(specific){
+    document.querySelectorAll('.tab-panel').forEach(t=>t.classList.remove('active'));
+    specific.classList.add('active');
+    return;
+  }
+
+  /* Show generic panel with generated content */
+  document.querySelectorAll('.tab-panel').forEach(t=>t.classList.remove('active'));
+  const gp = document.getElementById('tab-generic');
+  gp.classList.add('active');
+
+  /* Title */
+  const label = el.textContent.trim();
+  document.getElementById('generic-title').textContent = label;
+  document.getElementById('generic-sub').textContent = 'Manage '+label+' master data';
+
+  /* Table */
+  const rows = GENERIC_SAMPLES[tabId] || [
+    ['001',label+' — Type A','Active'],
+    ['002',label+' — Type B','Active'],
+    ['003',label+' — Type C','Inactive'],
+  ];
+  const hasCols4 = rows[0] && rows[0].length === 4;
+  const thead = hasCols4
+    ? '<tr><th>Code</th><th>Name</th><th>Short Code</th><th>Status</th><th></th></tr>'
+    : '<tr><th>Code</th><th>Name</th><th>Status</th><th></th></tr>';
+  const tbody = rows.map(r=>{
+    const last = r[r.length-1];
+    const badge = last==='Active'?'<span class="b b-g">Active</span>':'<span class="b b-x">Inactive</span>';
+    const mid = r.slice(1,-1).map(v=>`<td>${v}</td>`).join('');
+    return `<tr><td style="font-family:monospace;color:var(--blue);font-weight:600">${r[0]}</td>${mid}<td>${badge}</td><td><span class="act-ico edit" title="Edit">✏</span></td></tr>`;
+  }).join('');
+
+  document.getElementById('generic-tbody').innerHTML = tbody;
+  document.getElementById('generic-thead').innerHTML = thead;
 }
 
 // Card collapse
@@ -639,6 +765,12 @@ function toggleCard(hdr) {
   const body = hdr.nextElementSibling;
   if (body) body.classList.toggle('hidden');
 }
+
+// Auto-load first item on page ready
+document.addEventListener('DOMContentLoaded',()=>{
+  const first = document.querySelector('.lnav-item');
+  if(first) first.click();
+});
 
 // Inner tabs
 function switchItab(el, panelId) {

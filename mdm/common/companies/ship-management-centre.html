@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Ship Management Centre | MDM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../../shared/sidebar.css"/>
+
+<link rel="stylesheet" href="ship-management-centre.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR (Panel 1 only — no Panel 2 open in sub-module pages) -->
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../../index.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint"></div>
+    <div class="sb-parent active" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm"></div>
+    <div class="sb-parent" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Administration</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-admin"></div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <div class="tb-bc">MDM &rsaquo; <a href="../../../mdm/common/common.html" style="color:var(--muted);text-decoration:none">Common</a> &rsaquo; Companies &rsaquo; <b>Ship Management Centre</b></div>
+    <div class="tb-ava">RK</div>
+  </div>
+
+  <div id="content-area">
+    <!-- INNER LEFT NAV — 53 sub-modules -->
+    <div class="lnav">
+<div class="lnav-head">Companies</div>
+<a class="lnav-item" href="company-types.html">Company Types</a>
+<a class="lnav-item" href="company-type-groups.html">Company Type Groups</a>
+<a class="lnav-item" href="departments.html">Departments</a>
+<a class="lnav-item active" href="ship-management-centre.html">Ship Management Centre</a>
+<a class="lnav-item" href="crew-service-center.html">Crew Service Center</a>
+<a class="lnav-item" href="value-added-services.html">Value Added Services</a>
+<a class="lnav-item" href="all-companies.html">All Companies</a>
+<a class="lnav-item" href="external-manager.html">External Manager</a>
+<div class="lnav-head">Vessels</div>
+<a class="lnav-item" href="../vessels/sub-types.html">Sub Types</a>
+<a class="lnav-item" href="../vessels/types.html">Types</a>
+<a class="lnav-item" href="../vessels/fleet.html">Fleet</a>
+<a class="lnav-item" href="../vessels/class.html">Class</a>
+<a class="lnav-item" href="../vessels/flags.html">Flags</a>
+<a class="lnav-item" href="../vessels/management-types.html">Management Types</a>
+<a class="lnav-item" href="../vessels/special-feature.html">Special Feature</a>
+<a class="lnav-item" href="../vessels/vessel-departments.html">Vessel Departments</a>
+<a class="lnav-item" href="../vessels/registered-owners.html">Registered Owners</a>
+<a class="lnav-item" href="../vessels/ultimate-owners.html">Ultimate Owners</a>
+<a class="lnav-item" href="../vessels/beneficial-owner.html">Beneficial Owner</a>
+<a class="lnav-item" href="../vessels/doc.html">DOC</a>
+<a class="lnav-item" href="../vessels/company-owner.html">Company Owner</a>
+<a class="lnav-item" href="../vessels/contracting-company.html">Contracting Company</a>
+<a class="lnav-item" href="../vessels/bsm-contracting.html">BSM Contracting Company</a>
+<a class="lnav-item" href="../vessels/residential-manager.html">Residential Manager</a>
+<a class="lnav-item" href="../vessels/yards.html">Yards</a>
+<a class="lnav-item" href="../vessels/pi-club.html">P&I Club</a>
+<a class="lnav-item" href="../vessels/reason-owner-change.html">Reasons for Owner Change</a>
+<a class="lnav-item" href="../vessels/reason-manager-change.html">Reasons for Manager Change</a>
+<a class="lnav-item" href="../vessels/reason-mgmt-type-change.html">Reasons for Management Type Change</a>
+<a class="lnav-item" href="../vessels/reason-handover.html">Reasons for Handover</a>
+<a class="lnav-item" href="../vessels/reason-vessel-cancel.html">Reasons for Confirmed Vessels Cancellation</a>
+<a class="lnav-item" href="../vessels/vessel-user-settings.html">Vessel User Settings</a>
+<a class="lnav-item" href="../vessels/confirmed-vessels.html">Confirmed Vessels</a>
+<a class="lnav-item" href="../vessels/vessel-register.html">Vessel Register</a>
+<a class="lnav-item" href="../vessels/vessel-management-group.html">Vessel Management Group</a>
+<a class="lnav-item" href="../vessels/cargo-register.html">Cargo Register</a>
+<a class="lnav-item" href="../vessels/cargo-product.html">Cargo Product</a>
+<a class="lnav-item" href="../vessels/coating-system.html">Coating System</a>
+<div class="lnav-head">Geographical Info</div>
+<a class="lnav-item" href="../geographical/countries.html">Countries</a>
+<a class="lnav-item" href="../geographical/regions.html">Regions</a>
+<a class="lnav-item" href="../geographical/citizenships.html">Citizenships</a>
+<a class="lnav-item" href="../geographical/nationalities.html">Nationalities</a>
+<a class="lnav-item" href="../geographical/currencies.html">Currencies</a>
+<a class="lnav-item" href="../geographical/airports.html">Airports</a>
+<a class="lnav-item" href="../geographical/ports.html">Ports</a>
+<div class="lnav-head">General</div>
+<a class="lnav-item" href="../general/relations.html">Relations</a>
+<a class="lnav-item" href="../general/civil-status.html">Civil Status</a>
+<a class="lnav-item" href="../general/religions.html">Religions</a>
+<a class="lnav-item" href="../general/languages.html">Languages</a>
+<a class="lnav-item" href="../general/titles.html">Titles</a>
+<a class="lnav-item" href="../general/bank-branch.html">Bank/Branch Master</a>
+<a class="lnav-item" href="../general/common-parameters.html">Common Parameters</a>
+<a class="lnav-item" href="../general/vessel-groups.html">Vessel Groups</a>
+
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="main-scroll">
+      <div class="pg-hdr">
+        <div class="pg-title">Ship Management Centre</div>
+        <div class="pg-sub">Manage ship management centre reference master data</div>
+      </div>
+      <div class="card">
+        <div class="tbl-toolbar">
+          <div class="tbl-search"><input placeholder="Search ship management centre…"/></div>
+          <div class="tbl-actions">
+            <button class="tbtn">Export</button>
+            <button class="tbtn primary">+ Add New</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Code</th><th>Name</th><th>Status</th><th style="width:50px"></th></tr></thead>
+          <tbody><tr><td>001</td><td>Ship Management Centre — Item A</td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr><tr><td>002</td><td>Ship Management Centre — Item B</td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr><tr><td>003</td><td>Ship Management Centre — Item C</td><td><span class='b b-x'>Inactive</span></td><td><span class='act-ico'>✏</span></td></tr></tbody>
+        </table>
+        <div class="tbl-footer">3 records</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
