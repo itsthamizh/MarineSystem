@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAL4 · Audit Log Configuration | Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../shared/sidebar.css"/>
+<link rel="stylesheet" href="audit-log-configuration.css"/>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="sb-logo"><div class="sb-mark">⚓</div><div><div class="sb-name">Mariapps</div></div></div>
+  <div class="sb-nav">
+    <a class="sb-item" href="../../index.html"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sb-lbl">Dashboard</span></a>
+    <div class="sb-parent" data-k="maint"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="sb-lbl">Maintenance</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-maint"></div>
+    <div class="sb-parent" data-k="mdm"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><span class="sb-lbl">MDM</span><span class="sb-arr">›</span></div>
+    <div class="sb-children" id="ch-mdm"></div>
+    <div class="sb-parent open" data-k="admin"><span class="sb-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sb-lbl">Admin</span><span class="sb-arr">›</span></div>
+    <div class="sb-children open" id="ch-admin" data-title="Admin">
+      <a class="sb-child" href="../../administration/administration/user-designation.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Administration</a>
+      <a class="sb-child" href="../../administration/menu-rights/role-access-rights.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="17"/></svg></span>Menu Rights</a>
+      <a class="sb-child" href="../../administration/functional-rights/diagnostic-logs.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><polyline points="9 16 12 19 15 16"/></svg></span>Functional Rights</a>
+      <a class="sb-child" href="../../administration/livefleet-cwa/register-owner-livefleet.html"><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>LiveFleet / CWA</a>
+      <a class="sb-child active" href="user-activity-designation.html""><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Monitoring</a>
+      <a class="sb-child" href="../dashboard-admin/tile-information.html""><span class="sb-cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Dashboard</a>
+    </div>
+  </div>
+  <div class="sb-foot"><div class="sb-user"><div class="sb-ava">RK</div><div><div class="sb-uname">Rajan Kumar</div><div class="sb-urole">Chief Engineer</div></div></div></div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <div class="tb-bc">Admin &rsaquo; Monitoring &rsaquo; <b>Audit Log Configuration</b></div>
+    <div class="tb-ava">RK</div>
+  </div>
+  <div id="content-area">
+    <div class="lnav">
+      <div class="lnav-head">Monitoring</div>
+<a class="lnav-item" href="user-activity-designation.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg></span>User Activity Report (Designation)</a>
+<a class="lnav-item" href="designation-groups.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Designation Groups</a>
+<a class="lnav-item" href="designation-rules.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span>Designation Rules</a>
+<a class="lnav-item" href="user-activity-report.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>User Activity Report</a>
+<a class="lnav-item active" href="audit-log-configuration.html"><span class="lnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>Audit Log Configuration</a>
+
+    </div>
+    <div class="main-scroll">
+      <div class="pg-hdr">
+        <div class="pg-title">Audit Log Configuration</div>
+        <div class="pg-sub">Manage audit log configuration and monitoring records</div>
+      </div>
+      <div class="card">
+        <div class="tbl-toolbar">
+          <div class="tbl-search"><input placeholder="Search audit log configuration…"/></div>
+          <div class="tbl-actions">
+            <button class="tbtn">Export</button>
+            <button class="tbtn primary">+ Add New</button>
+          </div>
+        </div>
+        <table><thead><tr><th>Config Code</th><th>Event Type</th><th>Module</th><th>Log Level</th><th>Retention (Days)</th><th>Enabled</th><th>Status</th><th style="width:50px"></th></tr></thead>
+        <tbody><tr><td>ALC-001</td><td>Login/Logout</td><td>All</td><td>Standard</td><td>90</td><td><input type='checkbox' checked style='accent-color:var(--blue)'/></td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr><tr><td>ALC-002</td><td>Data Edit</td><td>Maintenance</td><td>Detailed</td><td>180</td><td><input type='checkbox' checked style='accent-color:var(--blue)'/></td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr><tr><td>ALC-003</td><td>Data Delete</td><td>All</td><td>Detailed</td><td>365</td><td><input type='checkbox' checked style='accent-color:var(--blue)'/></td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr><tr><td>ALC-004</td><td>Export</td><td>Reports</td><td>Standard</td><td>60</td><td><input type='checkbox' checked style='accent-color:var(--blue)'/></td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr><tr><td>ALC-005</td><td>Failed Login</td><td>Auth</td><td>Critical</td><td>365</td><td><input type='checkbox' checked style='accent-color:var(--blue)'/></td><td><span class='b b-g'>Active</span></td><td><span class='act-ico'>✏</span></td></tr></tbody></table>
+        <div class="tbl-footer">5 records</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
